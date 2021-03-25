@@ -21,12 +21,16 @@ import java.util.Objects;
 
 import org.gradle.api.Project;
 import org.gradle.api.Plugin;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
 @SuppressWarnings("UnstableApiUsage")
 public class CapsidPlugin implements Plugin<Project> {
+
+    public static final Logger LOGGER = Logging.getLogger("capsid");
 
     public void apply(Project project) {
 
