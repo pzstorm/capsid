@@ -17,15 +17,29 @@
  */
 package io.pzstorm.capsid;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.gradle.api.Plugin;
+import org.gradle.api.Project;
+import org.gradle.testfixtures.ProjectBuilder;
+import org.junit.jupiter.api.BeforeEach;
 
-class LocalPropertiesTest extends PluginUnitTest {
+public abstract class PluginUnitTest {
 
-	@Test
-	void shouldReturnFalseWhenLoadingNonExistingLocalProperties() {
+	private Project project;
+	private Plugin<Project> plugin;
 
-		Assertions.assertFalse(LocalProperties.getFile().exists());
-		Assertions.assertFalse(LocalProperties.load());
+	@BeforeEach
+	@SuppressWarnings("unchecked")
+	void createProjectAndApplyPlugin() {
+
+		project = ProjectBuilder.builder().build();
+		plugin = project.getPlugins().apply("io.pzstorm.capsid");
+	}
+
+	protected Project getProject() {
+		return project;
+	}
+
+	protected Plugin<Project> getPlugin() {
+		return plugin;
 	}
 }
