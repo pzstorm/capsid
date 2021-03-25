@@ -18,8 +18,8 @@ dependencies {
 gradlePlugin {
     // Define the plugin
     plugins {
-        greeting {
-            id = 'io.pzstorm.capsid.greeting'
+        capsid {
+            id = 'io.pzstorm.capsid'
             implementationClass = 'io.pzstorm.capsid.CapsidPlugin'
         }
     }
