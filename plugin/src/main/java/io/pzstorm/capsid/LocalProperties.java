@@ -18,14 +18,40 @@
 package io.pzstorm.capsid;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
-public class LocalProperties extends Properties {
+import org.gradle.api.Project;
+import org.gradle.api.plugins.ExtraPropertiesExtension;
 
-	private static final LocalProperties PROPERTIES = new LocalProperties();
+public enum LocalProperties {
+
+	/**
+	 * {@code Path} to Project Zomboid installation directory.
+	 */
+	GAME_DIR("gameDir", Path.class),
+
+	/**
+	 * {@code Path} to IntelliJ IDEA installation directory.
+	 */
+	IDEA_HOME("ideaHome", Path.class);
+
+	private static final Properties PROPERTIES = new Properties();
 	private static final File FILE = new File("local.properties");
 
-	private LocalProperties() {}
+	final String name;
+	final Class<?> type;
+	final boolean required;
+
+	//@formatter:off
+	LocalProperties(String name, Class<?> type, boolean required) {
+		this.name = name; this.type = type; this.required = required;
+	}
+	// @formatter:on
+	LocalProperties(String name, Class<?> type) {
+		this(name, type, true);
+	}
 
 	/**
 	 * Load properties from {@code local.properties} file.
@@ -33,7 +59,7 @@ public class LocalProperties extends Properties {
 	 * @return {@code true} if properties were successfully loaded, {@code false} otherwise.
 	 * @throws RuntimeException when an {@link IOException} occurred while loading file.
 	 */
-	public static boolean load() {
+	public static boolean load(Project project) {
 
 		if (!FILE.exists())
 		{
@@ -41,8 +67,30 @@ public class LocalProperties extends Properties {
 			return false;
 		}
 		// TODO: write integration test to verify properties were loaded
-		try (InputStream stream = new FileInputStream(FILE)) {
+		try (InputStream stream = new FileInputStream(FILE))
+		{
+			// read properties from byte stream
 			PROPERTIES.load(stream);
+
+			// save properties as project extended properties
+			for (LocalProperties property : LocalProperties.values())
+			{
+				String oProperty = PROPERTIES.getProperty(property.name);
+				if (property.required && oProperty == null)
+				{
+					String msg = "WARN: Local property %s is not defined";
+					CapsidPlugin.LOGGER.warn(String.format(msg, property.name));
+					continue;
+				}
+				// this is where we will save properties to
+				ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
+
+				// save the project property as a Path
+				if (property.type.equals(Path.class)) {
+					ext.set(property.name, Paths.get(oProperty));
+				}
+				else ext.set(property.name, oProperty);
+			}
 		}
 		catch (IOException e) {
 			throw new RuntimeException("An I/O exception occurred while loading local.properties", e);

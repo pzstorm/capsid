@@ -57,7 +57,7 @@ public class CapsidPlugin implements Plugin<Project> {
             if (!localProperties.exists() && !localProperties.createNewFile()) {
                 throw new IOException("Unable to create new local.properties file");
             }
-            LocalProperties.load();
+            LocalProperties.load(project);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
