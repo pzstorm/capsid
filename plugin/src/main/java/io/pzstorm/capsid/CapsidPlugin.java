@@ -17,6 +17,8 @@
  */
 package io.pzstorm.capsid;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 import org.gradle.api.Project;
@@ -48,5 +50,17 @@ public class CapsidPlugin implements Plugin<Project> {
         );
         // ZomboidDoc can only be executed with Java 8
         java.getToolchain().getLanguageVersion().set(JavaLanguageVersion.of(8));
+
+        // load local properties (create file if it doesn't exist)
+        try {
+            File localProperties = LocalProperties.getFile();
+            if (!localProperties.exists() && !localProperties.createNewFile()) {
+                throw new IOException("Unable to create new local.properties file");
+            }
+            LocalProperties.load();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

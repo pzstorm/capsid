@@ -23,7 +23,35 @@ import java.util.Properties;
 public class LocalProperties extends Properties {
 
 	private static final LocalProperties PROPERTIES = new LocalProperties();
+	private static final File FILE = new File("local.properties");
 
 	private LocalProperties() {}
 
+	/**
+	 * Load properties from {@code local.properties} file.
+	 *
+	 * @return {@code true} if properties were successfully loaded, {@code false} otherwise.
+	 * @throws RuntimeException when an {@link IOException} occurred while loading file.
+	 */
+	public static boolean load() {
+
+		if (!FILE.exists())
+		{
+			CapsidPlugin.LOGGER.warn("WARN: Tried to load local properties, but file does not exist");
+			return false;
+		}
+		// TODO: write integration test to verify properties were loaded
+		try (InputStream stream = new FileInputStream(FILE)) {
+			PROPERTIES.load(stream);
+		}
+		catch (IOException e) {
+			throw new RuntimeException("An I/O exception occurred while loading local.properties", e);
+		}
+		return true;
+	}
+
+	/** Returns properties {@code File} used to hold local properties. */
+	public static File getFile() {
+		return FILE;
+	}
 }
