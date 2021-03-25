@@ -8,8 +8,11 @@ repositories {
 }
 
 dependencies {
-    // Use JUnit test framework for unit tests
-    testImplementation 'junit:junit:4.13'
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
+
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.1'
 }
 
 gradlePlugin {
@@ -40,4 +43,11 @@ tasks.register('functionalTest', Test) {
 tasks.named('check') {
     // Run the functional tests as part of `check`
     dependsOn(tasks.functionalTest)
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }

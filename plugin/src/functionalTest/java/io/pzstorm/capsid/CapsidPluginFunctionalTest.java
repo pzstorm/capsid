@@ -10,14 +10,16 @@ import java.io.FileWriter;
 import java.nio.file.Files;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.BuildResult;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * A simple functional test for the 'io.pzstorm.capsid.greeting' plugin.
  */
 public class CapsidPluginFunctionalTest {
-    @Test public void canRunTask() throws IOException {
+
+    @Test
+    public void canRunTask() throws IOException {
         // Setup the test build
         File projectDir = new File("build/functionalTest");
         Files.createDirectories(projectDir.toPath());
@@ -36,7 +38,7 @@ public class CapsidPluginFunctionalTest {
         BuildResult result = runner.build();
 
         // Verify the result
-        assertTrue(result.getOutput().contains("Hello from plugin 'io.pzstorm.capsid.greeting'"));
+        Assertions.assertTrue(result.getOutput().contains("Hello from plugin 'io.pzstorm.capsid.greeting'"));
     }
 
     private void writeString(File file, String string) throws IOException {

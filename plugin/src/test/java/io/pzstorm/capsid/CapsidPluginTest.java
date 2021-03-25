@@ -5,8 +5,8 @@ package io.pzstorm.capsid;
 
 import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.api.Project;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * A simple unit test for the 'io.pzstorm.capsid.greeting' plugin.
@@ -21,6 +21,6 @@ public class CapsidPluginTest {
         project.getPlugins().apply("io.pzstorm.capsid.greeting");
 
         // Verify the result
-        assertNotNull(project.getTasks().findByName("greeting"));
+        Assertions.assertNotNull(project.getTasks().findByName("greeting"));
     }
 }
