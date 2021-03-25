@@ -17,21 +17,58 @@
  */
 package io.pzstorm.capsid;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.FileUtils;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 public abstract class PluginUnitTest {
 
+	private static final File PARENT_TEMP_DIR = new File("build/tmp/unitTest");
+	private static final Set<String> TEMP_DIR_NAMES = new HashSet<>();
+
 	private Project project;
 	private Plugin<Project> plugin;
+
+	@BeforeAll
+	static void cleanTemporaryDirectories() throws IOException {
+
+		if (PARENT_TEMP_DIR.exists())
+		{
+			Set<Path> dirsToClean = Files.list(PARENT_TEMP_DIR.toPath()).filter(p ->
+					p.toFile().isDirectory() && !TEMP_DIR_NAMES.contains(p.getFileName().toString()))
+					.collect(Collectors.toSet());
+
+			for (Path path : dirsToClean)
+			{
+				File dir = path.toFile();
+				FileUtils.deleteDirectory(dir);
+				Assertions.assertFalse(dir.exists());
+			}
+		}
+	}
 
 	@BeforeEach
 	@SuppressWarnings("unchecked")
 	void createProjectAndApplyPlugin() {
 
-		project = ProjectBuilder.builder().build();
+		String dirName = "test" + new Random().nextInt(1000);
+		File tempDir = new File(PARENT_TEMP_DIR, dirName);
+		TEMP_DIR_NAMES.add(dirName);
+
+		project = ProjectBuilder.builder().withProjectDir(tempDir).build();
 		plugin = project.getPlugins().apply("io.pzstorm.capsid");
 	}
 
