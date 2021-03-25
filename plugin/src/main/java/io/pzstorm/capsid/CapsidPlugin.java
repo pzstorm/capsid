@@ -24,5 +24,7 @@ public class CapsidPlugin implements Plugin<Project> {
 
     public void apply(Project project) {
 
+        // apply all core plugins to this project
+        CorePlugin.applyAll(project);
     }
 }
