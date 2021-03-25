@@ -19,6 +19,7 @@ package io.pzstorm.capsid;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.plugins.PluginContainer;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -45,5 +46,13 @@ class CapsidPluginTest {
 		for (CorePlugin plugin : CorePlugin.values()) {
 			Assertions.assertTrue(plugins.hasPlugin(plugin.getID()));
 		}
+	}
+
+	@Test
+	void shouldAddMavenCentralRepository() {
+
+		RepositoryHandler repositories = project.getRepositories();
+		Assertions.assertEquals(1, repositories.size());
+		Assertions.assertNotNull(repositories.findByName("MavenRepo"));
 	}
 }

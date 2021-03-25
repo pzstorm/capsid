@@ -26,5 +26,8 @@ public class CapsidPlugin implements Plugin<Project> {
 
         // apply all core plugins to this project
         CorePlugin.applyAll(project);
+
+        // add Maven Central repository
+        project.getRepositories().mavenCentral();
     }
 }
