@@ -38,7 +38,6 @@ public enum LocalProperties {
 	IDEA_HOME("ideaHome", Path.class);
 
 	private static final Properties PROPERTIES = new Properties();
-	private static final File FILE = new File("local.properties");
 
 	final String name;
 	final Class<?> type;
@@ -54,20 +53,23 @@ public enum LocalProperties {
 	}
 
 	/**
-	 * Load properties from {@code local.properties} file.
+	 * Load properties from local {@code Properties} file.
+	 *
+	 * @param project {@code Project} to load properties to.
 	 *
 	 * @return {@code true} if properties were successfully loaded, {@code false} otherwise.
 	 * @throws RuntimeException when an {@link IOException} occurred while loading file.
 	 */
 	public static boolean load(Project project) {
 
-		if (!FILE.exists())
+		File propertiesFile = getFile(project);
+		if (!propertiesFile.exists())
 		{
 			CapsidPlugin.LOGGER.warn("WARN: Tried to load local properties, but file does not exist");
 			return false;
 		}
 		// TODO: write integration test to verify properties were loaded
-		try (InputStream stream = new FileInputStream(FILE))
+		try (InputStream stream = new FileInputStream(propertiesFile))
 		{
 			// read properties from byte stream
 			PROPERTIES.load(stream);
@@ -99,7 +101,7 @@ public enum LocalProperties {
 	}
 
 	/** Returns properties {@code File} used to hold local properties. */
-	public static File getFile() {
-		return FILE;
+	public static File getFile(Project project) {
+		return project.getProjectDir().toPath().resolve("local.properties").toFile();
 	}
 }

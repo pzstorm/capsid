@@ -52,15 +52,18 @@ public class CapsidPlugin implements Plugin<Project> {
         java.getToolchain().getLanguageVersion().set(JavaLanguageVersion.of(8));
 
         // load local properties (create file if it doesn't exist)
-        try {
-            File localProperties = LocalProperties.getFile();
-            if (!localProperties.exists() && !localProperties.createNewFile()) {
-                throw new IOException("Unable to create new local.properties file");
+        File localProperties = LocalProperties.getFile(project);
+        if (!localProperties.exists())
+        {
+            try {
+                if (!localProperties.createNewFile()) {
+                    throw new IOException("Unable to create new local.properties file");
+                }
             }
-            LocalProperties.load(project);
+            catch(IOException e){
+                throw new RuntimeException(e);
+            }
         }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        else LocalProperties.load(project);
     }
 }
