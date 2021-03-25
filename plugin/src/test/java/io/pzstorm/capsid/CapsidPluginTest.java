@@ -11,10 +11,10 @@ import org.junit.jupiter.api.Test;
 /**
  * A simple unit test for the 'io.pzstorm.capsid.greeting' plugin.
  */
-public class CapsidPluginTest {
+class CapsidPluginTest {
 
     @Test
-    public void pluginRegistersATask() {
+    void pluginRegistersATask() {
 
         // Create a test project and apply the plugin
         Project project = ProjectBuilder.builder().build();

@@ -16,10 +16,10 @@ import org.junit.jupiter.api.Test;
 /**
  * A simple functional test for the 'io.pzstorm.capsid.greeting' plugin.
  */
-public class CapsidPluginFunctionalTest {
+class CapsidPluginFunctionalTest {
 
     @Test
-    public void canRunTask() throws IOException {
+    void canRunTask() throws IOException {
         // Setup the test build
         File projectDir = new File("build/functionalTest");
         Files.createDirectories(projectDir.toPath());
