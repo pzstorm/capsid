@@ -17,24 +17,21 @@
  */
 package io.pzstorm.capsid;
 
-import org.gradle.testfixtures.ProjectBuilder;
+import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.gradle.testfixtures.ProjectBuilder;
+import org.junit.jupiter.api.BeforeEach;
 
-/**
- * A simple unit test for the 'io.pzstorm.capsid.greeting' plugin.
- */
 class CapsidPluginTest {
 
-    @Test
-    void pluginRegistersATask() {
+	private Project project;
+	private Plugin<Project> plugin;
 
-        // Create a test project and apply the plugin
-        Project project = ProjectBuilder.builder().build();
-        project.getPlugins().apply("io.pzstorm.capsid.greeting");
+	@BeforeEach
+	@SuppressWarnings("unchecked")
+	void createProjectAndApplyPlugin() {
 
-        // Verify the result
-        Assertions.assertNotNull(project.getTasks().findByName("greeting"));
-    }
+		project = ProjectBuilder.builder().build();
+		plugin = project.getPlugins().apply("io.pzstorm.capsid");
+	}
 }
