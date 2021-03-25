@@ -16,7 +16,7 @@ dependencies {
 }
 
 gradlePlugin {
-    // Define the plugin
+    //noinspection GroovyAssignabilityCheck
     plugins {
         capsid {
             id = 'io.pzstorm.capsid'
@@ -42,7 +42,7 @@ tasks.register('functionalTest', Test) {
 
 tasks.named('check') {
     // Run the functional tests as part of `check`
-    dependsOn(tasks.functionalTest)
+    it.dependsOn(tasks.functionalTest)
 }
 
 test {
