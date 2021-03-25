@@ -1,3 +1,32 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+
+# User-specific stuff
+**/tasks.xml
+**/usage.statistics.xml
+**/dictionaries
+
+# Generated files
+**/contentModel.xml
+
+# Sensitive or high-churn files
+**/dataSources/
+**/dataSources.ids
+**/dataSources.local.xml
+**/sqlDataSources.xml
+**/dynamic.xml
+**/uiDesigner.xml
+**/dbnavigator.xml
+
+# Gradle
+**/gradle.xml
+**/libraries
+
+# When using auto-import, you should exclude module files,
+# since they will be recreated, and may cause churn.
+/artifacts/
+/modules/
+compiler.xml
+jarRepositories.xml
+modules.xml
