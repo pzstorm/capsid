@@ -17,15 +17,20 @@
  */
 package io.pzstorm.capsid;
 
+import java.util.Objects;
+
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.PluginContainer;
+import org.gradle.jvm.toolchain.JavaToolchainSpec;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("UnstableApiUsage")
 class CapsidPluginTest {
 
 	private Project project;
@@ -54,5 +59,15 @@ class CapsidPluginTest {
 		RepositoryHandler repositories = project.getRepositories();
 		Assertions.assertEquals(1, repositories.size());
 		Assertions.assertNotNull(repositories.findByName("MavenRepo"));
+	}
+
+	@Test
+	void shouldConfigureJavaToolchainLanguageLevel() {
+
+		JavaPluginExtension java = Objects.requireNonNull(
+				project.getExtensions().getByType(JavaPluginExtension.class)
+		);
+		JavaToolchainSpec toolchain = java.getToolchain();
+		Assertions.assertEquals(8, toolchain.getLanguageVersion().get().asInt());
 	}
 }

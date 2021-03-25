@@ -17,9 +17,15 @@
  */
 package io.pzstorm.capsid;
 
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
+import java.util.Objects;
 
+import org.gradle.api.Project;
+import org.gradle.api.Plugin;
+import org.gradle.api.plugins.ExtensionContainer;
+import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.jvm.toolchain.JavaLanguageVersion;
+
+@SuppressWarnings("UnstableApiUsage")
 public class CapsidPlugin implements Plugin<Project> {
 
     public void apply(Project project) {
@@ -29,5 +35,14 @@ public class CapsidPlugin implements Plugin<Project> {
 
         // add Maven Central repository
         project.getRepositories().mavenCentral();
+
+        // get project DSL extensions
+        ExtensionContainer extensions = project.getExtensions();
+
+        JavaPluginExtension java = Objects.requireNonNull(
+                extensions.getByType(JavaPluginExtension.class)
+        );
+        // ZomboidDoc can only be executed with Java 8
+        java.getToolchain().getLanguageVersion().set(JavaLanguageVersion.of(8));
     }
 }
