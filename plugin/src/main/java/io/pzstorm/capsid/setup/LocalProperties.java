@@ -17,34 +17,32 @@
  */
 package io.pzstorm.capsid.setup;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 
-import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
-import org.jetbrains.annotations.Nullable;
-
-import io.pzstorm.capsid.CapsidPlugin;
 
 public enum LocalProperties {
 
 	/**
 	 * {@code Path} to Project Zomboid installation directory.
 	 */
-	GAME_DIR(new Property<>("gameDir", "PZ_DIR_PATH", Path.class, null)),
+	GAME_DIR(new LocalProperty<>("gameDir", "PZ_DIR_PATH", Path.class, null)),
 
 	/**
 	 * {@code Path} to IntelliJ IDEA installation directory.
 	 */
-	IDEA_HOME(new Property<>("ideaHome", "IDEA_HOME", Path.class, null));
+	IDEA_HOME(new LocalProperty<>("ideaHome", "IDEA_HOME", Path.class, null));
 
-	private static final Properties PROPERTIES = new Properties();
+	static final Properties PROPERTIES = new Properties();
 
-	final Property<?> data;
-	LocalProperties(Property<?> property) {
+	final LocalProperty<?> data;
+	LocalProperties(LocalProperty<?> property) {
 		this.data = property;
 	}
 	/**
@@ -73,7 +71,7 @@ public enum LocalProperties {
 			// save properties as project extended properties
 			ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 			for (LocalProperties property : LocalProperties.values()) {
-				ext.set(property.data.name, property.data.getProperty());
+				ext.set(property.data.getName(), property.data.getProperty());
 			}
 		}
 		catch (IOException e) {
@@ -85,70 +83,5 @@ public enum LocalProperties {
 	/** Returns properties {@code File} used to hold local properties. */
 	public static File getFile(Project project) {
 		return project.getProjectDir().toPath().resolve("local.properties").toFile();
-	}
-
-	public static class Property<T> {
-
-		private final String name;
-		private final String env;
-		private final Class<T> type;
-		private final @Nullable T defaultValue;
-		private final boolean required;
-
-		// @formatter:off
-		private Property(String name, String env, Class<T> type, @Nullable T defaultValue, boolean required) {
-			this.name = name; this.env = env; this.type = type;
-			this.defaultValue = defaultValue; this.required = required;
-		}
-		// @formatter:on
-		private Property(String name, String env, Class<T> type, @Nullable T defaultValue) {
-			this(name, env, type, defaultValue, true);
-		}
-
-		/**
-		 * <p>Returns the value assigned to key matching this property.</p>
-		 * If no property was found try the resolve the value in the following order:
-		 * <ul>
-		 *     <li>Find the value in system properties.</li>
-		 *     <li>Find the value in environment variables.</li>
-		 *     <li>Return the default value.</li>
-		 * </ul>
-		 * @return value matching this property or default value.
-		 */
-		@SuppressWarnings("unchecked")
-		@Nullable T getProperty() {
-
-			String property = PROPERTIES.getProperty(name, "");
-			if (property.isEmpty())
-			{
-				// try to find a matching system property first
-				String sysProperty = System.getProperty(name);
-				if (sysProperty == null)
-				{
-					// when env parameter is not defined search for env variable with property name
-					String envVar = System.getenv(env != null && !env.isEmpty() ? env : name);
-					if (envVar != null) {
-						property = envVar;
-					}
-					else if (required && defaultValue == null) {
-						throw new InvalidUserDataException("Unable to find local project property " + name);
-					}
-					else return defaultValue;
-				}
-				else property = sysProperty;
-			}
-			if (type.equals(Path.class)) {
-				return (T) Paths.get(property);
-			}
-			else if (type.equals(String.class)) {
-				return (T) property;
-			}
-			else throw new InvalidUserDataException("Unsupported local property type " + type.getName());
-		}
-
-		/** Returns the name of this property. */
-		public String getName() {
-			return name;
-		}
 	}
 }
