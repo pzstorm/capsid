@@ -86,7 +86,7 @@ public enum LocalProperties {
 		return project.getProjectDir().toPath().resolve("local.properties").toFile();
 	}
 
-	private static class Property<T> {
+	public static class Property<T> {
 
 		private final String name;
 		private final String env;
@@ -105,7 +105,7 @@ public enum LocalProperties {
 		}
 
 		@SuppressWarnings("unchecked")
-		private @Nullable T getProperty(Project project) {
+		@Nullable T getProperty(Project project) {
 
 			String property = PROPERTIES.getProperty(name, "");
 			if (property.isEmpty())
