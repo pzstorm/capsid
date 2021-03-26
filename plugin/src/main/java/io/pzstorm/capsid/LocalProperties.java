@@ -63,7 +63,6 @@ public enum LocalProperties {
 			CapsidPlugin.LOGGER.warn("WARN: Tried to load local properties, but file does not exist");
 			return false;
 		}
-		// TODO: write integration test to verify properties were loaded
 		try (InputStream stream = new FileInputStream(propertiesFile))
 		{
 			// read properties from byte stream
@@ -126,12 +125,9 @@ public enum LocalProperties {
 				if (sysProperty == null)
 				{
 					// when env parameter is not defined search for env variable with property name
-					String sEnv = env != null && !env.isEmpty() ? env : name;
-
-					ProviderFactory providers = project.getProviders();
-					Provider<String> envVar = providers.environmentVariable(sEnv).forUseAtConfigurationTime();
-					if (envVar.isPresent()) {
-						property = envVar.get();
+					String envVar = System.getenv(env != null && !env.isEmpty() ? env : name);
+					if (envVar != null) {
+						property = envVar;
 					}
 					else if (required && defaultValue == null) {
 						throw new InvalidUserDataException("Unable to find local project property " + name);

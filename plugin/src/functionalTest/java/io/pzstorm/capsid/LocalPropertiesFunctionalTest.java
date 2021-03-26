@@ -19,6 +19,7 @@ package io.pzstorm.capsid;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
@@ -51,6 +52,26 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 				"-DgameDir=C:/ProjectZomboid/",
 				"-DideaHome=C:/IntelliJ IDEA/"
 		);
+		Assertions.assertDoesNotThrow(runner::build);
+
+		// load properties for project before asserting
+		LocalProperties.load(getProject());
+
+		for (LocalProperties localPropertyEnum : LocalProperties.values()) {
+			Assertions.assertNotNull(localPropertyEnum.data.getProperty(getProject()));
+		}
+	}
+
+	@Test
+	void shouldLoadLocalPropertiesFromEnvironmentVariables() {
+
+		GradleRunner runner = getRunner();
+		runner.withEnvironment(Map.of(
+				"PZ_DIR_PATH", "C:/ProjectZomboid/",
+				"IDEA_HOME", "C:/IntelliJ IDEA/"
+		));
+		// runner cannot run in debug mode with environment variables
+		runner.withDebug(false);
 		Assertions.assertDoesNotThrow(runner::build);
 
 		// load properties for project before asserting

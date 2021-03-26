@@ -4,6 +4,10 @@
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="tags" />
+    <envs>
+      <env name="PZ_DIR_PATH" value="$PROJECT_DIR$/../../../../../../ProjectZomboid/" />
+      <env name="IDEA_HOME" value="$PROJECT_DIR$/../../../../../../IntelliJ IDEA/" />
+    </envs>
     <dir value="$PROJECT_DIR$/plugin/src/test" />
     <tag value="functional" />
     <method v="2">
