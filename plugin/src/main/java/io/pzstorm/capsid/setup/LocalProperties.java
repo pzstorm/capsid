@@ -53,14 +53,16 @@ public enum LocalProperties {
 	 * @param project {@code Project} to load properties to.
 	 *
 	 * @return {@code true} if properties were successfully loaded, {@code false} otherwise.
-	 * @throws RuntimeException when an {@link IOException} occurred while loading file.
+	 * @throws IOException when an I/O error occurred while loading file.
 	 */
-	public static boolean load(Project project) {
+	public static boolean load(Project project) throws IOException {
 
 		File propertiesFile = getFile(project);
 		if (!propertiesFile.exists())
 		{
-			CapsidPlugin.LOGGER.warn("WARN: Tried to load local properties, but file does not exist");
+			if (!propertiesFile.createNewFile()) {
+				throw new IOException("Unable to create new local.properties file");
+			}
 			return false;
 		}
 		try (InputStream stream = new FileInputStream(propertiesFile))

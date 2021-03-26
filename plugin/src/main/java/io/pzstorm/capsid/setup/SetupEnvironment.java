@@ -17,24 +17,17 @@
  */
 package io.pzstorm.capsid.setup;
 
-import java.io.File;
 import java.io.IOException;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.gradle.api.GradleException;
+import org.gradle.api.Project;
 
-import io.pzstorm.capsid.PluginUnitTest;
+public class SetupEnvironment {
 
-class LocalPropertiesTest extends PluginUnitTest {
+	public static void applyFor(Project project) throws IOException {
 
-	@Test
-	void shouldReturnFalseWhenLoadingNonExistingLocalProperties() throws IOException {
+		// load local properties
+		LocalProperties.load(project);
 
-		File localProperties = LocalProperties.getFile(getProject());
-
-		Assertions.assertTrue(localProperties.delete());
-		Assertions.assertFalse(localProperties.exists());
-
-		Assertions.assertFalse(LocalProperties.load(getProject()));
 	}
 }

@@ -47,7 +47,7 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 	}
 
 	@Test
-	void shouldLoadLocalPropertiesFromSystemProperties() {
+	void shouldLoadLocalPropertiesFromSystemProperties() throws IOException {
 
 		GradleRunner runner = getRunner();
 		runner.withArguments(
@@ -65,7 +65,7 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 	}
 
 	@Test
-	void shouldLoadLocalPropertiesFromEnvironmentVariables() {
+	void shouldLoadLocalPropertiesFromEnvironmentVariables() throws IOException {
 
 		GradleRunner runner = getRunner();
 		runner.withEnvironment(Map.of(

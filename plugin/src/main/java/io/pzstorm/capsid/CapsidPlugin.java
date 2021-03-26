@@ -17,12 +17,12 @@
  */
 package io.pzstorm.capsid;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-import org.gradle.api.Project;
+import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
+import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.ExtensionContainer;
@@ -30,6 +30,7 @@ import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
 import io.pzstorm.capsid.setup.LocalProperties;
+import io.pzstorm.capsid.setup.SetupEnvironment;
 
 @SuppressWarnings("UnstableApiUsage")
 public class CapsidPlugin implements Plugin<Project> {
@@ -53,20 +54,11 @@ public class CapsidPlugin implements Plugin<Project> {
         // ZomboidDoc can only be executed with Java 8
         java.getToolchain().getLanguageVersion().set(JavaLanguageVersion.of(8));
 
-        // make sure properties file exists before we try to load from it
-        File localProperties = LocalProperties.getFile(project);
-        if (!localProperties.exists())
-        {
-            try {
-                if (!localProperties.createNewFile()) {
-                    throw new IOException("Unable to create new local.properties file");
-                }
-            }
-            catch(IOException e){
-                throw new RuntimeException(e);
-            }
+        try {
+            SetupEnvironment.applyFor(project);
         }
-        // load local properties
-        else LocalProperties.load(project);
+        catch (IOException e) {
+            throw new GradleException("Error occurred while setting up environment", e);
+        }
     }
 }
