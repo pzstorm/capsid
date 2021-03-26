@@ -137,5 +137,9 @@ public enum LocalProperties {
 			}
 			else throw new InvalidUserDataException("Unsupported local property type " + type.getName());
 		}
+
+		public String getName() {
+			return name;
+		}
 	}
 }
