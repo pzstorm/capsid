@@ -72,7 +72,7 @@ public abstract class FunctionalTest {
 		writeToFile(new File(projectDir, "settings.gradle"));
 		writeToFile(new File(projectDir, "build.gradle"), new String[] {
 				"plugins {",
-				"	id('io.pzstorm.capsid.greeting')",
+				"	id('io.pzstorm.capsid')",
 				"}"
 		});
 		runner = GradleRunner.create();
