@@ -29,6 +29,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.gradle.api.Project;
+import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -39,7 +41,7 @@ public abstract class FunctionalTest {
 	private static final File PARENT_TEMP_DIR = new File("build/tmp/functionalTest");
 	private static final Set<String> TEMP_DIR_NAMES = new HashSet<>();
 
-	private File projectDir;
+	private Project project;
 	private GradleRunner runner;
 
 	@BeforeAll
@@ -64,8 +66,11 @@ public abstract class FunctionalTest {
 	void createRunner() throws IOException {
 
 		String dirName = "test" + new Random().nextInt(1000);
-		projectDir = new File(PARENT_TEMP_DIR, dirName);
+		File projectDir = new File(PARENT_TEMP_DIR, dirName);
 		TEMP_DIR_NAMES.add(dirName);
+
+		// some functional tests will need Project instance
+		project = ProjectBuilder.builder().withProjectDir(projectDir).build();
 
 		// Setup the test build
 		Files.createDirectories(projectDir.toPath());
@@ -81,10 +86,15 @@ public abstract class FunctionalTest {
 		runner.forwardOutput();
 		runner.withPluginClasspath();
 		runner.withProjectDir(projectDir);
+		runner.withDebug(true);
+	}
+
+	protected Project getProject() {
+		return project;
 	}
 
 	protected File getProjectDir() {
-		return projectDir;
+		return project.getProjectDir();
 	}
 
 	protected GradleRunner getRunner() {
