@@ -31,16 +31,14 @@ public class LocalProperty<T> {
 	private final @Nullable T defaultValue;
 	private final boolean required;
 
-	// @formatter:off
-	LocalProperty(String name, String env, Class<T> type, @Nullable T defaultValue, boolean required) {
-		this.name = name; this.env = env; this.type = type;
-		this.defaultValue = defaultValue; this.required = required;
-	}
-	// @formatter:on
-	LocalProperty(String name, String env, Class<T> type, @Nullable T defaultValue) {
-		this(name, env, type, defaultValue, true);
-	}
+	private LocalProperty(Builder<T> builder) {
 
+		this.name = builder.name;
+		this.env = builder.env;
+		this.type = builder.type;
+		this.defaultValue = builder.defaultValue;
+		this.required = builder.required;
+	}
 	/**
 	 * <p>Returns the value assigned to key matching this property.</p>
 	 * If no property was found try the resolve the value in the following order:
@@ -85,5 +83,43 @@ public class LocalProperty<T> {
 	/** Returns the name of this property. */
 	public String getName() {
 		return name;
+	}
+
+	static class Builder<T> {
+
+		private final String name;
+		private String env;
+		private Class<T> type;
+		private @Nullable T defaultValue = null;
+		private boolean required = true;
+
+		Builder(String name) {
+			this.name = name;
+		}
+
+		Builder<T> withEnvironmentVar(String env) {
+			this.env = env;
+			return this;
+		}
+
+		Builder<T> withType(Class<T> type) {
+			this.type = type;
+			return this;
+		}
+
+		Builder<T> withDefaultValue(T defaultValue) {
+			this.defaultValue = defaultValue;
+			return this;
+		}
+
+
+		Builder<T> isRequired(boolean required) {
+			this.required = required;
+			return this;
+		}
+
+		LocalProperty<T> build() {
+			return new LocalProperty<>(this);
+		}
 	}
 }

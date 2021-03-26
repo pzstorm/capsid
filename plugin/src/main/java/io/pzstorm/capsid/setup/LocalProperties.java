@@ -32,12 +32,13 @@ public enum LocalProperties {
 	/**
 	 * {@code Path} to Project Zomboid installation directory.
 	 */
-	GAME_DIR(new LocalProperty<>("gameDir", "PZ_DIR_PATH", Path.class, null)),
-
+	GAME_DIR(new LocalProperty.Builder<Path>("gameDir")
+			.withType(Path.class).withEnvironmentVar("PZ_DIR_PATH").build()),
 	/**
 	 * {@code Path} to IntelliJ IDEA installation directory.
 	 */
-	IDEA_HOME(new LocalProperty<>("ideaHome", "IDEA_HOME", Path.class, null));
+	IDEA_HOME(new LocalProperty.Builder<Path>("ideaHome")
+			.withType(Path.class).withEnvironmentVar("IDEA_HOME").build());
 
 	static final Properties PROPERTIES = new Properties();
 
