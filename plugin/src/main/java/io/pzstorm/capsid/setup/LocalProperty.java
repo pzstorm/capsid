@@ -25,8 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class LocalProperty<T> {
 
-	private final String name;
-	private final String env;
+	private final String name, env, comment;
 	private final Class<T> type;
 	private final @Nullable T defaultValue;
 	private final boolean required;
@@ -35,6 +34,7 @@ public class LocalProperty<T> {
 
 		this.name = builder.name;
 		this.env = builder.env;
+		this.comment = builder.comment;
 		this.type = builder.type;
 		this.defaultValue = builder.defaultValue;
 		this.required = builder.required;
@@ -90,6 +90,7 @@ public class LocalProperty<T> {
 		private final String name;
 		private String env;
 		private Class<T> type;
+		private String comment = "";
 		private @Nullable T defaultValue = null;
 		private boolean required = true;
 
@@ -112,6 +113,10 @@ public class LocalProperty<T> {
 			return this;
 		}
 
+		Builder<T> withComment(String comment) {
+			this.comment = comment;
+			return this;
+		}
 
 		Builder<T> isRequired(boolean required) {
 			this.required = required;
