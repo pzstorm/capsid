@@ -19,8 +19,6 @@ package io.pzstorm.capsid;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,17 +28,10 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 	@Test
 	void shouldLoadAllLocalProperties() throws IOException {
 
-		File localProperties = new File(getProjectDir(), "local.properties");
-
-		Map<String, String> localPropertiesMap = new LinkedHashMap<>();
-		localPropertiesMap.put("gameDir", "C:/ProjectZomboid/");
-		localPropertiesMap.put("ideaHome", "C:/IntelliJ IDEA/");
-
-		String[] localPropertiesLines = new String[localPropertiesMap.size()];
-		int i = -1; for (Map.Entry<String, String> entry : localPropertiesMap.entrySet()) {
-			localPropertiesLines[i += 1] = String.format("%s=%s", entry.getKey(), entry.getValue());
-		}
-		writeToFile(localProperties, localPropertiesLines);
+		String[] localPropertiesLines = new String[] {
+			"gameDir=C:/ProjectZomboid/", "ideaHome=C:/IntelliJ IDEA/"
+		};
+		writeToFile(new File(getProjectDir(), "local.properties"), localPropertiesLines);
 		Assertions.assertDoesNotThrow(() -> getRunner().build());
 
 		// load properties for project before asserting
