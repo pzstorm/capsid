@@ -51,7 +51,7 @@ public class CapsidPlugin implements Plugin<Project> {
         // ZomboidDoc can only be executed with Java 8
         java.getToolchain().getLanguageVersion().set(JavaLanguageVersion.of(8));
 
-        // load local properties (create file if it doesn't exist)
+        // make sure properties file exists before we try to load from it
         File localProperties = LocalProperties.getFile(project);
         if (!localProperties.exists())
         {
@@ -64,6 +64,7 @@ public class CapsidPlugin implements Plugin<Project> {
                 throw new RuntimeException(e);
             }
         }
+        // load local properties
         else LocalProperties.load(project);
     }
 }

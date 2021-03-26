@@ -104,6 +104,17 @@ public enum LocalProperties {
 			this(name, env, type, defaultValue, true);
 		}
 
+		/**
+		 * <p>Returns the value assigned to key matching this property for given project.</p>
+		 * If no property was found try the resolve the value in the following order:
+		 * <ul>
+		 *     <li>Find the value in system properties.</li>
+		 *     <li>Find the value in environment variables.</li>
+		 *     <li>Return the default value.</li>
+		 * </ul>
+		 * @param project {@code Project} requesting this property.
+		 * @return value matching this property or default value.
+		 */
 		@SuppressWarnings("unchecked")
 		@Nullable T getProperty(Project project) {
 
@@ -138,6 +149,7 @@ public enum LocalProperties {
 			else throw new InvalidUserDataException("Unsupported local property type " + type.getName());
 		}
 
+		/** Returns the name of this property. */
 		public String getName() {
 			return name;
 		}
