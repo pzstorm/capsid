@@ -114,7 +114,24 @@ public enum LocalProperties {
 			String property = PROPERTIES.getProperty(name, "");
 			if (property.isEmpty())
 			{
+				// try to find a matching system property first
+				String sysProperty = System.getProperty(name);
+				if (sysProperty == null)
+				{
+					// when env parameter is not defined search for env variable with property name
+					String sEnv = env != null && !env.isEmpty() ? env : name;
 
+					ProviderFactory providers = project.getProviders();
+					Provider<String> envVar = providers.environmentVariable(sEnv).forUseAtConfigurationTime();
+					if (envVar.isPresent()) {
+						property = envVar.get();
+					}
+					else if (required/* && defaultValue == null*/) {
+						throw new InvalidUserDataException("Unable to find local project property " + name);
+					}
+					/*else return defaultValue;*/
+				}
+				else property = sysProperty;
 			}
 			if (type.equals(Path.class)) {
 				return (T) Paths.get(property);
