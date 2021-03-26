@@ -27,18 +27,19 @@ import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
+import org.jetbrains.annotations.Nullable;
 
 public enum LocalProperties {
 
 	/**
 	 * {@code Path} to Project Zomboid installation directory.
 	 */
-	GAME_DIR(new Property<>("gameDir", "PZ_DIR_PATH", Path.class)),
+	GAME_DIR(new Property<>("gameDir", "PZ_DIR_PATH", Path.class, null)),
 
 	/**
 	 * {@code Path} to IntelliJ IDEA installation directory.
 	 */
-	IDEA_HOME(new Property<>("ideaHome", "IDEA_HOME", Path.class));
+	IDEA_HOME(new Property<>("ideaHome", "IDEA_HOME", Path.class, null));
 
 	private static final Properties PROPERTIES = new Properties();
 
@@ -46,7 +47,6 @@ public enum LocalProperties {
 	LocalProperties(Property<?> property) {
 		this.data = property;
 	}
-
 	/**
 	 * Load properties from local {@code Properties} file.
 	 *
@@ -70,14 +70,9 @@ public enum LocalProperties {
 			PROPERTIES.load(stream);
 
 			// save properties as project extended properties
-			for (LocalProperties property : LocalProperties.values())
-			{
-				String oProperty = PROPERTIES.getProperty(property.data.name, "");
-				if (!oProperty.isEmpty())
-				{
-					ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-					ext.set(property.data.name, property.data.getProperty(project));
-				}
+			ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
+			for (LocalProperties property : LocalProperties.values()) {
+				ext.set(property.data.name, property.data.getProperty(project));
 			}
 		}
 		catch (IOException e) {
@@ -96,20 +91,21 @@ public enum LocalProperties {
 		private final String name;
 		private final String env;
 		private final Class<T> type;
+		private final @Nullable T defaultValue;
 		private final boolean required;
 
 		// @formatter:off
-		private Property(String name, String env, Class<T> type, boolean required) {
-			this.name = name; this.env = env;
-			this.type = type; this.required = required;
+		private Property(String name, String env, Class<T> type, @Nullable T defaultValue, boolean required) {
+			this.name = name; this.env = env; this.type = type;
+			this.defaultValue = defaultValue; this.required = required;
 		}
 		// @formatter:on
-		private Property(String name, String env, Class<T> type) {
-			this(name, env, type, true);
+		private Property(String name, String env, Class<T> type, @Nullable T defaultValue) {
+			this(name, env, type, defaultValue, true);
 		}
 
 		@SuppressWarnings("unchecked")
-		private T getProperty(Project project) {
+		private @Nullable T getProperty(Project project) {
 
 			String property = PROPERTIES.getProperty(name, "");
 			if (property.isEmpty())
@@ -126,10 +122,10 @@ public enum LocalProperties {
 					if (envVar.isPresent()) {
 						property = envVar.get();
 					}
-					else if (required/* && defaultValue == null*/) {
+					else if (required && defaultValue == null) {
 						throw new InvalidUserDataException("Unable to find local project property " + name);
 					}
-					/*else return defaultValue;*/
+					else return defaultValue;
 				}
 				else property = sysProperty;
 			}
