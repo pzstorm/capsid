@@ -33,7 +33,9 @@ import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 
+@Tag("unit")
 public abstract class PluginUnitTest {
 
 	private static final File PARENT_TEMP_DIR = new File("build/tmp/unitTest");

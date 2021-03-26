@@ -35,7 +35,9 @@ import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 
+@Tag("functional")
 public abstract class FunctionalTest {
 
 	private static final File PARENT_TEMP_DIR = new File("build/tmp/functionalTest");
