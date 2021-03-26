@@ -22,9 +22,5 @@ import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-/**
- * A simple functional test for the 'io.pzstorm.capsid.greeting' plugin.
- */
-class CapsidPluginFunctionalTest {
-
+class CapsidPluginFunctionalTest extends FunctionalTest {
 }
