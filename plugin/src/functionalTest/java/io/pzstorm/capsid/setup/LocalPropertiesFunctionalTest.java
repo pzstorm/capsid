@@ -42,7 +42,7 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 		LocalProperties.load(getProject());
 
 		for (LocalProperties localPropertyEnum : LocalProperties.values()) {
-			Assertions.assertNotNull(localPropertyEnum.data.getProperty(getProject()));
+			Assertions.assertNotNull(localPropertyEnum.data.getProperty());
 		}
 	}
 
@@ -60,7 +60,7 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 		LocalProperties.load(getProject());
 
 		for (LocalProperties localPropertyEnum : LocalProperties.values()) {
-			Assertions.assertNotNull(localPropertyEnum.data.getProperty(getProject()));
+			Assertions.assertNotNull(localPropertyEnum.data.getProperty());
 		}
 	}
 
@@ -80,7 +80,7 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 		LocalProperties.load(getProject());
 
 		for (LocalProperties localPropertyEnum : LocalProperties.values()) {
-			Assertions.assertNotNull(localPropertyEnum.data.getProperty(getProject()));
+			Assertions.assertNotNull(localPropertyEnum.data.getProperty());
 		}
 	}
 }

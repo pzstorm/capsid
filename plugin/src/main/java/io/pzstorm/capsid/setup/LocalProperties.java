@@ -71,7 +71,7 @@ public enum LocalProperties {
 			// save properties as project extended properties
 			ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 			for (LocalProperties property : LocalProperties.values()) {
-				ext.set(property.data.name, property.data.getProperty(project));
+				ext.set(property.data.name, property.data.getProperty());
 			}
 		}
 		catch (IOException e) {
@@ -104,18 +104,17 @@ public enum LocalProperties {
 		}
 
 		/**
-		 * <p>Returns the value assigned to key matching this property for given project.</p>
+		 * <p>Returns the value assigned to key matching this property.</p>
 		 * If no property was found try the resolve the value in the following order:
 		 * <ul>
 		 *     <li>Find the value in system properties.</li>
 		 *     <li>Find the value in environment variables.</li>
 		 *     <li>Return the default value.</li>
 		 * </ul>
-		 * @param project {@code Project} requesting this property.
 		 * @return value matching this property or default value.
 		 */
 		@SuppressWarnings("unchecked")
-		@Nullable T getProperty(Project project) {
+		@Nullable T getProperty() {
 
 			String property = PROPERTIES.getProperty(name, "");
 			if (property.isEmpty())
