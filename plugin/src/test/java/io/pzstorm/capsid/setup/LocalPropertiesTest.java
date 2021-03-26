@@ -15,12 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package io.pzstorm.capsid;
+package io.pzstorm.capsid.setup;
 
 import java.io.File;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import io.pzstorm.capsid.PluginUnitTest;
+import io.pzstorm.capsid.setup.LocalProperties;
 
 class LocalPropertiesTest extends PluginUnitTest {
 

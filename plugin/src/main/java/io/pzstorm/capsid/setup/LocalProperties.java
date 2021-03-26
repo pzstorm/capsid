@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package io.pzstorm.capsid;
+package io.pzstorm.capsid.setup;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -25,9 +25,9 @@ import java.util.Properties;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
-import org.gradle.api.provider.Provider;
-import org.gradle.api.provider.ProviderFactory;
 import org.jetbrains.annotations.Nullable;
+
+import io.pzstorm.capsid.CapsidPlugin;
 
 public enum LocalProperties {
 
