@@ -16,6 +16,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
     testImplementation group: 'commons-io', name: 'commons-io', version: '2.8.0'
+
+    // https://mvnrepository.com/artifact/org.jetbrains/annotations
+    implementation 'org.jetbrains:annotations:20.1.0'
 }
 
 gradlePlugin {
