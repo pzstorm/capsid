@@ -22,34 +22,29 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.ProviderFactory;
 
 public enum LocalProperties {
 
 	/**
 	 * {@code Path} to Project Zomboid installation directory.
 	 */
-	GAME_DIR("gameDir", Path.class),
+	GAME_DIR(new Property<>("gameDir", "PZ_DIR_PATH", Path.class)),
 
 	/**
 	 * {@code Path} to IntelliJ IDEA installation directory.
 	 */
-	IDEA_HOME("ideaHome", Path.class);
+	IDEA_HOME(new Property<>("ideaHome", "IDEA_HOME", Path.class));
 
 	private static final Properties PROPERTIES = new Properties();
 
-	final String name;
-	final Class<?> type;
-	final boolean required;
-
-	//@formatter:off
-	LocalProperties(String name, Class<?> type, boolean required) {
-		this.name = name; this.type = type; this.required = required;
-	}
-	// @formatter:on
-	LocalProperties(String name, Class<?> type) {
-		this(name, type, true);
+	final Property<?> data;
+	LocalProperties(Property<?> property) {
+		this.data = property;
 	}
 
 	/**
@@ -77,21 +72,12 @@ public enum LocalProperties {
 			// save properties as project extended properties
 			for (LocalProperties property : LocalProperties.values())
 			{
-				String oProperty = PROPERTIES.getProperty(property.name);
-				if (property.required && oProperty == null)
+				String oProperty = PROPERTIES.getProperty(property.data.name, "");
+				if (!oProperty.isEmpty())
 				{
-					String msg = "WARN: Local property %s is not defined";
-					CapsidPlugin.LOGGER.warn(String.format(msg, property.name));
-					continue;
+					ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
+					ext.set(property.data.name, property.data.getProperty(project));
 				}
-				// this is where we will save properties to
-				ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-
-				// save the project property as a Path
-				if (property.type.equals(Path.class)) {
-					ext.set(property.name, Paths.get(oProperty));
-				}
-				else ext.set(property.name, oProperty);
 			}
 		}
 		catch (IOException e) {
@@ -103,5 +89,40 @@ public enum LocalProperties {
 	/** Returns properties {@code File} used to hold local properties. */
 	public static File getFile(Project project) {
 		return project.getProjectDir().toPath().resolve("local.properties").toFile();
+	}
+
+	private static class Property<T> {
+
+		private final String name;
+		private final String env;
+		private final Class<T> type;
+		private final boolean required;
+
+		// @formatter:off
+		private Property(String name, String env, Class<T> type, boolean required) {
+			this.name = name; this.env = env;
+			this.type = type; this.required = required;
+		}
+		// @formatter:on
+		private Property(String name, String env, Class<T> type) {
+			this(name, env, type, true);
+		}
+
+		@SuppressWarnings("unchecked")
+		private T getProperty(Project project) {
+
+			String property = PROPERTIES.getProperty(name, "");
+			if (property.isEmpty())
+			{
+
+			}
+			if (type.equals(Path.class)) {
+				return (T) Paths.get(property);
+			}
+			else if (type.equals(String.class)) {
+				return (T) property;
+			}
+			else throw new InvalidUserDataException("Unsupported local property type " + type.getName());
+		}
 	}
 }
