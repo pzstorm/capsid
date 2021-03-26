@@ -20,6 +20,7 @@ package io.pzstorm.capsid;
 import java.io.File;
 import java.io.IOException;
 
+import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +34,24 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 		};
 		writeToFile(new File(getProjectDir(), "local.properties"), localPropertiesLines);
 		Assertions.assertDoesNotThrow(() -> getRunner().build());
+
+		// load properties for project before asserting
+		LocalProperties.load(getProject());
+
+		for (LocalProperties localPropertyEnum : LocalProperties.values()) {
+			Assertions.assertNotNull(localPropertyEnum.data.getProperty(getProject()));
+		}
+	}
+
+	@Test
+	void shouldLoadLocalPropertiesFromSystemProperties() {
+
+		GradleRunner runner = getRunner();
+		runner.withArguments(
+				"-DgameDir=C:/ProjectZomboid/",
+				"-DideaHome=C:/IntelliJ IDEA/"
+		);
+		Assertions.assertDoesNotThrow(runner::build);
 
 		// load properties for project before asserting
 		LocalProperties.load(getProject());
