@@ -84,7 +84,7 @@ public enum LocalProperties {
 			// save properties as project extended properties
 			ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 			for (LocalProperties property : LocalProperties.values()) {
-				ext.set(property.data.getName(), property.data.getProperty());
+				ext.set(property.data.getName(), property.data.getProperty(project));
 			}
 		}
 		catch (IOException e) {

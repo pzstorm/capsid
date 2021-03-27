@@ -44,6 +44,13 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 	}
 
 	@Test
+	void shouldLoadLocalPropertiesFromProjectProperties() throws IOException {
+
+		Assertions.assertDoesNotThrow(() -> getRunner().build());
+		assertLocalPropertiesNotNull(true);
+	}
+
+	@Test
 	void shouldLoadLocalPropertiesFromSystemProperties() throws IOException {
 
 		GradleRunner runner = getRunner();
@@ -93,7 +100,7 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 		sb.append(String.join("\n", expectedFileComments));
 		for (LocalProperties property : LocalProperties.values())
 		{
-			String sProperty = Objects.requireNonNull(property.data.getProperty()).toString();
+			String sProperty = Objects.requireNonNull(property.data.getProperty(getProject())).toString();
 
 			sb.append("\n\n").append("#").append(property.data.comment).append('\n');
 			sb.append(property.data.name).append('=').append(sProperty.replace('\\', '/'));
@@ -115,7 +122,7 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 		LocalProperties.load(getProject());
 
 		for (LocalProperties localPropertyEnum : LocalProperties.values()) {
-			Assertions.assertNotNull(localPropertyEnum.data.getProperty());
+			Assertions.assertNotNull(localPropertyEnum.data.getProperty(getProject()));
 		}
 	}
 
