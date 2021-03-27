@@ -22,10 +22,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
+import org.jetbrains.annotations.Nullable;
 
 public enum LocalProperties {
 
@@ -90,6 +92,14 @@ public enum LocalProperties {
 			throw new RuntimeException("An I/O exception occurred while loading local.properties", e);
 		}
 		return true;
+	}
+
+	/**
+	 * Find a property that matches the given name.
+	 * @param name property name to match.
+	 */
+	public static @Nullable LocalProperties getProperty(String name) {
+		return Arrays.stream(values()).filter(p -> p.data.name.equals(name)).findFirst().orElse(null);
 	}
 
 	/** Returns properties {@code File} used to hold local properties. */
