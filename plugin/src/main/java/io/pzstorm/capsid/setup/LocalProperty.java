@@ -25,10 +25,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class LocalProperty<T> {
 
-	private final String name, env, comment;
-	private final Class<T> type;
-	private final @Nullable T defaultValue;
-	private final boolean required;
+	final String name, env, comment;
+	final Class<T> type;
+	final @Nullable T defaultValue;
+	final boolean required;
 
 	private LocalProperty(Builder<T> builder) {
 
