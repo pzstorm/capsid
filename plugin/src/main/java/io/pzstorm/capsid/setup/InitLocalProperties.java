@@ -27,13 +27,7 @@ import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
 
-public class InitLocalProperties extends CapsidTask {
-
-	@Override
-	public void configure(String group, String description) {
-		super.configure(group, description);
-		onlyIf(t -> !LocalProperties.getFile(getProject()).exists());
-	}
+class InitLocalProperties extends CapsidTask {
 
 	@TaskAction
 	void execute() throws IOException {
