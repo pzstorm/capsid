@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -73,10 +73,12 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 	void shouldLoadLocalPropertiesFromEnvironmentVariables() throws IOException {
 
 		GradleRunner runner = getRunner().withArguments(new ArrayList<>());
-		runner.withEnvironment(Map.of(
-				"PZ_DIR_PATH", "C:/ProjectZomboid/",
-				"IDEA_HOME", "C:/IntelliJ IDEA/"
-		));
+
+		Map<String, String> arguments = new HashMap<>();
+		arguments.put("PZ_DIR_PATH", "C:/ProjectZomboid/");
+		arguments.put("IDEA_HOME", "C:/IntelliJ IDEA/");
+		runner.withEnvironment(arguments);
+
 		// runner cannot run in debug mode with environment variables
 		runner.withDebug(false);
 		Assertions.assertDoesNotThrow(runner::build);

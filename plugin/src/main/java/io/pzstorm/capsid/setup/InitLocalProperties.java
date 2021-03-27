@@ -19,9 +19,9 @@ package io.pzstorm.capsid.setup;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.groovy.util.Maps;
 import org.apache.tools.ant.taskdefs.Input;
 import org.gradle.api.tasks.TaskAction;
 
@@ -38,9 +38,12 @@ public class InitLocalProperties extends CapsidTask {
 	@TaskAction
 	void execute() throws IOException {
 
-		Map<LocalProperties, String> PROPERTIES_INPUT_MAP = Maps.of(
-				LocalProperties.GAME_DIR, "Enter path to game installation directory",
-				LocalProperties.IDEA_HOME, "Enter path to IntelliJ IDEA installation directory"
+		Map<LocalProperties, String> PROPERTIES_INPUT_MAP = new HashMap<>();
+		PROPERTIES_INPUT_MAP.put(LocalProperties.GAME_DIR,
+				"Enter path to game installation directory"
+		);
+		PROPERTIES_INPUT_MAP.put(LocalProperties.IDEA_HOME,
+				"Enter path to IntelliJ IDEA installation directory"
 		);
 		org.apache.tools.ant.Project antProject = getProject().getAnt().getAntProject();
 		Input inputTask = (Input) antProject.createTask("input");

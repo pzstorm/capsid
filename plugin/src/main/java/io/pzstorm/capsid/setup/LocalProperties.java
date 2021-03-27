@@ -20,13 +20,11 @@ package io.pzstorm.capsid.setup;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnmodifiableView;
 
 import io.pzstorm.capsid.CapsidPlugin;
 
@@ -49,11 +47,11 @@ public enum LocalProperties {
 	 * When the properties are saved to file these lines will be included
 	 * at the very top of the file in form of single line comments.
 	 */
-	private static final @UnmodifiableView List<String> COMMENTS = List.of(
+	private static final String[] COMMENTS = new String[] {
 			"This file contains local properties used to configure project build",
 			"Note: paths need to be Unix-style where segments need to be separated with forward-slashes (/)",
 			"this is for compatibility and stability purposes as backslashes don't play well."
-	);
+	};
 	static final Properties PROPERTIES = new Properties();
 
 	final LocalProperty<?> data;
@@ -138,7 +136,7 @@ public enum LocalProperties {
 					value = "";
 				}
 				String comment = property.data.comment;
-				if (!comment.isBlank()) {
+				if (comment != null && !comment.isEmpty()) {
 					sb.append("\n\n").append('#').append(comment).append('\n');
 				}
 				sb.append(property.data.name).append('=').append(value);
