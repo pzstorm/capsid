@@ -36,19 +36,11 @@ import io.pzstorm.capsid.FunctionalTest;
 class LocalPropertiesFunctionalTest extends FunctionalTest {
 
 	@Test
-	void shouldLoadAllLocalProperties() throws IOException {
+	void shouldLoadLocalPropertiesFromFile() throws IOException {
 
-		writeToFile(new File(getProjectDir(), "local.properties"), new String[] {
-				"gameDir=C:/ProjectZomboid/", "ideaHome=C:/IntelliJ IDEA/"
-		});
+		writeLocalPropertiesToFile();
 		Assertions.assertDoesNotThrow(() -> getRunner().withArguments(new ArrayList<>()).build());
-
-		// load properties for project before asserting
-		LocalProperties.load(getProject());
-
-		for (LocalProperties localPropertyEnum : LocalProperties.values()) {
-			Assertions.assertNotNull(localPropertyEnum.data.getProperty());
-		}
+		assertLocalPropertiesNotNull(false);
 	}
 
 	@Test
@@ -60,13 +52,7 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 				"-DideaHome=C:/IntelliJ IDEA/"
 		);
 		Assertions.assertDoesNotThrow(runner::build);
-
-		// load properties for project before asserting
-		LocalProperties.load(getProject());
-
-		for (LocalProperties localPropertyEnum : LocalProperties.values()) {
-			Assertions.assertNotNull(localPropertyEnum.data.getProperty());
-		}
+		assertLocalPropertiesNotNull(true);
 	}
 
 	@Test
@@ -81,14 +67,9 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 
 		// runner cannot run in debug mode with environment variables
 		runner.withDebug(false);
+
 		Assertions.assertDoesNotThrow(runner::build);
-
-		// load properties for project before asserting
-		LocalProperties.load(getProject());
-
-		for (LocalProperties localPropertyEnum : LocalProperties.values()) {
-			Assertions.assertNotNull(localPropertyEnum.data.getProperty());
-		}
+		assertLocalPropertiesNotNull(true);
 	}
 
 	@Test
@@ -123,5 +104,25 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 				LocalProperties.getFile(getProject()), StandardCharsets.UTF_8
 		));
 		Assertions.assertEquals(expected, actual);
+	}
+
+	private void assertLocalPropertiesNotNull(boolean writeBeforeAssert) throws IOException {
+
+		if (writeBeforeAssert) {
+			writeLocalPropertiesToFile();
+		}
+		// load properties for project before asserting
+		LocalProperties.load(getProject());
+
+		for (LocalProperties localPropertyEnum : LocalProperties.values()) {
+			Assertions.assertNotNull(localPropertyEnum.data.getProperty());
+		}
+	}
+
+	private void writeLocalPropertiesToFile() throws IOException {
+
+		writeToFile(new File(getProjectDir(), "local.properties"), new String[] {
+				"gameDir=C:/ProjectZomboid/", "ideaHome=C:/IntelliJ IDEA/"
+		});
 	}
 }
