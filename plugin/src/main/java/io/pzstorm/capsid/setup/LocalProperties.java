@@ -52,8 +52,6 @@ public enum LocalProperties {
 			"Note: paths need to be Unix-style where segments need to be separated with forward-slashes (/)",
 			"this is for compatibility and stability purposes as backslashes don't play well."
 	};
-	static final Properties PROPERTIES = new Properties();
-
 	final LocalProperty<?> data;
 	LocalProperties(LocalProperty<?> property) {
 		this.data = property;
@@ -79,12 +77,22 @@ public enum LocalProperties {
 		try (InputStream stream = new FileInputStream(propertiesFile))
 		{
 			// read properties from byte stream
-			PROPERTIES.load(stream);
+			Properties properties = new Properties();
+			properties.load(stream);
 
 			// save properties as project extended properties
 			ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-			for (LocalProperties property : LocalProperties.values()) {
-				ext.set(property.data.getName(), property.data.getProperty(project));
+			for (LocalProperties property : LocalProperties.values())
+			{
+				String name = property.data.getName();
+				String foundProperty = properties.getProperty(name, "");
+				if (!foundProperty.isEmpty()) {
+					ext.set(name, foundProperty);
+				}
+				// if no property found from file try other locations
+				else if (!ext.has(name)) {
+					ext.set(name, property.data.findProperty(project));
+				}
 			}
 		}
 		catch (IOException e) {
@@ -127,14 +135,15 @@ public enum LocalProperties {
 			// write properties and their comments to file
 			for (LocalProperties property : LocalProperties.values())
 			{
-				String value = PROPERTIES.getProperty(property.data.name);
-				if (value == null)
+				String value = "";
+				Object oProperty = property.data.findProperty(project);
+				if (oProperty == null)
 				{
 					if (property.data.required) {
 						CapsidPlugin.LOGGER.warn("WARN: Missing property value " + property.data.name);
 					}
-					value = "";
 				}
+				else value = oProperty.toString();
 				String comment = property.data.comment;
 				if (comment != null && !comment.isEmpty()) {
 					sb.append("\n\n").append('#').append(comment).append('\n');

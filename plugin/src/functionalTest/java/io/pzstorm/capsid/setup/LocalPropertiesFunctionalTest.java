@@ -20,6 +20,7 @@ package io.pzstorm.capsid.setup;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -83,7 +84,8 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 	void shouldWriteLocalPropertiesToFile() throws IOException {
 
 		writeToFile(new File(getProjectDir(), "local.properties"), new String[] {
-			"gameDir=C:/ProjectZomboid", "ideaHome=C:/IntelliJ IDEA"
+				String.format("gameDir=%s", Paths.get("C:/ProjectZomboid").toString()),
+				String.format("ideaHome=%s", Paths.get("C:/IntelliJ IDEA").toString())
 		});
 		// load properties for project before asserting
 		LocalProperties.load(getProject());
@@ -100,7 +102,7 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 		sb.append(String.join("\n", expectedFileComments));
 		for (LocalProperties property : LocalProperties.values())
 		{
-			String sProperty = Objects.requireNonNull(property.data.getProperty(getProject())).toString();
+			String sProperty = Objects.requireNonNull(property.data.findProperty(getProject())).toString();
 
 			sb.append("\n\n").append("#").append(property.data.comment).append('\n');
 			sb.append(property.data.name).append('=').append(sProperty.replace('\\', '/'));
@@ -122,7 +124,7 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 		LocalProperties.load(getProject());
 
 		for (LocalProperties localPropertyEnum : LocalProperties.values()) {
-			Assertions.assertNotNull(localPropertyEnum.data.getProperty(getProject()));
+			Assertions.assertNotNull(localPropertyEnum.data.findProperty(getProject()));
 		}
 	}
 
