@@ -28,7 +28,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
+
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.testkit.runner.GradleRunner;
@@ -57,9 +59,8 @@ public abstract class FunctionalTest {
 
 			for (Path path : dirsToClean)
 			{
-				File dir = path.toFile();
-				FileUtils.deleteDirectory(dir);
-				Assertions.assertFalse(dir.exists());
+				MoreFiles.deleteRecursively(path, RecursiveDeleteOption.ALLOW_INSECURE);
+				Assertions.assertFalse(path.toFile().exists());
 			}
 		}
 	}
