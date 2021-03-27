@@ -42,12 +42,15 @@ public enum LocalProperties {
 			.withComment("Path to IntelliJ IDEA installation directory")
 			.withType(Path.class).withEnvironmentVar("IDEA_HOME").build());
 
-	// these lines will be included at the very top of the file in form of comments
-	private static final String[] FILE_COMMENTS = new String[] {
+	/**
+	 * When the properties are saved to file these lines will be included
+	 * at the very top of the file in form of single line comments.
+	 */
+	private static final @UnmodifiableView List<String> COMMENTS = List.of(
 			"This file contains local properties used to configure project build",
 			"Note: paths need to be Unix-style where segments need to be separated with forward-slashes (/)",
 			"this is for compatibility and stability purposes as backslashes don't play well."
-	};
+	);
 	static final Properties PROPERTIES = new Properties();
 
 	final LocalProperty<?> data;
