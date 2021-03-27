@@ -89,6 +89,12 @@ public abstract class FunctionalTest {
 		runner.withPluginClasspath();
 		runner.withProjectDir(projectDir);
 		runner.withDebug(true);
+
+		// add project properties
+		runner.withArguments(
+				"-PgameDir=C:/ProjectZomboid/",
+				"-PideaHome=C:/IntelliJ IDEA/"
+		);
 	}
 
 	protected Project getProject() {

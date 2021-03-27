@@ -19,6 +19,9 @@ package io.pzstorm.capsid.setup;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.gradle.testkit.runner.GradleRunner;
@@ -32,11 +35,10 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 	@Test
 	void shouldLoadAllLocalProperties() throws IOException {
 
-		String[] localPropertiesLines = new String[] {
-			"gameDir=C:/ProjectZomboid/", "ideaHome=C:/IntelliJ IDEA/"
-		};
-		writeToFile(new File(getProjectDir(), "local.properties"), localPropertiesLines);
-		Assertions.assertDoesNotThrow(() -> getRunner().build());
+		writeToFile(new File(getProjectDir(), "local.properties"), new String[] {
+				"gameDir=C:/ProjectZomboid/", "ideaHome=C:/IntelliJ IDEA/"
+		});
+		Assertions.assertDoesNotThrow(() -> getRunner().withArguments(new ArrayList<>()).build());
 
 		// load properties for project before asserting
 		LocalProperties.load(getProject());
@@ -67,7 +69,7 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 	@Test
 	void shouldLoadLocalPropertiesFromEnvironmentVariables() throws IOException {
 
-		GradleRunner runner = getRunner();
+		GradleRunner runner = getRunner().withArguments(new ArrayList<>());
 		runner.withEnvironment(Map.of(
 				"PZ_DIR_PATH", "C:/ProjectZomboid/",
 				"IDEA_HOME", "C:/IntelliJ IDEA/"
