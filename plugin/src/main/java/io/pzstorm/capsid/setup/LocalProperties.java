@@ -17,17 +17,18 @@
  */
 package io.pzstorm.capsid.setup;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
+
+import io.pzstorm.capsid.CapsidPlugin;
 
 public enum LocalProperties {
 
@@ -105,5 +106,44 @@ public enum LocalProperties {
 	/** Returns properties {@code File} used to hold local properties. */
 	public static File getFile(Project project) {
 		return project.getProjectDir().toPath().resolve("local.properties").toFile();
+	}
+
+	/**
+	 * Write properties with comments to {@code local.properties} file.
+	 *
+	 * @param project {@link Project} instance used to resolve the {@code File}.
+	 * @throws IOException when an I/O exception occurred while writing to file.
+	 */
+	public static void writeToFile(Project project) throws IOException {
+
+		try (Writer writer = new FileWriter(getFile(project)))
+		{
+			StringBuilder sb = new StringBuilder();
+			// file comments at the top of the file
+			for (String comment : COMMENTS) {
+				sb.append('#').append(comment).append('\n');
+			}
+			// remove last '\n' character
+			sb.deleteCharAt(sb.length() - 1);
+
+			// write properties and their comments to file
+			for (LocalProperties property : LocalProperties.values())
+			{
+				String value = PROPERTIES.getProperty(property.data.name);
+				if (value == null)
+				{
+					if (property.data.required) {
+						CapsidPlugin.LOGGER.warn("WARN: Missing property value " + property.data.name);
+					}
+					value = "";
+				}
+				String comment = property.data.comment;
+				if (!comment.isBlank()) {
+					sb.append("\n\n").append('#').append(comment).append('\n');
+				}
+				sb.append(property.data.name).append('=').append(value);
+			}
+			writer.write(sb.toString());
+		}
 	}
 }

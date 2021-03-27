@@ -23,6 +23,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
+
+import com.google.common.io.Files;
 
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
@@ -84,5 +87,39 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 		for (LocalProperties localPropertyEnum : LocalProperties.values()) {
 			Assertions.assertNotNull(localPropertyEnum.data.getProperty());
 		}
+	}
+
+	@Test
+	void shouldWriteLocalPropertiesToFile() throws IOException {
+
+		writeToFile(new File(getProjectDir(), "local.properties"), new String[] {
+			"gameDir=C:/ProjectZomboid", "ideaHome=C:/IntelliJ IDEA"
+		});
+		// load properties for project before asserting
+		LocalProperties.load(getProject());
+
+		// write properties to file
+		LocalProperties.writeToFile(getProject());
+
+		StringBuilder sb = new StringBuilder();
+		String[] expectedFileComments = new String[] {
+				"#This file contains local properties used to configure project build",
+				"#Note: paths need to be Unix-style where segments need to be separated with forward-slashes (/)",
+				"#this is for compatibility and stability purposes as backslashes don't play well."
+		};
+		sb.append(String.join("\n", expectedFileComments));
+		for (LocalProperties property : LocalProperties.values())
+		{
+			String sProperty = Objects.requireNonNull(property.data.getProperty()).toString();
+
+			sb.append("\n\n").append("#").append(property.data.comment).append('\n');
+			sb.append(property.data.name).append('=').append(sProperty.replace('\\', '/'));
+		}
+		String expected = sb.toString();
+		LocalProperties.writeToFile(getProject());
+		String actual = String.join("\n", Files.readLines(
+				LocalProperties.getFile(getProject()), StandardCharsets.UTF_8
+		));
+		Assertions.assertEquals(expected, actual);
 	}
 }
