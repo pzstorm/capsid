@@ -27,9 +27,11 @@ import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.tasks.TaskContainer;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
 import io.pzstorm.capsid.setup.LocalProperties;
+import io.pzstorm.capsid.setup.SetupTasks;
 
 @SuppressWarnings("UnstableApiUsage")
 public class CapsidPlugin implements Plugin<Project> {
@@ -60,6 +62,11 @@ public class CapsidPlugin implements Plugin<Project> {
         catch (IOException e) {
             throw new GradleException("I/O exception occurred while loading properties");
         }
+        TaskContainer tasks = project.getTasks();
+
+        // register all setup tasks
+        for (SetupTasks task : SetupTasks.values()) {
+            task.register(tasks);
         }
     }
 }
