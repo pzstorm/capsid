@@ -44,6 +44,6 @@ public enum SetupTasks {
 	 * @param tasks {@code TaskContainer} to register this task to.
 	 */
 	public void register(TaskContainer tasks) {
-		tasks.register(name, t -> ((CapsidTask)t).configure(group, description));
+		tasks.register(name, type, t -> t.configure(group, description));
 	}
 }
