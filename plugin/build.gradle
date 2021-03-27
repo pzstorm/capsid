@@ -18,7 +18,7 @@ dependencies {
     testImplementation 'com.google.guava:guava:30.1-jre'
 
     // https://mvnrepository.com/artifact/org.jetbrains/annotations
-    implementation 'org.jetbrains:annotations:20.1.0'
+    compileOnly 'org.jetbrains:annotations:20.1.0'
 }
 
 gradlePlugin {
