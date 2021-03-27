@@ -30,7 +30,6 @@ import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
 import io.pzstorm.capsid.setup.LocalProperties;
-import io.pzstorm.capsid.setup.SetupEnvironment;
 
 @SuppressWarnings("UnstableApiUsage")
 public class CapsidPlugin implements Plugin<Project> {
@@ -55,10 +54,12 @@ public class CapsidPlugin implements Plugin<Project> {
         java.getToolchain().getLanguageVersion().set(JavaLanguageVersion.of(8));
 
         try {
-            SetupEnvironment.applyFor(project);
+            // load local properties
+            LocalProperties.load(project);
         }
         catch (IOException e) {
-            throw new GradleException("Error occurred while setting up environment", e);
+            throw new GradleException("I/O exception occurred while loading properties");
+        }
         }
     }
 }
