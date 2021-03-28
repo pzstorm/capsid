@@ -46,7 +46,7 @@ public class InitLocalProperties extends CapsidTask {
 			String format = "Unable to create %s file";
 			throw new IOException(String.format(format, localPropertiesFile.getName()));
 		}
-		Map<LocalProperties, String> PROPERTIES_INPUT_MAP = new HashMap<>();
+		Map<LocalProperty<?>, String> PROPERTIES_INPUT_MAP = new HashMap<>();
 		PROPERTIES_INPUT_MAP.put(LocalProperties.GAME_DIR,
 				"Enter path to game installation directory:"
 		);
@@ -55,15 +55,15 @@ public class InitLocalProperties extends CapsidTask {
 		);
 		org.apache.tools.ant.Project antProject = gradleProject.getAnt().getAntProject();
 		Input inputTask = (Input) antProject.createTask("input");
-		for (LocalProperties property : LocalProperties.values())
+		for (LocalProperty<?> property : LocalProperties.get())
 		{
-			inputTask.setAddproperty(property.data.name);
+			inputTask.setAddproperty(property.name);
 			inputTask.setMessage(PROPERTIES_INPUT_MAP.get(property));
 			inputTask.execute();
 
 			// transfer properties from ant to gradle
-			String antProperty = antProject.getProperty(property.data.name);
-			ext.set(property.data.name, antProperty);
+			String antProperty = antProject.getProperty(property.name);
+			ext.set(property.name, antProperty);
 		}
 		// write local properties to file
 		LocalProperties.writeToFile(gradleProject);

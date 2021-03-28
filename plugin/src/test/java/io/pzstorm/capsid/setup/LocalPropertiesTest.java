@@ -39,8 +39,8 @@ class LocalPropertiesTest extends PluginUnitTest {
 	@Test
 	void shouldGetAllLocalPropertiesByName() {
 
-		for (LocalProperties value : LocalProperties.values()) {
-			Assertions.assertEquals(value, LocalProperties.getProperty(value.data.name));
+		for (LocalProperty<?> value : LocalProperties.get()) {
+			Assertions.assertEquals(value, LocalProperties.getProperty(value.name));
 		}
 	}
 }

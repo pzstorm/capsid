@@ -19,43 +19,60 @@ package io.pzstorm.capsid.setup;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Properties;
+import java.util.*;
 
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import io.pzstorm.capsid.CapsidPlugin;
 
-public enum LocalProperties {
+public class LocalProperties {
+
+	@UnmodifiableView
+	private static final Set<LocalProperty<?>> PROPERTIES;
 
 	/**
 	 * {@code Path} to Project Zomboid installation directory.
 	 */
-	GAME_DIR(new LocalProperty.Builder<Path>("gameDir")
-			.withComment("Path to game installation directory")
-			.withType(Path.class).withEnvironmentVar("PZ_DIR_PATH").build()),
+	public static final LocalProperty<Path> GAME_DIR;
+
 	/**
 	 * {@code Path} to IntelliJ IDEA installation directory.
 	 */
-	IDEA_HOME(new LocalProperty.Builder<Path>("ideaHome")
-			.withComment("Path to IntelliJ IDEA installation directory")
-			.withType(Path.class).withEnvironmentVar("IDEA_HOME").build());
+	static final LocalProperty<Path> IDEA_HOME;
+
+	static
+	{
+		Set<LocalProperty<?>> properties = new HashSet<>();
+
+		GAME_DIR = new LocalProperty.Builder<Path>("gameDir")
+				.withComment("Path to game installation directory").withType(Path.class)
+				.withEnvironmentVar("PZ_DIR_PATH").build();
+
+		IDEA_HOME = new LocalProperty.Builder<Path>("ideaHome")
+				.withComment("Path to IntelliJ IDEA installation directory").withType(Path.class)
+				.withEnvironmentVar("IDEA_HOME").build();
+
+		properties.add(GAME_DIR);
+		properties.add(IDEA_HOME);
+
+		PROPERTIES = Collections.unmodifiableSet(properties);
+	}
+
+	private LocalProperties() {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
-	 * When the properties are saved to file these lines will be included
-	 * at the very top of the file in form of single line comments.
+	 * Returns all registered local properties.
 	 */
-	private static final String[] COMMENTS = new String[] {
-			"This file contains local properties used to configure project build",
-			"Note: paths need to be Unix-style where segments need to be separated with forward-slashes (/)",
-			"this is for compatibility and stability purposes as backslashes don't play well."
-	};
-	final LocalProperty<?> data;
-	LocalProperties(LocalProperty<?> property) {
-		this.data = property;
+	@UnmodifiableView
+	public static Set<LocalProperty<?>> get() {
+		return PROPERTIES;
 	}
+
 	/**
 	 * Load properties from local {@code Properties} file.
 	 *
@@ -78,16 +95,16 @@ public enum LocalProperties {
 
 			// save properties as project extended properties
 			ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-			for (LocalProperties property : LocalProperties.values())
+			for (LocalProperty<?> property : PROPERTIES)
 			{
-				String name = property.data.getName();
+				String name = property.getName();
 				String foundProperty = properties.getProperty(name, "");
 				if (!foundProperty.isEmpty()) {
 					ext.set(name, foundProperty);
 				}
 				// if no property found from file try other locations
 				else if (!ext.has(name)) {
-					ext.set(name, property.data.findProperty(project));
+					ext.set(name, property.findProperty(project));
 				}
 			}
 		}
@@ -101,8 +118,8 @@ public enum LocalProperties {
 	 * Find a property that matches the given name.
 	 * @param name property name to match.
 	 */
-	public static @Nullable LocalProperties getProperty(String name) {
-		return Arrays.stream(values()).filter(p -> p.data.name.equals(name)).findFirst().orElse(null);
+	public static @Nullable LocalProperty<?> getProperty(String name) {
+		return PROPERTIES.stream().filter(p -> p.name.equals(name)).findFirst().orElse(null);
 	}
 
 	/** Returns properties {@code File} used to hold local properties. */
@@ -122,29 +139,32 @@ public enum LocalProperties {
 		{
 			StringBuilder sb = new StringBuilder();
 			// file comments at the top of the file
-			for (String comment : COMMENTS) {
+			for (String comment : new String[] {
+					"This file contains local properties used to configure project build",
+					"Note: paths need to be Unix-style where segments need to be separated with forward-slashes (/)",
+					"this is for compatibility and stability purposes as backslashes don't play well." })
+			{
 				sb.append('#').append(comment).append('\n');
 			}
 			// remove last '\n' character
 			sb.deleteCharAt(sb.length() - 1);
 
 			// write properties and their comments to file
-			for (LocalProperties property : LocalProperties.values())
+			for (LocalProperty<?> property : PROPERTIES)
 			{
 				String value = "";
-				Object oProperty = property.data.findProperty(project);
-				if (oProperty == null)
-				{
-					if (property.data.required) {
-						CapsidPlugin.LOGGER.warn("WARN: Missing property value " + property.data.name);
-					}
+				Object oProperty = property.findProperty(project);
+				if (oProperty != null) {
+					value = oProperty.toString();
 				}
-				else value = oProperty.toString();
-				String comment = property.data.comment;
+				else if (property.required) {
+					CapsidPlugin.LOGGER.warn("WARN: Missing property value " + property.name);
+				}
+				String comment = property.comment;
 				if (comment != null && !comment.isEmpty()) {
 					sb.append("\n\n").append('#').append(comment).append('\n');
 				}
-				sb.append(property.data.name).append('=').append(value);
+				sb.append(property.name).append('=').append(value);
 			}
 			writer.write(sb.toString());
 		}

@@ -100,12 +100,12 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 				"#this is for compatibility and stability purposes as backslashes don't play well."
 		};
 		sb.append(String.join("\n", expectedFileComments));
-		for (LocalProperties property : LocalProperties.values())
+		for (LocalProperty<?> property : LocalProperties.get())
 		{
-			String sProperty = Objects.requireNonNull(property.data.findProperty(getProject())).toString();
+			String sProperty = Objects.requireNonNull(property.findProperty(getProject())).toString();
 
-			sb.append("\n\n").append("#").append(property.data.comment).append('\n');
-			sb.append(property.data.name).append('=').append(sProperty.replace('\\', '/'));
+			sb.append("\n\n").append("#").append(property.comment).append('\n');
+			sb.append(property.name).append('=').append(sProperty.replace('\\', '/'));
 		}
 		String expected = sb.toString();
 		LocalProperties.writeToFile(getProject());
@@ -123,8 +123,8 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 		// load properties for project before asserting
 		LocalProperties.load(getProject());
 
-		for (LocalProperties localPropertyEnum : LocalProperties.values()) {
-			Assertions.assertNotNull(localPropertyEnum.data.findProperty(getProject()));
+		for (LocalProperty<?> localPropertyEnum : LocalProperties.get()) {
+			Assertions.assertNotNull(localPropertyEnum.findProperty(getProject()));
 		}
 	}
 

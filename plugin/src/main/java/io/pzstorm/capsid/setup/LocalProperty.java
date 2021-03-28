@@ -42,6 +42,7 @@ public class LocalProperty<T> {
 		this.defaultValue = builder.defaultValue;
 		this.required = builder.required;
 	}
+
 	/**
 	 * <p>Returns the value assigned to key matching this property.</p>
 	 * Try to find the property value in the following locations:
