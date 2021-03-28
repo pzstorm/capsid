@@ -19,9 +19,11 @@ package io.pzstorm.capsid.setup;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
+import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.jetbrains.annotations.Nullable;
 
 public class LocalProperty<T> {
@@ -52,9 +54,9 @@ public class LocalProperty<T> {
 	 */
 	@Nullable T findProperty(Project project) {
 
-		Object extProperty = project.getExtensions().getExtraProperties().get(name);
-		if (extProperty != null) {
-			return parseProperty((String) extProperty);
+		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
+		if (ext.has(name)) {
+			return parseProperty((String) Objects.requireNonNull(ext.get(name)));
 		}
 		// try to find a matching system property first
 		String sysProperty = System.getProperty(name);
