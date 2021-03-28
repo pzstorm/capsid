@@ -1,6 +1,11 @@
 plugins {
     // Apply the Java Gradle plugin development plugin to add support for developing Gradle plugins
+    // https://docs.gradle.org/current/userguide/java_gradle_plugin.html
     id 'java-gradle-plugin'
+
+    // Provides the ability to publish build artifacts to an Apache Maven repository.
+    // https://docs.gradle.org/current/userguide/publishing_maven.html
+    id 'maven-publish'
 }
 
 repositories {
