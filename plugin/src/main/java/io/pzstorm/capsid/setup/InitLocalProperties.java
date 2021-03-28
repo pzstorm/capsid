@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.tools.ant.taskdefs.Input;
 import org.gradle.api.Project;
+import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
@@ -36,6 +37,7 @@ public class InitLocalProperties extends CapsidTask {
 
 		// declare locally to resolve only once
 		Project gradleProject = getProject();
+		ExtraPropertiesExtension ext = gradleProject.getExtensions().getExtraProperties();
 
 		// make sure the properties file exists
 		File localPropertiesFile = LocalProperties.getFile(gradleProject);
@@ -61,10 +63,9 @@ public class InitLocalProperties extends CapsidTask {
 
 			// transfer properties from ant to gradle
 			String antProperty = antProject.getProperty(property.data.name);
-			gradleProject.setProperty(property.data.name, antProperty);
-
-			// write local properties to file
-			LocalProperties.writeToFile(gradleProject);
+			ext.set(property.data.name, antProperty);
 		}
+		// write local properties to file
+		LocalProperties.writeToFile(gradleProject);
 	}
 }
