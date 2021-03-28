@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.tools.ant.taskdefs.Input;
+import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
@@ -33,6 +34,16 @@ public class InitLocalProperties extends CapsidTask {
 	@TaskAction
 	void execute() throws IOException {
 
+		// declare locally to resolve only once
+		Project gradleProject = getProject();
+
+		// make sure the properties file exists
+		File localPropertiesFile = LocalProperties.getFile(gradleProject);
+		if (!localPropertiesFile.exists() && !localPropertiesFile.createNewFile())
+		{
+			String format = "Unable to create %s file";
+			throw new IOException(String.format(format, localPropertiesFile.getName()));
+		}
 		Map<LocalProperties, String> PROPERTIES_INPUT_MAP = new HashMap<>();
 		PROPERTIES_INPUT_MAP.put(LocalProperties.GAME_DIR,
 				"Enter path to game installation directory"
@@ -40,19 +51,13 @@ public class InitLocalProperties extends CapsidTask {
 		PROPERTIES_INPUT_MAP.put(LocalProperties.IDEA_HOME,
 				"Enter path to IntelliJ IDEA installation directory"
 		);
-		org.apache.tools.ant.Project antProject = getProject().getAnt().getAntProject();
+		org.apache.tools.ant.Project antProject = gradleProject.getAnt().getAntProject();
 		Input inputTask = (Input) antProject.createTask("input");
 		for (LocalProperties property : LocalProperties.values())
 		{
 			inputTask.setAddproperty(property.data.name);
 			inputTask.setMessage(PROPERTIES_INPUT_MAP.get(property));
 			inputTask.execute();
-		}
-		File localPropertiesFile = LocalProperties.getFile(getProject());
-		if (!localPropertiesFile.createNewFile())
-		{
-			String format = "Unable to create %s file";
-			throw new IOException(String.format(format, localPropertiesFile.getName()));
 		}
 	}
 }
