@@ -48,10 +48,10 @@ public class InitLocalProperties extends CapsidTask {
 		}
 		Map<LocalProperties, String> PROPERTIES_INPUT_MAP = new HashMap<>();
 		PROPERTIES_INPUT_MAP.put(LocalProperties.GAME_DIR,
-				"Enter path to game installation directory"
+				"Enter path to game installation directory:"
 		);
 		PROPERTIES_INPUT_MAP.put(LocalProperties.IDEA_HOME,
-				"Enter path to IntelliJ IDEA installation directory"
+				"\nEnter path to IntelliJ IDEA installation directory:"
 		);
 		org.apache.tools.ant.Project antProject = gradleProject.getAnt().getAntProject();
 		Input inputTask = (Input) antProject.createTask("input");
