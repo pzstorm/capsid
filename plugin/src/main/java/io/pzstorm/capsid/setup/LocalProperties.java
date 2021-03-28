@@ -67,11 +67,7 @@ public enum LocalProperties {
 	public static boolean load(Project project) throws IOException {
 
 		File propertiesFile = getFile(project);
-		if (!propertiesFile.exists())
-		{
-			if (!propertiesFile.createNewFile()) {
-				throw new IOException("Unable to create new local.properties file");
-			}
+		if (!propertiesFile.exists()) {
 			return false;
 		}
 		try (InputStream stream = new FileInputStream(propertiesFile))

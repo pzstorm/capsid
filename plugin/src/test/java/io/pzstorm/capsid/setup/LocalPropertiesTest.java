@@ -31,8 +31,6 @@ class LocalPropertiesTest extends PluginUnitTest {
 	void shouldReturnFalseWhenLoadingNonExistingLocalProperties() throws IOException {
 
 		File localProperties = LocalProperties.getFile(getProject());
-
-		Assertions.assertTrue(localProperties.delete());
 		Assertions.assertFalse(localProperties.exists());
 
 		Assertions.assertFalse(LocalProperties.load(getProject()));
