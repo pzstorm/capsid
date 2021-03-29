@@ -89,10 +89,10 @@ public abstract class PluginFunctionalTest {
 
 		// Setup the test build
 		Files.createDirectories(projectDir.toPath());
-		writeToFile(new File(projectDir, "settings.gradle"),
-				String.format("rootProject.name = '%s'", projectName)
+		writeToProjectFile("settings.gradle",
+				new String[] { String.format("rootProject.name = '%s'", projectName) }
 		);
-		writeToFile(new File(projectDir, "build.gradle"), new String[] {
+		writeToProjectFile("build.gradle", new String[] {
 				"plugins {",
 				"	id('io.pzstorm.capsid')",
 				"}"
@@ -133,21 +133,13 @@ public abstract class PluginFunctionalTest {
 		return runner;
 	}
 
+	protected void writeToProjectFile(String path, String[] lines) throws IOException {
+		writeToFile(projectDir.toPath().resolve(path).toFile(), lines);
+	}
+
 	protected static void writeToFile(File file, String[] lines) throws IOException {
 		try (Writer writer = new FileWriter(file)) {
 			writer.write(String.join("\n", lines));
-		}
-	}
-
-	protected static void writeToFile(File file, String string) throws IOException {
-		try (Writer writer = new FileWriter(file)) {
-			writer.write(string);
-		}
-	}
-
-	protected static void writeToFile(File file) throws IOException {
-		try (Writer writer = new FileWriter(file)) {
-			writer.write("");
 		}
 	}
 }
