@@ -30,7 +30,7 @@ import org.gradle.api.tasks.TaskAction;
 import io.pzstorm.capsid.CapsidTask;
 
 @SuppressWarnings("WeakerAccess")
-public class InitLocalProperties extends CapsidTask {
+public class InitLocalPropertiesTask extends CapsidTask {
 
 	@TaskAction
 	void execute() throws IOException {

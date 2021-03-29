@@ -26,7 +26,7 @@ import io.pzstorm.capsid.CapsidTask;
  */
 public enum SetupTasks {
 
-	INIT_LOCAL_PROPERTIES(InitLocalProperties.class, "initLocalProperties",
+	INIT_LOCAL_PROPERTIES(InitLocalPropertiesTask.class, "initLocalProperties",
 			"build setup", "Initialize local project properties."
 	);
 	final String name, group, description;
