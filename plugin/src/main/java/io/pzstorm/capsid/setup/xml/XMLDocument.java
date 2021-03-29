@@ -29,6 +29,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
@@ -43,14 +44,16 @@ public abstract class XMLDocument {
 	private static final DocumentBuilderFactory FACTORY = DocumentBuilderFactory.newInstance();
 
 	final String name;
+	final String dirPath;
 	final Document document;
 
 	/** Instance of {@code Project} that owns this document. */
 	private Project project;
 
-	public XMLDocument(String name) {
+	public XMLDocument(String name, String dirPath) {
 
 		this.name = name;
+		this.dirPath = dirPath;
 		try {
 			this.document = FACTORY.newDocumentBuilder().newDocument();
 		}
@@ -84,25 +87,37 @@ public abstract class XMLDocument {
 	 *
 	 * @throws TransformerException if an unrecoverable error occurred while creating an
 	 * 		an instance of {@code Transformer} or during the course of the transformation.
+	 * @throws GradleException when {@code Project} instance is {@code null}.
 	 * @throws IOException if the given file does not exist but cannot be created,
 	 * 		or cannot be opened for any other reason.
 	 */
-	protected void writeToFile(File file) throws IOException, TransformerException {
+	public void writeToFile() throws IOException, TransformerException {
 
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 
 		DOMSource source = new DOMSource(document);
-		String filename = file.getName();
+		// translate config name to filename (similar to what IDEA is doing)
+		String filename = name.replaceAll("\\s", "_")
+				.replaceAll("[^\\w_]", "").replaceAll("__", "_") + ".xml";
+
+		// parent directory
+		if (project == null) {
+			throw new GradleException("Tried writing XMLDocument to file with null project");
+		}
+		File projectDir = project.getProjectDir();
+		File parentDir = projectDir.toPath().resolve(dirPath).toFile();
+
+		// file to print the contents of this document
+		File destination = new File(parentDir, filename);
 
 		// create destination file before trying to write to it
-		if (!file.exists())
+		if (!destination.exists())
 		{
-			File parentFile = file.getParentFile();
-			if (!parentFile.exists() && !parentFile.mkdirs()) {
+			if (!parentDir.exists() && !parentDir.mkdirs()) {
 				throw new IOException("Unable to create directory structure for configuration file '" + filename + '\'');
 			}
-			if (!file.createNewFile()) {
+			if (!destination.createNewFile()) {
 				throw new IOException("Unable to create run configuration file '" + filename + '\'');
 			}
 		}
@@ -114,7 +129,7 @@ public abstract class XMLDocument {
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 
 		// write to file and return destination file
-		transformer.transform(source, new StreamResult(new FileWriter(file)));
+		transformer.transform(source, new StreamResult(new FileWriter(destination)));
 	}
 
 	/**
@@ -124,6 +139,4 @@ public abstract class XMLDocument {
 	protected @Nullable Project getProject() {
 		return project;
 	}
-
-	public abstract void writeToFile() throws TransformerException, IOException;
 }

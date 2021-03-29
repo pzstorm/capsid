@@ -17,11 +17,7 @@
  */
 package io.pzstorm.capsid.setup.xml;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Objects;
-import javax.xml.transform.TransformerException;
 
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
@@ -51,7 +47,7 @@ public class LaunchRunConfig extends XMLDocument {
 
 	private final VmParameter vmParameters;
 	public LaunchRunConfig(String name, VmParameter vmParameters) {
-		super(name);
+		super(name, ".idea/runConfigurations/");
 		this.vmParameters = vmParameters;
 	}
 
@@ -128,24 +124,5 @@ public class LaunchRunConfig extends XMLDocument {
 //		method.appendChild(optionBeforeRunTask);
 
 		return (LaunchRunConfig) super.configure(project);
-	}
-
-	/**
-	 * Write this launch run configuration to {@code XML} file.
-	 *
-	 * @throws TransformerException if an unrecoverable error occurred while creating an
-	 * 		an instance of {@code Transformer} or during the course of the transformation.
-	 * @throws IOException if the run configuration file does not exist but cannot be created,
-	 * 		or cannot be opened for any other reason.
-	 */
-	@Override
-	public void writeToFile() throws TransformerException, IOException {
-
-		// translate config name to filename (similar to what IDEA is doing)
-		String filename = name.replaceAll("\\s", "_")
-				.replaceAll("[^\\w_]", "").replaceAll("__", "_") + ".xml";
-
-		Project project = Objects.requireNonNull(getProject());
-		writeToFile(new File(project.getProjectDir(), ".idea/runConfigurations/" + filename));
 	}
 }
