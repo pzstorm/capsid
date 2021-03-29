@@ -19,9 +19,10 @@ package io.pzstorm.capsid.setup;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import javax.xml.transform.TransformerException;
+
+import com.google.common.collect.ImmutableMap;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,19 +32,21 @@ import io.pzstorm.capsid.Utils;
 
 class LaunchRunConfigFunctionalTest extends FunctionalTest {
 
+	private static final Map<LaunchRunConfig, String> RUN_CONFIGS = ImmutableMap.of(
+			LaunchRunConfig.RUN_ZOMBOID, "Run_Zomboid.xml",
+			LaunchRunConfig.RUN_ZOMBOID_LOCAL, "Run_Zomboid_local.xml",
+			LaunchRunConfig.DEBUG_ZOMBOID, "Debug_Zomboid.xml",
+			LaunchRunConfig.DEBUG_ZOMBOID_LOCAL, "Debug_Zomboid_local.xml"
+	);
+
 	LaunchRunConfigFunctionalTest() {
 		super("test");
 	}
+
 	@Test
 	void shouldWriteToFileLaunchRunConfigurations() throws TransformerException, IOException {
 
-		Map<LaunchRunConfig, String> runConfigMap = new HashMap<>();
-		runConfigMap.put(LaunchRunConfig.RUN_ZOMBOID, "Run_Zomboid.xml");
-		runConfigMap.put(LaunchRunConfig.RUN_ZOMBOID_LOCAL, "Run_Zomboid_local.xml");
-		runConfigMap.put(LaunchRunConfig.DEBUG_ZOMBOID, "Debug_Zomboid.xml");
-		runConfigMap.put(LaunchRunConfig.DEBUG_ZOMBOID_LOCAL, "Debug_Zomboid_local.xml");
-
-		for (Map.Entry<LaunchRunConfig, String> entry : runConfigMap.entrySet())
+		for (Map.Entry<LaunchRunConfig, String> entry : RUN_CONFIGS.entrySet())
 		{
 			LaunchRunConfig runConfig = entry.getKey();
 			String expectedFilename = entry.getValue();
