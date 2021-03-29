@@ -19,11 +19,18 @@ package io.pzstorm.capsid.setup;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.transform.TransformerException;
 
 import com.google.common.collect.ImmutableMap;
 
+import org.gradle.testkit.runner.BuildResult;
+import org.gradle.testkit.runner.BuildTask;
+import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -56,6 +63,30 @@ class LaunchRunConfigFunctionalTest extends FunctionalTest {
 
 			String expected = Utils.readResourceAsTextFromStream(getClass(), expectedFilename);
 			String actual = Utils.readTextFromFile(file);
+
+			Assertions.assertEquals(expected, actual);
+		}
+	}
+
+	@Test
+	void shouldWriteToFileLaunchRunConfigurationsFromTask() throws IOException {
+
+		List<String> arguments = new ArrayList<>(getRunner().getArguments());
+		arguments.add("createLaunchRunConfigs");
+
+		BuildResult result = getRunner().withArguments(arguments).build();
+		BuildTask task = Objects.requireNonNull(result.task(":createLaunchRunConfigs"));
+		Assertions.assertEquals(TaskOutcome.SUCCESS, task.getOutcome());
+
+		Path runConfigurations = getProjectDir().toPath().resolve(".idea/runConfigurations");
+		for (Map.Entry<LaunchRunConfig, String> entry : RUN_CONFIGS.entrySet())
+		{
+			String filename = entry.getValue();
+			File runConfig = runConfigurations.resolve(filename).toFile();
+			Assertions.assertTrue(runConfig.exists());
+
+			String expected = Utils.readResourceAsTextFromStream(getClass(), filename);
+			String actual = Utils.readTextFromFile(runConfig);
 
 			Assertions.assertEquals(expected, actual);
 		}
