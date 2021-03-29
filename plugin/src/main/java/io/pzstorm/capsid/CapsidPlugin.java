@@ -62,11 +62,9 @@ public class CapsidPlugin implements Plugin<Project> {
         catch (IOException e) {
             throw new GradleException("I/O exception occurred while loading properties");
         }
-        TaskContainer tasks = project.getTasks();
-
         // register all setup tasks
         for (SetupTasks task : SetupTasks.values()) {
-            task.register(tasks);
+            task.register(project);
         }
     }
 }

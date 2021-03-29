@@ -17,7 +17,7 @@
  */
 package io.pzstorm.capsid.setup;
 
-import org.gradle.api.tasks.TaskContainer;
+import org.gradle.api.Project;
 
 import io.pzstorm.capsid.CapsidTask;
 
@@ -40,10 +40,10 @@ public enum SetupTasks {
 	}
 
 	/**
-	 * Configure and register this task in the given {@code TaskContainer}.
-	 * @param tasks {@code TaskContainer} to register this task to.
+	 * Configure and register this task for the given {@code Project}.
+	 * @param project {@code Project} register this task.
 	 */
-	public void register(TaskContainer tasks) {
-		tasks.register(name, type, t -> t.configure(group, description));
+	public void register(Project project) {
+		project.getTasks().register(name, type, t -> t.configure(group, description, project));
 	}
 }
