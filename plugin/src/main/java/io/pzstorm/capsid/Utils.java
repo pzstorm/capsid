@@ -17,12 +17,13 @@
  */
 package io.pzstorm.capsid;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.google.common.io.Files;
 
 public class Utils {
 
@@ -45,5 +46,19 @@ public class Utils {
 			Stream<String> stream = new BufferedReader(new InputStreamReader(inputStream)).lines();
 			return stream.collect(Collectors.joining("\n"));
 		}
+	}
+
+	/**
+	 * Reads text from a given file. The lines do not include line-termination
+	 * characters, but do include other leading and trailing whitespace
+	 *
+	 * @param file {@code File} to read the lines from.
+	 * @return a {@code String} representing the contents of given file.
+	 *
+	 * @throws IOException if an I/O error occurred.
+	 * @see Files#readLines(File, Charset)
+	 */
+	public static String readTextFromFile(File file) throws IOException {
+		return String.join("\n", Files.readLines(file, StandardCharsets.UTF_8));
 	}
 }

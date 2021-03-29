@@ -19,20 +19,18 @@ package io.pzstorm.capsid.setup;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.common.io.Files;
-
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.FunctionalTest;
+import io.pzstorm.capsid.Utils;
 
 class LocalPropertiesFunctionalTest extends FunctionalTest {
 
@@ -109,9 +107,7 @@ class LocalPropertiesFunctionalTest extends FunctionalTest {
 		}
 		String expected = sb.toString();
 		LocalProperties.writeToFile(getProject());
-		String actual = String.join("\n", Files.readLines(
-				LocalProperties.getFile(getProject()), StandardCharsets.UTF_8
-		));
+		String actual = Utils.readTextFromFile(LocalProperties.getFile(getProject()));
 		Assertions.assertEquals(expected, actual);
 	}
 

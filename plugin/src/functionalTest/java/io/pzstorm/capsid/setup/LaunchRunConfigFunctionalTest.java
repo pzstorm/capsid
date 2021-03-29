@@ -19,12 +19,9 @@ package io.pzstorm.capsid.setup;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.transform.TransformerException;
-
-import com.google.common.io.Files;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -52,7 +49,7 @@ class LaunchRunConfigFunctionalTest extends FunctionalTest {
 			Assertions.assertEquals(expectedFilename, file.getName());
 
 			String expected = Utils.readResourceAsTextFromStream(getClass(), expectedFilename);
-			String actual = String.join("\n", Files.readLines(file, StandardCharsets.UTF_8));
+			String actual = Utils.readTextFromFile(file);
 
 			Assertions.assertEquals(expected, actual);
 		}
