@@ -28,6 +28,9 @@ public enum SetupTasks {
 
 	INIT_LOCAL_PROPERTIES(InitLocalPropertiesTask.class, "initLocalProperties",
 			"build setup", "Initialize local project properties."
+	),
+	CREATE_LAUNCH_CONFIGS(CreateLaunchConfigsTask.class, "createLaunchRunConfigs",
+			"build setup", "Create game launch run configurations."
 	);
 	final String name, group, description;
 	final Class<? extends CapsidTask> type;
