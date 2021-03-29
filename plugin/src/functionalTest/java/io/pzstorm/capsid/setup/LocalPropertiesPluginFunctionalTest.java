@@ -29,10 +29,10 @@ import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.pzstorm.capsid.FunctionalTest;
+import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.Utils;
 
-class LocalPropertiesFunctionalTest extends FunctionalTest {
+class LocalPropertiesPluginFunctionalTest extends PluginFunctionalTest {
 
 	@Test
 	void shouldLoadLocalPropertiesFromFile() throws IOException {

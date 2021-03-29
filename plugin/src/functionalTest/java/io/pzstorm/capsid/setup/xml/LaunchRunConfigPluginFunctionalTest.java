@@ -33,11 +33,10 @@ import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.pzstorm.capsid.FunctionalTest;
+import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.Utils;
-import io.pzstorm.capsid.setup.xml.LaunchRunConfig;
 
-class LaunchRunConfigFunctionalTest extends FunctionalTest {
+class LaunchRunConfigPluginFunctionalTest extends PluginFunctionalTest {
 
 	private static final Map<LaunchRunConfig, String> RUN_CONFIGS = ImmutableMap.of(
 			LaunchRunConfig.RUN_ZOMBOID, "Run_Zomboid.xml",
@@ -46,7 +45,7 @@ class LaunchRunConfigFunctionalTest extends FunctionalTest {
 			LaunchRunConfig.DEBUG_ZOMBOID_LOCAL, "Debug_Zomboid_local.xml"
 	);
 
-	LaunchRunConfigFunctionalTest() {
+	LaunchRunConfigPluginFunctionalTest() {
 		super("testLaunchRunConfigs");
 	}
 

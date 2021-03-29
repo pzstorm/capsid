@@ -41,7 +41,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 
 @Tag("functional")
-public abstract class FunctionalTest {
+public abstract class PluginFunctionalTest {
 
 	private static final File PARENT_TEMP_DIR = new File("build/tmp/functionalTest");
 	private static final Set<String> TEMP_DIR_NAMES = new HashSet<>();
@@ -53,12 +53,12 @@ public abstract class FunctionalTest {
 	private File projectDir;
 	private GradleRunner runner;
 
-	public FunctionalTest() {
+	public PluginFunctionalTest() {
 		this.projectName = "test" + new Random().nextInt(1000);
 		this.customProjectName = false;
 	}
 
-	protected FunctionalTest(String projectName) {
+	protected PluginFunctionalTest(String projectName) {
 		this.projectName = projectName;
 		this.customProjectName = true;
 	}

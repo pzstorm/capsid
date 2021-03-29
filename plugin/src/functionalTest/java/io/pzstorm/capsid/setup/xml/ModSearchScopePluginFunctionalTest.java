@@ -33,17 +33,17 @@ import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.pzstorm.capsid.FunctionalTest;
+import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.Utils;
 
-class ModSearchScopeFunctionalTest extends FunctionalTest {
+class ModSearchScopePluginFunctionalTest extends PluginFunctionalTest {
 
 	private static final Map<ModSearchScope, String> SEARCH_SCOPES = ImmutableMap.of(
 			ModSearchScope.MOD_LUA, "mod_lua.xml",
 			ModSearchScope.MOD_MEDIA, "mod_media.xml"
 	);
 
-	ModSearchScopeFunctionalTest() {
+	ModSearchScopePluginFunctionalTest() {
 		super("modSearchScopes");
 	}
 
