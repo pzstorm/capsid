@@ -32,7 +32,7 @@ import io.pzstorm.capsid.Utils;
 class LaunchRunConfigFunctionalTest extends FunctionalTest {
 
 	@Test
-	void shouldCorrectlyConfigureAndWriteToFileLaunchRunConfiguration() throws TransformerException, IOException {
+	void shouldWriteToFileLaunchRunConfigurations() throws TransformerException, IOException {
 
 		Map<LaunchRunConfig, String> runConfigMap = new HashMap<>();
 		runConfigMap.put(LaunchRunConfig.RUN_ZOMBOID, "Run_Zomboid.xml");
