@@ -41,7 +41,7 @@ public class LocalProperties {
 	/**
 	 * {@code Path} to IntelliJ IDEA installation directory.
 	 */
-	static final LocalProperty<Path> IDEA_HOME;
+	public static final LocalProperty<Path> IDEA_HOME;
 
 	static
 	{

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package io.pzstorm.capsid.setup;
+package io.pzstorm.capsid.setup.task;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +28,8 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.setup.LocalProperties;
+import io.pzstorm.capsid.setup.LocalProperty;
 
 @SuppressWarnings("WeakerAccess")
 public class InitLocalPropertiesTask extends CapsidTask {
@@ -57,13 +59,13 @@ public class InitLocalPropertiesTask extends CapsidTask {
 		Input inputTask = (Input) antProject.createTask("input");
 		for (LocalProperty<?> property : LocalProperties.get())
 		{
-			inputTask.setAddproperty(property.name);
+			inputTask.setAddproperty(property.getName());
 			inputTask.setMessage(PROPERTIES_INPUT_MAP.get(property));
 			inputTask.execute();
 
 			// transfer properties from ant to gradle
-			String antProperty = antProject.getProperty(property.name);
-			ext.set(property.name, antProperty);
+			String antProperty = antProject.getProperty(property.getName());
+			ext.set(property.getName(), antProperty);
 		}
 		// write local properties to file
 		LocalProperties.writeToFile(gradleProject);
