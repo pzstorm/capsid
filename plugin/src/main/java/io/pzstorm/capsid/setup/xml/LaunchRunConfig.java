@@ -20,14 +20,12 @@ package io.pzstorm.capsid.setup.xml;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import javax.xml.transform.Transformer;
+import java.util.Objects;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.VmParameter;
@@ -60,25 +58,16 @@ public class LaunchRunConfig extends XMLDocument {
 	/**
 	 * Configure this instance of {@code ZomboidLaunchRunConfig} for given {@code Project}.
 	 *
-	 * @param project instance of {@link Project} requesting configuration.
 	 * @return an instance of this {@code ZomboidLaunchRunConfig}.
-	 *
 	 * @throws InvalidUserDataException if {@code gameDir} local property is not initialized.
 	 */
+	@Override
 	public LaunchRunConfig configure(Project project) {
 
 		// <component name="ProjectRunConfigurationManager">
 		Element component = document.createElement("component");
 		component.setAttribute("name", "ProjectRunConfigurationManager");
-		/*
-		 * make sure that we replace the root element if one exists already,
-		 * otherwise HIERARCHY_REQUEST_ERR error will be thrown
-		 */
-		Node childNode = document.getFirstChild();
-		if (childNode == null) {
-			document.appendChild(component);
-		}
-		else document.replaceChild(component, childNode);
+		appendOrReplaceRootElement(component);
 
 		// <configuration default="false" name="<name>" type="Application" factoryName="Application">
 		Element configuration = document.createElement("configuration");
@@ -149,16 +138,14 @@ public class LaunchRunConfig extends XMLDocument {
 	 * @throws IOException if the run configuration file does not exist but cannot be created,
 	 * 		or cannot be opened for any other reason.
 	 */
+	@Override
 	public void writeToFile() throws TransformerException, IOException {
 
 		// translate config name to filename (similar to what IDEA is doing)
 		String filename = name.replaceAll("\\s", "_")
 				.replaceAll("[^\\w_]", "").replaceAll("__", "_") + ".xml";
 
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-
-		File destination = new File(project.getProjectDir(), ".idea/runConfigurations/" + filename);
-		writeToFile(transformer, destination);
+		Project project = Objects.requireNonNull(getProject());
+		writeToFile(new File(project.getProjectDir(), ".idea/runConfigurations/" + filename));
 	}
 }

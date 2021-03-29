@@ -25,12 +25,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.gradle.api.Project;
-import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 public abstract class XMLDocument {
 
@@ -42,7 +45,8 @@ public abstract class XMLDocument {
 	final String name;
 	final Document document;
 
-	Project project;
+	/** Instance of {@code Project} that owns this document. */
+	private Project project;
 
 	public XMLDocument(String name) {
 
@@ -55,10 +59,24 @@ public abstract class XMLDocument {
 		}
 	}
 
-	@Contract("_ -> this")
 	public XMLDocument configure(Project project) {
 		this.project = project;
 		return this;
+	}
+
+	/**
+	 * <p>Append or replace child {@link Node} with the given element.</p>
+	 * This is a way to prevent {@code HIERARCHY_REQUEST_ERR} from occurring.
+	 *
+	 * @param element element to append or replace child with.
+	 */
+	protected void appendOrReplaceRootElement(Element element) {
+
+		Node childNode = document.getFirstChild();
+		if (childNode == null) {
+			document.appendChild(element);
+		}
+		else document.replaceChild(element, childNode);
 	}
 
 	/**
@@ -69,7 +87,10 @@ public abstract class XMLDocument {
 	 * @throws IOException if the given file does not exist but cannot be created,
 	 * 		or cannot be opened for any other reason.
 	 */
-	protected void writeToFile(Transformer transformer, File file) throws IOException, TransformerException {
+	protected void writeToFile(File file) throws IOException, TransformerException {
+
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
 
 		DOMSource source = new DOMSource(document);
 		String filename = file.getName();
@@ -94,6 +115,14 @@ public abstract class XMLDocument {
 
 		// write to file and return destination file
 		transformer.transform(source, new StreamResult(new FileWriter(file)));
+	}
+
+	/**
+	 * <p>Returns project associated with this {@code XMLDocument}.</p>
+	 * @return {@code Project} instance or {@code null} if document was not configured.
+	 */
+	protected @Nullable Project getProject() {
+		return project;
 	}
 
 	public abstract void writeToFile() throws TransformerException, IOException;
