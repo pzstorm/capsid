@@ -32,6 +32,7 @@ import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
 
 import org.gradle.api.Project;
+import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
@@ -46,6 +47,7 @@ public abstract class FunctionalTest {
 	private static final Set<String> TEMP_DIR_NAMES = new HashSet<>();
 
 	private Project project;
+	private File projectDir;
 	private GradleRunner runner;
 
 	@BeforeAll
@@ -69,11 +71,8 @@ public abstract class FunctionalTest {
 	void createRunner() throws IOException {
 
 		String dirName = "test" + new Random().nextInt(1000);
-		File projectDir = new File(PARENT_TEMP_DIR, dirName);
+		this.projectDir = new File(PARENT_TEMP_DIR, dirName);
 		TEMP_DIR_NAMES.add(dirName);
-
-		// some functional tests will need Project instance
-		project = ProjectBuilder.builder().withProjectDir(projectDir).build();
 
 		// Setup the test build
 		Files.createDirectories(projectDir.toPath());
@@ -98,12 +97,21 @@ public abstract class FunctionalTest {
 		);
 	}
 
-	protected Project getProject() {
+	private Project initializeProject() {
+
+		this.project = ProjectBuilder.builder().withProjectDir(projectDir).build();
+		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
+		ext.set("gameDir", "C:/ProjectZomboid/");
+		ext.set("ideaHome", "C:/IntelliJ IDEA/");
 		return project;
 	}
 
+	protected Project getProject() {
+		return project != null ? project : initializeProject();
+	}
+
 	protected File getProjectDir() {
-		return project.getProjectDir();
+		return getProject().getProjectDir();
 	}
 
 	protected GradleRunner getRunner() {
