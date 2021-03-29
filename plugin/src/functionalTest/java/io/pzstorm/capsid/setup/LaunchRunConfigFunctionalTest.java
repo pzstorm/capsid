@@ -50,22 +50,6 @@ class LaunchRunConfigFunctionalTest extends FunctionalTest {
 		super("test");
 	}
 
-	@Test
-	void shouldWriteToFileLaunchRunConfigurations() throws TransformerException, IOException {
-
-		for (Map.Entry<LaunchRunConfig, String> entry : RUN_CONFIGS.entrySet())
-		{
-			LaunchRunConfig runConfig = entry.getKey();
-			String expectedFilename = entry.getValue();
-
-			File file = runConfig.configure(getProject()).writeToFile();
-			Assertions.assertEquals(expectedFilename, file.getName());
-
-			String expected = Utils.readResourceAsTextFromStream(getClass(), expectedFilename);
-			String actual = Utils.readTextFromFile(file);
-
-			Assertions.assertEquals(expected, actual);
-		}
 	}
 
 	@Test
