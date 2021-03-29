@@ -31,6 +31,9 @@ public enum SetupTasks {
 	),
 	CREATE_LAUNCH_CONFIGS(CreateLaunchConfigsTask.class, "createLaunchRunConfigs",
 			"build setup", "Create game launch run configurations."
+	),
+	CREATE_MOD_SEARCH_SCOPES(CreateModSearchScopesTask.class, "createModSearchScopes",
+			"build setup", "Create IDEA search scopes for mod files."
 	);
 	final String name, group, description;
 	final Class<? extends CapsidTask> type;
