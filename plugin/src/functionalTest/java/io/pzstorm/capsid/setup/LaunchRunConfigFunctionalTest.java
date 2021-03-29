@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.xml.transform.TransformerException;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -47,9 +46,7 @@ class LaunchRunConfigFunctionalTest extends FunctionalTest {
 	);
 
 	LaunchRunConfigFunctionalTest() {
-		super("test");
-	}
-
+		super("testLaunchRunConfigs");
 	}
 
 	@Test
