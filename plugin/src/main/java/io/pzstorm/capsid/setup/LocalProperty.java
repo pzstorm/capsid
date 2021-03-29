@@ -53,7 +53,7 @@ public class LocalProperty<T> {
 	 * </ul>
 	 * @return value matching this property or default value.
 	 */
-	@Nullable T findProperty(Project project) {
+	public @Nullable T findProperty(Project project) {
 
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 		if (ext.has(name)) {
