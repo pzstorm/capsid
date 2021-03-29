@@ -18,6 +18,7 @@
 package io.pzstorm.capsid;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Objects;
 
 import org.gradle.api.GradleException;
@@ -25,8 +26,12 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
+import org.gradle.api.plugins.Convention;
 import org.gradle.api.plugins.ExtensionContainer;
+import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
 import io.pzstorm.capsid.setup.LocalProperties;
@@ -48,11 +53,11 @@ public class CapsidPlugin implements Plugin<Project> {
         // get project DSL extensions
         ExtensionContainer extensions = project.getExtensions();
 
-        JavaPluginExtension java = Objects.requireNonNull(
+        JavaPluginExtension javaExtension = Objects.requireNonNull(
                 extensions.getByType(JavaPluginExtension.class)
         );
         // ZomboidDoc can only be executed with Java 8
-        java.getToolchain().getLanguageVersion().set(JavaLanguageVersion.of(8));
+        javaExtension.getToolchain().getLanguageVersion().set(JavaLanguageVersion.of(8));
 
         try {
             // load local properties
@@ -65,5 +70,11 @@ public class CapsidPlugin implements Plugin<Project> {
         for (SetupTasks task : SetupTasks.values()) {
             task.register(project);
         }
+        Convention convention = project.getConvention();
+        JavaPluginConvention javaPlugin = convention.getPlugin(JavaPluginConvention.class);
+        SourceSetContainer sourceSets = javaPlugin.getSourceSets();
+
+        SourceSet media = sourceSets.create("media");
+        media.getJava().setSrcDirs(Collections.singletonList("media/lua"));
     }
 }

@@ -17,11 +17,18 @@
  */
 package io.pzstorm.capsid;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
+import java.util.Set;
 
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
+import org.gradle.api.plugins.Convention;
+import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.PluginContainer;
+import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.jvm.toolchain.JavaToolchainSpec;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -54,5 +61,19 @@ class CapsidPluginTest extends PluginUnitTest {
 		);
 		JavaToolchainSpec toolchain = java.getToolchain();
 		Assertions.assertEquals(8, toolchain.getLanguageVersion().get().asInt());
+	}
+
+	@Test
+	void shouldCreateCustomSourceSetsWithSourceDirs() {
+
+		Convention convention = getProject().getConvention();
+		JavaPluginConvention javaPlugin = convention.getPlugin(JavaPluginConvention.class);
+		SourceSetContainer sourceSets = javaPlugin.getSourceSets();
+
+		SourceSet mediaSourceSet = sourceSets.getByName("media");
+		Set<File> sourceDirs = mediaSourceSet.getJava().getSrcDirs();
+
+		Path expectedPath = getProject().getProjectDir().toPath().resolve("media/lua");
+		Assertions.assertTrue(sourceDirs.stream().anyMatch(d -> d.toPath().equals(expectedPath)));
 	}
 }
