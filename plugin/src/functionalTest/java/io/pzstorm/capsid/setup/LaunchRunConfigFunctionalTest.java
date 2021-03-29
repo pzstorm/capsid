@@ -31,6 +31,9 @@ import io.pzstorm.capsid.Utils;
 
 class LaunchRunConfigFunctionalTest extends FunctionalTest {
 
+	LaunchRunConfigFunctionalTest() {
+		super("test");
+	}
 	@Test
 	void shouldWriteToFileLaunchRunConfigurations() throws TransformerException, IOException {
 

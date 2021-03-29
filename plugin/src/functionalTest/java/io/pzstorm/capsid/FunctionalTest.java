@@ -46,9 +46,22 @@ public abstract class FunctionalTest {
 	private static final File PARENT_TEMP_DIR = new File("build/tmp/functionalTest");
 	private static final Set<String> TEMP_DIR_NAMES = new HashSet<>();
 
+	private final String projectName;
+	private final boolean customProjectName;
+
 	private Project project;
 	private File projectDir;
 	private GradleRunner runner;
+
+	public FunctionalTest() {
+		this.projectName = "test" + new Random().nextInt(1000);
+		this.customProjectName = false;
+	}
+
+	protected FunctionalTest(String projectName) {
+		this.projectName = projectName;
+		this.customProjectName = true;
+	}
 
 	@BeforeAll
 	static void cleanTemporaryDirectories() throws IOException {
@@ -70,13 +83,15 @@ public abstract class FunctionalTest {
 	@BeforeEach
 	void createRunner() throws IOException {
 
-		String dirName = "test" + new Random().nextInt(1000);
+		String dirName = customProjectName ? projectName : "test" + new Random().nextInt(1000);
 		this.projectDir = new File(PARENT_TEMP_DIR, dirName);
 		TEMP_DIR_NAMES.add(dirName);
 
 		// Setup the test build
 		Files.createDirectories(projectDir.toPath());
-		writeToFile(new File(projectDir, "settings.gradle"));
+		writeToFile(new File(projectDir, "settings.gradle"),
+				String.format("rootProject.name = '%s'", projectName)
+		);
 		writeToFile(new File(projectDir, "build.gradle"), new String[] {
 				"plugins {",
 				"	id('io.pzstorm.capsid')",
