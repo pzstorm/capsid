@@ -96,10 +96,16 @@ public abstract class XMLDocument {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 
-		DOMSource source = new DOMSource(document);
 		// translate config name to filename (similar to what IDEA is doing)
-		String filename = name.replaceAll("\\s", "_")
-				.replaceAll("[^\\w_]", "").replaceAll("__", "_") + ".xml";
+		String filename = name
+				// replace dashed with underscores
+				.replace('-', '_')
+				// replace whitespaces with underscores
+				.replaceAll("\\s", "_")
+				// remove all non-word characters
+				.replaceAll("[^\\w_]", "")
+				// replace consecutive with single underscores
+				.replaceAll("_+", "_") + ".xml";
 
 		// parent directory
 		if (project == null) {
@@ -129,7 +135,7 @@ public abstract class XMLDocument {
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 
 		// write to file and return destination file
-		transformer.transform(source, new StreamResult(new FileWriter(destination)));
+		transformer.transform(new DOMSource(document), new StreamResult(new FileWriter(destination)));
 	}
 
 	/**
