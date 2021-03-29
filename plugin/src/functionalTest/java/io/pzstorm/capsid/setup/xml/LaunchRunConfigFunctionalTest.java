@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package io.pzstorm.capsid.setup;
+package io.pzstorm.capsid.setup.xml;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.FunctionalTest;
 import io.pzstorm.capsid.Utils;
+import io.pzstorm.capsid.setup.xml.LaunchRunConfig;
 
 class LaunchRunConfigFunctionalTest extends FunctionalTest {
 

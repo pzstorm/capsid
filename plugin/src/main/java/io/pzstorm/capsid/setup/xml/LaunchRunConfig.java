@@ -15,29 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package io.pzstorm.capsid.setup;
+package io.pzstorm.capsid.setup.xml;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
-import org.jetbrains.annotations.Contract;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class LaunchRunConfig {
+import io.pzstorm.capsid.setup.LocalProperties;
+import io.pzstorm.capsid.setup.VmParameter;
 
-	/** Instance of factory used to create new {@link Document} instances. */
-	private static final DocumentBuilderFactory FACTORY = DocumentBuilderFactory.newInstance();
+public class LaunchRunConfig extends XMLDocument {
 
 	public static final LaunchRunConfig RUN_ZOMBOID = new LaunchRunConfig(
 			"Run Zomboid",
@@ -55,21 +50,10 @@ public class LaunchRunConfig {
 			"Debug Zomboid (local)",
 			new VmParameter.Builder().withDebug(true).withSteamIntegration(false).build()
 	);
-	private final String name;
-	private final Document document;
+
 	private final VmParameter vmParameters;
-
-	private Project project;
-
 	public LaunchRunConfig(String name, VmParameter vmParameters) {
-
-		this.name = name;
-		try {
-			this.document = FACTORY.newDocumentBuilder().newDocument();
-		}
-		catch (ParserConfigurationException e) {
-			throw new ExceptionInInitializerError(e);
-		}
+		super(name);
 		this.vmParameters = vmParameters;
 	}
 
@@ -81,10 +65,7 @@ public class LaunchRunConfig {
 	 *
 	 * @throws InvalidUserDataException if {@code gameDir} local property is not initialized.
 	 */
-	@Contract("_ -> this")
 	public LaunchRunConfig configure(Project project) {
-
-		this.project = project;
 
 		// <component name="ProjectRunConfigurationManager">
 		Element component = document.createElement("component");
@@ -157,20 +138,18 @@ public class LaunchRunConfig {
 //
 //		method.appendChild(optionBeforeRunTask);
 
-		return this;
+		return (LaunchRunConfig) super.configure(project);
 	}
 
 	/**
 	 * Write this launch run configuration to {@code XML} file.
-	 *
-	 * @return {@code File} the launch run configuration was written to.
 	 *
 	 * @throws TransformerException if an unrecoverable error occurred while creating an
 	 * 		an instance of {@code Transformer} or during the course of the transformation.
 	 * @throws IOException if the run configuration file does not exist but cannot be created,
 	 * 		or cannot be opened for any other reason.
 	 */
-	public File writeToFile() throws TransformerException, IOException {
+	public void writeToFile() throws TransformerException, IOException {
 
 		// translate config name to filename (similar to what IDEA is doing)
 		String filename = name.replaceAll("\\s", "_")
@@ -179,29 +158,7 @@ public class LaunchRunConfig {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 
-		DOMSource source = new DOMSource(document);
 		File destination = new File(project.getProjectDir(), ".idea/runConfigurations/" + filename);
-
-		// create destination file before trying to write to it
-		if (!destination.exists())
-		{
-			File parentFile = destination.getParentFile();
-			if (!parentFile.exists() && !parentFile.mkdirs()) {
-				throw new IOException("Unable to create directory structure for configuration file '" + filename + '\'');
-			}
-			if (!destination.createNewFile()) {
-				throw new IOException("Unable to create run configuration file '" + filename + '\'');
-			}
-		}
-		// enable xml line indenting
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-
-		// omit xml declaration at top of the file
-		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-
-		// write to file and return destination file
-		transformer.transform(source, new StreamResult(new FileWriter(destination)));
-		return destination;
+		writeToFile(transformer, destination);
 	}
 }

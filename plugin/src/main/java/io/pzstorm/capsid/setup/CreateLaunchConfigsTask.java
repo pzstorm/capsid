@@ -25,6 +25,7 @@ import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.setup.xml.LaunchRunConfig;
 
 @SuppressWarnings("WeakerAccess")
 public class CreateLaunchConfigsTask extends CapsidTask {
