@@ -17,12 +17,11 @@
  */
 package io.pzstorm.capsid.setup.xml;
 
-import java.nio.file.Path;
-
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.w3c.dom.Element;
 
+import io.pzstorm.capsid.UnixPath;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.VmParameter;
 
@@ -98,7 +97,7 @@ public class LaunchRunConfig extends XMLDocument {
 		// <option name="WORKING_DIRECTORY" value="<game_dir>" />
 		Element optionWorkDir = document.createElement("option");
 
-		Path gameDir = LocalProperties.GAME_DIR.findProperty(project);
+		UnixPath gameDir = LocalProperties.GAME_DIR.findProperty(project);
 		if (gameDir == null) {
 			throw new InvalidUserDataException("Unable to find gameDir local property");
 		}

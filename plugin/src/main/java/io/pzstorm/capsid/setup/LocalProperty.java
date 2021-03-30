@@ -17,14 +17,14 @@
  */
 package io.pzstorm.capsid.setup;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.jetbrains.annotations.Nullable;
+
+import io.pzstorm.capsid.UnixPath;
 
 public class LocalProperty<T> {
 
@@ -79,8 +79,8 @@ public class LocalProperty<T> {
 	@SuppressWarnings("unchecked")
 	private T parseProperty(String property) {
 
-		if (type.equals(Path.class)) {
-			return (T) Paths.get(property);
+		if (type.equals(UnixPath.class)) {
+			return (T) UnixPath.get(property);
 		}
 		else if (type.equals(String.class)) {
 			return (T) property;

@@ -20,7 +20,6 @@ package io.pzstorm.capsid.setup.xml;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -54,8 +53,8 @@ class LaunchRunConfigFunctionalTest extends PluginFunctionalTest {
 	void shouldWriteToFileLaunchRunConfigurationsFromTask() throws IOException {
 
 		List<String> arguments = ImmutableList.of(
-				"-PgameDir=" + "C:/ProjectZomboid/",
-				"-PideaHome=" + "C:/IntelliJ IDEA/",
+				String.format("-PgameDir=%s", getGameDirPath().toString()),
+				String.format("-PideaHome=%s", getIdeaHomePath().toString()),
 				"createLaunchRunConfigs"
 		);
 		BuildResult result = getRunner().withArguments(arguments).build();

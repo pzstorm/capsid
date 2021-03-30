@@ -3,6 +3,6 @@
         <option name="MAIN_CLASS_NAME" value="zombie.gameStates.MainScreenState"/>
         <module name="testLaunchRunConfigs.main"/>
         <option name="VM_PARAMETERS" value="-Ddebug=1 -Dzomboid.steam=0 -Dzomboid.znetlog=1 -XX:+UseConcMarkSweepGC -XX:-CreateMinidumpOnCrash -XX:-OmitStackTraceInFastThrow -Xms1800m -Xmx2048m"/>
-        <option name="WORKING_DIRECTORY" value="C:/ProjectZomboid"/>
+        <option name="WORKING_DIRECTORY" value="build/tmp/functionalTest/testLaunchRunConfigs/gameDir"/>
     </configuration>
 </component>

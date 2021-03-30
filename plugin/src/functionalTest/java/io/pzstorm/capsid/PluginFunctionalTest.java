@@ -50,7 +50,7 @@ public abstract class PluginFunctionalTest {
 
 	private Project project;
 	private File projectDir;
-	private File gameDir, ideaHome;
+	private UnixPath gameDir, ideaHome;
 	private GradleRunner runner;
 
 	public PluginFunctionalTest() {
@@ -83,9 +83,9 @@ public abstract class PluginFunctionalTest {
 	void createRunner() throws IOException {
 
 		if (projectDir == null) {
-			projectDir = generateProjectDirectory();
+			projectDir = new File(PARENT_TEMP_DIR, projectName);
 		}
-		TEMP_DIR_NAMES.add(projectDir.getName());
+		TEMP_DIR_NAMES.add(projectName);
 
 		// Setup the test build
 		Files.createDirectories(projectDir.toPath());
@@ -105,16 +105,22 @@ public abstract class PluginFunctionalTest {
 		runner.withProjectDir(projectDir);
 		runner.withDebug(true);
 
-		gameDir = new File(projectDir, "gameDir");
-		Files.createDirectory(gameDir.toPath());
+		gameDir = UnixPath.get(new File(projectDir, "gameDir"));
+		Files.createDirectory(gameDir.convert());
 
-		ideaHome = new File(projectDir, "ideaHome");
-		Files.createDirectory(ideaHome.toPath());
+		File gameMediaDir = new File(gameDir.convert().toFile(), "media");
+		Files.createDirectory(gameMediaDir.toPath());
+
+		for (String dir : new String[] {"lua", "maps", "models"}) {
+			Files.createDirectories(new File(gameMediaDir, dir).toPath());
+		}
+		ideaHome = UnixPath.get(new File(projectDir, "ideaHome"));
+		Files.createDirectory(ideaHome.convert());
 
 		// add project properties
 		runner.withArguments(
-				"-PgameDir=" + gameDir.toPath().toString(),
-				"-PideaHome=" + ideaHome.toPath().toString()
+				"-PgameDir=" + gameDir.toString(),
+				"-PideaHome=" + ideaHome.toString()
 		);
 	}
 
@@ -122,8 +128,8 @@ public abstract class PluginFunctionalTest {
 
 		this.project = ProjectBuilder.builder().withProjectDir(projectDir).build();
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-		ext.set("gameDir", gameDir.toPath().toString());
-		ext.set("ideaHome", ideaHome.toPath().toString());
+		ext.set("gameDir", gameDir.toString());
+		ext.set("ideaHome", ideaHome.toString());
 		return project;
 	}
 
@@ -137,6 +143,14 @@ public abstract class PluginFunctionalTest {
 
 	protected GradleRunner getRunner() {
 		return runner;
+	}
+
+	protected UnixPath getGameDirPath() {
+		return gameDir;
+	}
+
+	protected UnixPath getIdeaHomePath() {
+		return ideaHome;
 	}
 
 	private File generateProjectDirectory() {

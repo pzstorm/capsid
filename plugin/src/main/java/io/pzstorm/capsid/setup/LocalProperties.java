@@ -18,7 +18,6 @@
 package io.pzstorm.capsid.setup;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.util.*;
 
 import org.gradle.api.Project;
@@ -27,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import io.pzstorm.capsid.CapsidPlugin;
+import io.pzstorm.capsid.UnixPath;
 
 public class LocalProperties {
 
@@ -36,23 +36,23 @@ public class LocalProperties {
 	/**
 	 * {@code Path} to Project Zomboid installation directory.
 	 */
-	public static final LocalProperty<Path> GAME_DIR;
+	public static final LocalProperty<UnixPath> GAME_DIR;
 
 	/**
 	 * {@code Path} to IntelliJ IDEA installation directory.
 	 */
-	public static final LocalProperty<Path> IDEA_HOME;
+	public static final LocalProperty<UnixPath> IDEA_HOME;
 
 	static
 	{
 		Set<LocalProperty<?>> properties = new HashSet<>();
 
-		GAME_DIR = new LocalProperty.Builder<Path>("gameDir")
-				.withComment("Path to game installation directory").withType(Path.class)
+		GAME_DIR = new LocalProperty.Builder<UnixPath>("gameDir")
+				.withComment("Path to game installation directory").withType(UnixPath.class)
 				.withEnvironmentVar("PZ_DIR_PATH").build();
 
-		IDEA_HOME = new LocalProperty.Builder<Path>("ideaHome")
-				.withComment("Path to IntelliJ IDEA installation directory").withType(Path.class)
+		IDEA_HOME = new LocalProperty.Builder<UnixPath>("ideaHome")
+				.withComment("Path to IntelliJ IDEA installation directory").withType(UnixPath.class)
 				.withEnvironmentVar("IDEA_HOME").build();
 
 		properties.add(GAME_DIR);

@@ -19,11 +19,7 @@ package io.pzstorm.capsid.setup;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
@@ -54,8 +50,8 @@ class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 
 		GradleRunner runner = getRunner();
 		runner.withArguments(
-				"-DgameDir=C:/ProjectZomboid/",
-				"-DideaHome=C:/IntelliJ IDEA/"
+				String.format("-DgameDir=%s", getGameDirPath().toString()),
+				String.format("-DideaHome=%s", getIdeaHomePath().toString())
 		);
 		Assertions.assertDoesNotThrow(runner::build);
 		assertLocalPropertiesNotNull(true);
@@ -64,11 +60,11 @@ class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldLoadLocalPropertiesFromEnvironmentVariables() throws IOException {
 
-		GradleRunner runner = getRunner().withArguments(new ArrayList<>());
+		GradleRunner runner = getRunner().withArguments(new ArrayList<>(Collections.singletonList("--stacktrace")));
 
 		Map<String, String> arguments = new HashMap<>();
-		arguments.put("PZ_DIR_PATH", "C:/ProjectZomboid/");
-		arguments.put("IDEA_HOME", "C:/IntelliJ IDEA/");
+		arguments.put("PZ_DIR_PATH", getGameDirPath().toString());
+		arguments.put("IDEA_HOME", getIdeaHomePath().toString());
 		runner.withEnvironment(arguments);
 
 		// runner cannot run in debug mode with environment variables
@@ -82,8 +78,8 @@ class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 	void shouldWriteLocalPropertiesToFile() throws IOException {
 
 		writeToFile(new File(getProjectDir(), "local.properties"), new String[] {
-				String.format("gameDir=%s", Paths.get("C:/ProjectZomboid").toString()),
-				String.format("ideaHome=%s", Paths.get("C:/IntelliJ IDEA").toString())
+				String.format("gameDir=%s", getGameDirPath().toString()),
+				String.format("ideaHome=%s", getIdeaHomePath().toString())
 		});
 		// load properties for project before asserting
 		LocalProperties.load(getProject());
@@ -127,7 +123,8 @@ class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 	private void writeLocalPropertiesToFile() throws IOException {
 
 		writeToFile(new File(getProjectDir(), "local.properties"), new String[] {
-				"gameDir=C:/ProjectZomboid/", "ideaHome=C:/IntelliJ IDEA/"
+				String.format("gameDir=%s", getGameDirPath().toString()),
+				String.format("ideaHome=%s", getIdeaHomePath().toString())
 		});
 	}
 }

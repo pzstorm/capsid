@@ -77,13 +77,22 @@ public abstract class PluginUnitTest {
 		Assertions.assertTrue(localProperties.createNewFile());
 
 		File gameDir = new File(projectDir, "gameDir");
+		Files.createDirectory(gameDir.toPath());
+
+		File gameMediaDir = new File(gameDir, "media");
+		Files.createDirectory(gameMediaDir.toPath());
+
+		for (String dir : new String[] {"lua", "maps", "models"}) {
+			Files.createDirectories(new File(gameMediaDir, dir).toPath());
+		}
 		File ideaHome = new File(projectDir, "ideaHome");
+		Files.createFile(ideaHome.toPath());
 
 		try (Writer writer = new FileWriter(localProperties)) {
 			writer.write(String.join("\n",
 					// property values with backslashes are considered malformed
-					"gameDir=" + gameDir.toPath().toString().replace('\\', '/'),
-					"ideaHome=" + ideaHome.toPath().toString().replace('\\', '/')
+					"gameDir=" + UnixPath.get(gameDir).toString(),
+					"ideaHome=" + UnixPath.get(ideaHome).toString()
 			));
 		}
 		project = ProjectBuilder.builder().withProjectDir(projectDir).build();
