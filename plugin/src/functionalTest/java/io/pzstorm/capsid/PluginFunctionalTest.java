@@ -47,20 +47,18 @@ public abstract class PluginFunctionalTest {
 	private static final Set<String> TEMP_DIR_NAMES = new HashSet<>();
 
 	private final String projectName;
-	private final boolean customProjectName;
 
 	private Project project;
 	private File projectDir;
 	private GradleRunner runner;
 
 	public PluginFunctionalTest() {
-		this.projectName = "test" + new Random().nextInt(1000);
-		this.customProjectName = false;
+		this.projectDir = generateProjectDirectory();
+		this.projectName = projectDir.getName();
 	}
 
 	protected PluginFunctionalTest(String projectName) {
 		this.projectName = projectName;
-		this.customProjectName = true;
 	}
 
 	@BeforeAll
@@ -83,9 +81,10 @@ public abstract class PluginFunctionalTest {
 	@BeforeEach
 	void createRunner() throws IOException {
 
-		String dirName = customProjectName ? projectName : "test" + new Random().nextInt(1000);
-		this.projectDir = new File(PARENT_TEMP_DIR, dirName);
-		TEMP_DIR_NAMES.add(dirName);
+		if (projectDir == null) {
+			projectDir = generateProjectDirectory();
+		}
+		TEMP_DIR_NAMES.add(projectDir.getName());
 
 		// Setup the test build
 		Files.createDirectories(projectDir.toPath());
@@ -105,10 +104,13 @@ public abstract class PluginFunctionalTest {
 		runner.withProjectDir(projectDir);
 		runner.withDebug(true);
 
+		File gameDir = new File(projectDir, "gameDir");
+		File ideaHome = new File(projectDir, "ideaHome");
+
 		// add project properties
 		runner.withArguments(
-				"-PgameDir=C:/ProjectZomboid/",
-				"-PideaHome=C:/IntelliJ IDEA/"
+				"-PgameDir=" + gameDir.toPath().toString(),
+				"-PideaHome=" + ideaHome.toPath().toString()
 		);
 	}
 
@@ -131,6 +133,20 @@ public abstract class PluginFunctionalTest {
 
 	protected GradleRunner getRunner() {
 		return runner;
+	}
+
+	private File generateProjectDirectory() {
+
+		// generate a directory name that doesn't exist yet
+		File result = getRandomProjectDirectory();
+		while (result.exists()) {
+			result = getRandomProjectDirectory();
+		}
+		return result;
+	}
+
+	private File getRandomProjectDirectory() {
+		return new File(PARENT_TEMP_DIR, "test" + new Random().nextInt(1000));
 	}
 
 	protected void writeToProjectFile(String path, String[] lines) throws IOException {

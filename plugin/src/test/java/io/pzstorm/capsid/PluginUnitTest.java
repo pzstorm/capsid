@@ -18,7 +18,9 @@
 package io.pzstorm.capsid;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -65,14 +67,41 @@ public abstract class PluginUnitTest {
 
 	@BeforeEach
 	@SuppressWarnings("unchecked")
-	void createProjectAndApplyPlugin() {
+	void createProjectAndApplyPlugin() throws IOException {
 
-		String dirName = "test" + new Random().nextInt(1000);
-		File tempDir = new File(PARENT_TEMP_DIR, dirName);
-		TEMP_DIR_NAMES.add(dirName);
+		File projectDir = generateProjectDirectory();
+		Assertions.assertTrue(projectDir.mkdirs());
+		TEMP_DIR_NAMES.add(projectDir.getName());
 
-		project = ProjectBuilder.builder().withProjectDir(tempDir).build();
+		File localProperties = new File(projectDir, "local.properties");
+		Assertions.assertTrue(localProperties.createNewFile());
+
+		File gameDir = new File(projectDir, "gameDir");
+		File ideaHome = new File(projectDir, "ideaHome");
+
+		try (Writer writer = new FileWriter(localProperties)) {
+			writer.write(String.join("\n",
+					// property values with backslashes are considered malformed
+					"gameDir=" + gameDir.toPath().toString().replace('\\', '/'),
+					"ideaHome=" + ideaHome.toPath().toString().replace('\\', '/')
+			));
+		}
+		project = ProjectBuilder.builder().withProjectDir(projectDir).build();
 		plugin = project.getPlugins().apply("io.pzstorm.capsid");
+	}
+
+	private File generateProjectDirectory() {
+
+		// generate a directory name that doesn't exist yet
+		File result = getRandomProjectDirectory();
+		while (result.exists()) {
+			result = getRandomProjectDirectory();
+		}
+		return result;
+	}
+
+	private File getRandomProjectDirectory() {
+		return new File(PARENT_TEMP_DIR, "test" + new Random().nextInt(1000));
 	}
 
 	protected Project getProject() {
