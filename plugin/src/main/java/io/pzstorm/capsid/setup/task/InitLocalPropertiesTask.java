@@ -29,7 +29,7 @@ import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.setup.LocalProperties;
-import io.pzstorm.capsid.setup.LocalProperty;
+import io.pzstorm.capsid.property.LocalProperty;
 
 @SuppressWarnings("WeakerAccess")
 public class InitLocalPropertiesTask extends CapsidTask {

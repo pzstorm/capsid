@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.Utils;
+import io.pzstorm.capsid.property.LocalProperty;
 
 class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 

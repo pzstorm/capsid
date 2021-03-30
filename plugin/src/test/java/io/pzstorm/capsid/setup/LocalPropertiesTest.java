@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginUnitTest;
+import io.pzstorm.capsid.property.LocalProperty;
 
 class LocalPropertiesTest extends PluginUnitTest {
 
