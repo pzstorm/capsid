@@ -17,9 +17,15 @@
  */
 package io.pzstorm.capsid;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
 public class CapsidPluginExtension {
 
+	public Set<String> excludedResourceDirs = new HashSet<>();
+
+	public boolean isExcludedResource(String path) {
+		return excludedResourceDirs.contains(path);
+	}
 }

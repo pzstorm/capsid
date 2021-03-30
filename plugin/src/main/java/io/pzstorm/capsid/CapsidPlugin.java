@@ -69,11 +69,20 @@ public class CapsidPlugin implements Plugin<Project> {
         for (SetupTasks task : SetupTasks.values()) {
             task.register(project);
         }
+        // path to game installation directory
+        UnixPath gameDir = Objects.requireNonNull(LocalProperties.GAME_DIR.findProperty(project));
+
         Convention convention = project.getConvention();
         JavaPluginConvention javaPlugin = convention.getPlugin(JavaPluginConvention.class);
         SourceSet media = javaPlugin.getSourceSets().create("media");
 
         // set media java source directory
         media.getJava().setSrcDirs(Collections.singletonList("media/lua"));
+
+        // set media resource source directories
+        media.getResources().setSrcDirs(new HashSet<>(
+                Arrays.asList(gameDir.convert().resolve("media").toFile().listFiles(pathname ->
+                        pathname.isDirectory() && !capsid.isExcludedResource("media/" + pathname.getName()))
+        )));
     }
 }
