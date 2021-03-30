@@ -35,7 +35,7 @@ public enum SetupTasks {
 	CREATE_MOD_SEARCH_SCOPES(CreateModSearchScopesTask.class, "createModSearchScopes",
 			"build setup", "Create IDEA search scopes for mod files."
 	);
-	final String name, group, description;
+	public final String name, group, description;
 	final Class<? extends CapsidTask> type;
 
 	SetupTasks(Class<? extends CapsidTask> type, String name, String group, String description) {
