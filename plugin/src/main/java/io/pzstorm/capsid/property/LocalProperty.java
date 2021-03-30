@@ -65,12 +65,25 @@ public class LocalProperty<T> {
 	 *     <li>Environment variables.</li>
 	 * </ul>
 	 * @return value matching this property or default value.
+	 * @throws InvalidUserDataException when a property was not
+	 * 		found or was found but is of unsupported type.
 	 */
 	public @Nullable T findProperty(Project project) {
 
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-		if (ext.has(name)) {
-			return convertAndValidateProperty((String) Objects.requireNonNull(ext.get(name)));
+		if (ext.has(name))
+		{
+			Object foundProperty = Objects.requireNonNull(ext.get(name));
+			if (foundProperty instanceof String) {
+				return convertAndValidateProperty((String) foundProperty);
+			}
+			else if (type.isInstance(foundProperty)) {
+				return validator.validate(type.cast(foundProperty));
+			}
+			else {
+				String msg = "Found project property is of unsupported type '%s'";
+				throw new InvalidUserDataException(String.format(msg, foundProperty.getClass().getName()));
+			}
 		}
 		// try to find a matching system property first
 		String sysProperty = System.getProperty(name);
