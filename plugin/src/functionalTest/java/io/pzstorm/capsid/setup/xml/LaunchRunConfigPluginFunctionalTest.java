@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import org.gradle.testkit.runner.BuildResult;
@@ -52,9 +53,11 @@ class LaunchRunConfigPluginFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldWriteToFileLaunchRunConfigurationsFromTask() throws IOException {
 
-		List<String> arguments = new ArrayList<>(getRunner().getArguments());
-		arguments.add("createLaunchRunConfigs");
-
+		List<String> arguments = ImmutableList.of(
+				"-PgameDir=" + "C:/ProjectZomboid/",
+				"-PideaHome=" + "C:/IntelliJ IDEA/",
+				"createLaunchRunConfigs"
+		);
 		BuildResult result = getRunner().withArguments(arguments).build();
 		BuildTask task = Objects.requireNonNull(result.task(":createLaunchRunConfigs"));
 		Assertions.assertEquals(TaskOutcome.SUCCESS, task.getOutcome());
