@@ -32,6 +32,7 @@ public class LocalProperty<T> {
 	public final Class<T> type;
 	public final boolean required;
 	private final @Nullable T defaultValue;
+	private final PropertyValidator<T> validator;
 
 	private LocalProperty(Builder<T> builder) {
 
@@ -41,6 +42,7 @@ public class LocalProperty<T> {
 		this.type = builder.type;
 		this.defaultValue = builder.defaultValue;
 		this.required = builder.required;
+		this.validator = builder.validator;
 	}
 
 	/**
@@ -80,10 +82,10 @@ public class LocalProperty<T> {
 	private T parseProperty(String property) {
 
 		if (type.equals(UnixPath.class)) {
-			return (T) UnixPath.get(property);
+			return validator.validate((T) UnixPath.get(property));
 		}
 		else if (type.equals(String.class)) {
-			return (T) property;
+			return validator.validate((T) property);
 		}
 		else throw new InvalidUserDataException("Unsupported local property type " + type.getName());
 	}
@@ -94,6 +96,7 @@ public class LocalProperty<T> {
 		private String env;
 		private Class<T> type;
 		private String comment = "";
+		private PropertyValidator<T> validator;
 		private @Nullable T defaultValue = null;
 		private boolean required = true;
 
@@ -123,6 +126,11 @@ public class LocalProperty<T> {
 
 		public Builder<T> isRequired(boolean required) {
 			this.required = required;
+			return this;
+		}
+
+		public Builder<T> withValidator(PropertyValidator<T> validator) {
+			this.validator = validator;
 			return this;
 		}
 
