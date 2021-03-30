@@ -17,7 +17,9 @@
  */
 package io.pzstorm.capsid;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.*;
 
 import org.gradle.api.GradleException;
@@ -80,10 +82,14 @@ public class CapsidPlugin implements Plugin<Project> {
         // set media java source directory
         media.getJava().setSrcDirs(Collections.singletonList("media/lua"));
 
+        List<File> mediaFiles = Arrays.asList(gameDir.convert().resolve("media").toFile().listFiles(pathname ->
+                pathname.isDirectory() && !capsid.isExcludedResource("media/" + pathname.getName()))
+        );
+        Set<File> resourceSrcDirs = new HashSet<>();
+        mediaFiles.forEach(f -> resourceSrcDirs.add(
+                Paths.get(project.getProjectDir().toPath().toString(), "media", f.getName()).toFile())
+        );
         // set media resource source directories
-        media.getResources().setSrcDirs(new HashSet<>(
-                Arrays.asList(gameDir.convert().resolve("media").toFile().listFiles(pathname ->
-                        pathname.isDirectory() && !capsid.isExcludedResource("media/" + pathname.getName()))
-        )));
+        media.getResources().setSrcDirs(resourceSrcDirs);
     }
 }
