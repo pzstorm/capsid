@@ -18,8 +18,7 @@
 package io.pzstorm.capsid;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
@@ -31,7 +30,6 @@ import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
 import io.pzstorm.capsid.setup.LocalProperties;
@@ -73,9 +71,9 @@ public class CapsidPlugin implements Plugin<Project> {
         }
         Convention convention = project.getConvention();
         JavaPluginConvention javaPlugin = convention.getPlugin(JavaPluginConvention.class);
-        SourceSetContainer sourceSets = javaPlugin.getSourceSets();
+        SourceSet media = javaPlugin.getSourceSets().create("media");
 
-        SourceSet media = sourceSets.create("media");
+        // set media java source directory
         media.getJava().setSrcDirs(Collections.singletonList("media/lua"));
     }
 }
