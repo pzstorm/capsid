@@ -22,17 +22,26 @@ import java.util.Objects;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import io.pzstorm.capsid.UnixPath;
 
+/**
+ * This class represents a property loaded from local properties file.
+ *
+ * @param <T> type of property.
+ */
 public class LocalProperty<T> {
 
 	public static final DirectoryPathValidator DIRECTORY_PATH_VALIDATOR = new DirectoryPathValidator();
 
-	public final String name, env, comment;
+	public final String name;
+	public final String comment;
 	public final Class<T> type;
 	public final boolean required;
+
+	private final String env;
 	private final @Nullable T defaultValue;
 	private final PropertyValidator<T> validator;
 
@@ -61,7 +70,7 @@ public class LocalProperty<T> {
 
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 		if (ext.has(name)) {
-			return parseProperty((String) Objects.requireNonNull(ext.get(name)));
+			return convertAndValidateProperty((String) Objects.requireNonNull(ext.get(name)));
 		}
 		// try to find a matching system property first
 		String sysProperty = System.getProperty(name);
@@ -70,18 +79,26 @@ public class LocalProperty<T> {
 			// when env parameter is not defined search for env variable with property name
 			String envVar = System.getenv(env != null && !env.isEmpty() ? env : name);
 			if (envVar != null) {
-				return parseProperty(envVar);
+				return convertAndValidateProperty(envVar);
 			}
 			else if (required && defaultValue == null) {
 				throw new InvalidUserDataException("Unable to find local project property " + name);
 			}
 			else return defaultValue;
 		}
-		else return parseProperty(sysProperty);
+		else return convertAndValidateProperty(sysProperty);
 	}
 
+	/**
+	 * Convert and validate the given property to {@code Class} {@link #type}.
+	 *
+	 * @param property property to convert and validate.
+	 * @return converted and validated property.
+	 *
+	 * @throws InvalidUserDataException if property is of unsupported type.
+	 */
 	@SuppressWarnings("unchecked")
-	private T parseProperty(String property) {
+	private T convertAndValidateProperty(String property) {
 
 		if (type.equals(UnixPath.class)) {
 			return validator.validate((T) UnixPath.get(property));
@@ -102,40 +119,76 @@ public class LocalProperty<T> {
 		private @Nullable T defaultValue = null;
 		private boolean required = true;
 
+		/**
+		 * Start building {@link LocalProperty} instance.
+		 * @param name name of the property to build.
+		 */
 		public Builder(String name) {
 			this.name = name;
 		}
 
+		/**
+		 * Associate property with given environment variable.
+		 */
+		@Contract("_ -> this")
 		public Builder<T> withEnvironmentVar(String env) {
 			this.env = env;
 			return this;
 		}
 
+		/**
+		 * Set property to be of given class type.
+		 */
+		@Contract("_ -> this")
 		public Builder<T> withType(Class<T> type) {
 			this.type = type;
 			return this;
 		}
 
-		public Builder<T> withDefaultValue(T defaultValue) {
+		/**
+		 * Set default value to use when property is not found.
+		 *
+		 * @see #isRequired(boolean)
+		 */
+		@Contract("_ -> this")
+		public Builder<T> withDefaultValue(@Nullable T defaultValue) {
 			this.defaultValue = defaultValue;
 			return this;
 		}
 
+		/**
+		 * Set property comment to be written when saved to {@code Properties} file.
+		 */
+		@Contract("_ -> this")
 		public Builder<T> withComment(String comment) {
 			this.comment = comment;
 			return this;
 		}
 
+		/**
+		 * Marks the property as <i>required</i> or not. Finding the property with
+		 * {@link #findProperty(Project)} will produce an exception if a required
+		 * property cannot be found and no default value is designated.
+		 */
+		@Contract("_ -> this")
 		public Builder<T> isRequired(boolean required) {
 			this.required = required;
 			return this;
 		}
 
+		/**
+		 * Designate a property validator used to assert if property is valid or not.
+		 */
+		@Contract("_ -> this")
 		public Builder<T> withValidator(PropertyValidator<T> validator) {
 			this.validator = validator;
 			return this;
 		}
 
+		/**
+		 * Returns a new instance of {@link LocalProperty} with held configuration.
+		 */
+		@Contract(" -> new")
 		public LocalProperty<T> build() {
 			return new LocalProperty<>(this);
 		}
