@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import io.pzstorm.capsid.CapsidPlugin;
-import io.pzstorm.capsid.UnixPath;
+import io.pzstorm.capsid.util.UnixPath;
 import io.pzstorm.capsid.property.LocalProperty;
 
 public class LocalProperties {

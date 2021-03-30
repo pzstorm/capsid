@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginUnitTest;
-import io.pzstorm.capsid.UnixPath;
+import io.pzstorm.capsid.util.UnixPath;
 
 class DirectoryPathValidatorTest extends PluginUnitTest {
 

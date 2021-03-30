@@ -21,7 +21,7 @@ import java.io.File;
 
 import org.gradle.api.InvalidUserDataException;
 
-import io.pzstorm.capsid.UnixPath;
+import io.pzstorm.capsid.util.UnixPath;
 
 /**
  * This class validates a directory {@link UnixPath}.

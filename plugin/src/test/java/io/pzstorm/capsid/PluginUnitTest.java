@@ -39,6 +39,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 
+import io.pzstorm.capsid.util.UnixPath;
+
 @Tag("unit")
 public abstract class PluginUnitTest {
 

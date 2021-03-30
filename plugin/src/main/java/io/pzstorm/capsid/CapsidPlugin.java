@@ -34,6 +34,7 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.task.SetupTasks;
+import io.pzstorm.capsid.util.UnixPath;
 
 @SuppressWarnings("UnstableApiUsage")
 public class CapsidPlugin implements Plugin<Project> {

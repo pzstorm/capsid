@@ -25,7 +25,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
-import io.pzstorm.capsid.UnixPath;
+import io.pzstorm.capsid.util.UnixPath;
 
 /**
  * This class represents a property loaded from local properties file.

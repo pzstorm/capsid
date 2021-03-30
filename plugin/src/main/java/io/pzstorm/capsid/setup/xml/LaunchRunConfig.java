@@ -21,7 +21,7 @@ import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.w3c.dom.Element;
 
-import io.pzstorm.capsid.UnixPath;
+import io.pzstorm.capsid.util.UnixPath;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.VmParameter;
 
