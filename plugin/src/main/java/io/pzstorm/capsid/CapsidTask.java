@@ -19,11 +19,12 @@ package io.pzstorm.capsid;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 
 /**
- * Standard implementation of {@link DefaultTask} for Capsid project.
+ * Standard contract for all plugin task implementations.
  */
-public abstract class CapsidTask extends DefaultTask {
+public interface CapsidTask extends Task {
 
 	/**
 	 * Configure this task with basic metadata.
@@ -32,7 +33,7 @@ public abstract class CapsidTask extends DefaultTask {
 	 * @param description description for this task.
 	 * @param project {@code Project} configuring the task.
 	 */
-	public void configure(String group, String description, Project project) {
+	default void configure(String group, String description, Project project) {
 		setGroup(group);
 		setDescription(description);
 	}

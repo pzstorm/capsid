@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import javax.xml.transform.TransformerException;
 
+import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
 
@@ -28,7 +29,7 @@ import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.setup.xml.LaunchRunConfig;
 
 @SuppressWarnings("WeakerAccess")
-public class CreateLaunchConfigsTask extends CapsidTask {
+public class CreateLaunchConfigsTask extends DefaultTask implements CapsidTask {
 
 	@TaskAction
 	void execute() throws IOException, TransformerException {

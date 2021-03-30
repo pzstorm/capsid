@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.tools.ant.taskdefs.Input;
+import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.TaskAction;
@@ -32,7 +33,7 @@ import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.property.LocalProperty;
 
 @SuppressWarnings("WeakerAccess")
-public class InitLocalPropertiesTask extends CapsidTask {
+public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
 
 	@TaskAction
 	void execute() throws IOException {
