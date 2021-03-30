@@ -28,6 +28,8 @@ import io.pzstorm.capsid.UnixPath;
 
 public class LocalProperty<T> {
 
+	public static final DirectoryPathValidator DIRECTORY_PATH_VALIDATOR = new DirectoryPathValidator();
+
 	public final String name, env, comment;
 	public final Class<T> type;
 	public final boolean required;

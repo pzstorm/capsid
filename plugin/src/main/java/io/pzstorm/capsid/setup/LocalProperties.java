@@ -51,11 +51,13 @@ public class LocalProperties {
 		GAME_DIR = new LocalProperty.Builder<UnixPath>("gameDir")
 				.withComment("Path to game installation directory")
 				.withType(UnixPath.class).withEnvironmentVar("PZ_DIR_PATH")
+				.withValidator(LocalProperty.DIRECTORY_PATH_VALIDATOR)
 				.build();
 
 		IDEA_HOME = new LocalProperty.Builder<UnixPath>("ideaHome")
 				.withComment("Path to IntelliJ IDEA installation directory")
 				.withType(UnixPath.class).withEnvironmentVar("IDEA_HOME")
+				.withValidator(LocalProperty.DIRECTORY_PATH_VALIDATOR)
 				.build();
 
 		properties.add(GAME_DIR);
