@@ -44,14 +44,15 @@ public class CapsidPlugin implements Plugin<Project> {
 
     public void apply(Project project) {
 
+        // add the plugin extension object
+        ExtensionContainer extensions = project.getExtensions();
+        CapsidPluginExtension capsid = extensions.create("capsid", CapsidPluginExtension.class);
+
         // apply all core plugins to this project
         CorePlugin.applyAll(project);
 
         // add Maven Central repository
         project.getRepositories().mavenCentral();
-
-        // get project DSL extensions
-        ExtensionContainer extensions = project.getExtensions();
 
         JavaPluginExtension javaExtension = Objects.requireNonNull(
                 extensions.getByType(JavaPluginExtension.class)
