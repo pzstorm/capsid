@@ -59,13 +59,13 @@ public class InitLocalPropertiesTask extends CapsidTask {
 		Input inputTask = (Input) antProject.createTask("input");
 		for (LocalProperty<?> property : LocalProperties.get())
 		{
-			inputTask.setAddproperty(property.getName());
+			inputTask.setAddproperty(property.name);
 			inputTask.setMessage(PROPERTIES_INPUT_MAP.get(property));
 			inputTask.execute();
 
 			// transfer properties from ant to gradle
-			String antProperty = antProject.getProperty(property.getName());
-			ext.set(property.getName(), antProperty);
+			String antProperty = antProject.getProperty(property.name);
+			ext.set(property.name, antProperty);
 		}
 		// write local properties to file
 		LocalProperties.writeToFile(gradleProject);

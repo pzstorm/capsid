@@ -28,10 +28,10 @@ import io.pzstorm.capsid.UnixPath;
 
 public class LocalProperty<T> {
 
-	final String name, env, comment;
-	final Class<T> type;
-	final @Nullable T defaultValue;
-	final boolean required;
+	public final String name, env, comment;
+	public final Class<T> type;
+	public final boolean required;
+	private final @Nullable T defaultValue;
 
 	private LocalProperty(Builder<T> builder) {
 
@@ -88,12 +88,7 @@ public class LocalProperty<T> {
 		else throw new InvalidUserDataException("Unsupported local property type " + type.getName());
 	}
 
-	/** Returns the name of this property. */
-	public String getName() {
-		return name;
-	}
-
-	static class Builder<T> {
+	public static class Builder<T> {
 
 		private final String name;
 		private String env;
@@ -102,36 +97,36 @@ public class LocalProperty<T> {
 		private @Nullable T defaultValue = null;
 		private boolean required = true;
 
-		Builder(String name) {
+		public Builder(String name) {
 			this.name = name;
 		}
 
-		Builder<T> withEnvironmentVar(String env) {
+		public Builder<T> withEnvironmentVar(String env) {
 			this.env = env;
 			return this;
 		}
 
-		Builder<T> withType(Class<T> type) {
+		public Builder<T> withType(Class<T> type) {
 			this.type = type;
 			return this;
 		}
 
-		Builder<T> withDefaultValue(T defaultValue) {
+		public Builder<T> withDefaultValue(T defaultValue) {
 			this.defaultValue = defaultValue;
 			return this;
 		}
 
-		Builder<T> withComment(String comment) {
+		public Builder<T> withComment(String comment) {
 			this.comment = comment;
 			return this;
 		}
 
-		Builder<T> isRequired(boolean required) {
+		public Builder<T> isRequired(boolean required) {
 			this.required = required;
 			return this;
 		}
 
-		LocalProperty<T> build() {
+		public LocalProperty<T> build() {
 			return new LocalProperty<>(this);
 		}
 	}

@@ -49,12 +49,14 @@ public class LocalProperties {
 		Set<LocalProperty<?>> properties = new HashSet<>();
 
 		GAME_DIR = new LocalProperty.Builder<UnixPath>("gameDir")
-				.withComment("Path to game installation directory").withType(UnixPath.class)
-				.withEnvironmentVar("PZ_DIR_PATH").build();
+				.withComment("Path to game installation directory")
+				.withType(UnixPath.class).withEnvironmentVar("PZ_DIR_PATH")
+				.build();
 
 		IDEA_HOME = new LocalProperty.Builder<UnixPath>("ideaHome")
-				.withComment("Path to IntelliJ IDEA installation directory").withType(UnixPath.class)
-				.withEnvironmentVar("IDEA_HOME").build();
+				.withComment("Path to IntelliJ IDEA installation directory")
+				.withType(UnixPath.class).withEnvironmentVar("IDEA_HOME")
+				.build();
 
 		properties.add(GAME_DIR);
 		properties.add(IDEA_HOME);
@@ -98,14 +100,13 @@ public class LocalProperties {
 			ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 			for (LocalProperty<?> property : PROPERTIES)
 			{
-				String name = property.getName();
-				String foundProperty = properties.getProperty(name, "");
+				String foundProperty = properties.getProperty(property.name, "");
 				if (!foundProperty.isEmpty()) {
-					ext.set(name, foundProperty);
+					ext.set(property.name, foundProperty);
 				}
 				// if no property found from file try other locations
-				else if (!ext.has(name)) {
-					ext.set(name, property.findProperty(project));
+				else if (!ext.has(property.name)) {
+					ext.set(property.name, property.findProperty(project));
 				}
 			}
 		}
