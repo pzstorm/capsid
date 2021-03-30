@@ -22,18 +22,16 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.BuildTask;
-import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
+import io.pzstorm.capsid.setup.task.SetupTasks;
 import io.pzstorm.capsid.util.Utils;
 
 class LaunchRunConfigFunctionalTest extends PluginFunctionalTest {
@@ -55,11 +53,10 @@ class LaunchRunConfigFunctionalTest extends PluginFunctionalTest {
 		List<String> arguments = ImmutableList.of(
 				String.format("-PgameDir=%s", getGameDirPath().toString()),
 				String.format("-PideaHome=%s", getIdeaHomePath().toString()),
-				"createLaunchRunConfigs"
+				SetupTasks.CREATE_LAUNCH_CONFIGS.name
 		);
 		BuildResult result = getRunner().withArguments(arguments).build();
-		BuildTask task = Objects.requireNonNull(result.task(":createLaunchRunConfigs"));
-		Assertions.assertEquals(TaskOutcome.SUCCESS, task.getOutcome());
+		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_LAUNCH_CONFIGS.name);
 
 		Path runConfigurations = getProjectDir().toPath().resolve(".idea/runConfigurations");
 		for (Map.Entry<LaunchRunConfig, String> entry : RUN_CONFIGS.entrySet())

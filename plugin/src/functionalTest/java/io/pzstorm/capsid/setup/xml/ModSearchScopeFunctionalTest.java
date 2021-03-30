@@ -23,17 +23,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import com.google.common.collect.ImmutableMap;
 
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.BuildTask;
-import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
+import io.pzstorm.capsid.setup.task.SetupTasks;
 import io.pzstorm.capsid.util.Utils;
 
 class ModSearchScopeFunctionalTest extends PluginFunctionalTest {
@@ -51,11 +49,10 @@ class ModSearchScopeFunctionalTest extends PluginFunctionalTest {
 	void shouldWriteToFileModSearchScopes() throws IOException {
 
 		List<String> arguments = new ArrayList<>(getRunner().getArguments());
-		arguments.add("createModSearchScopes");
+		arguments.add(SetupTasks.CREATE_MOD_SEARCH_SCOPES.name);
 
 		BuildResult result = getRunner().withArguments(arguments).build();
-		BuildTask task = Objects.requireNonNull(result.task(":createModSearchScopes"));
-		Assertions.assertEquals(TaskOutcome.SUCCESS, task.getOutcome());
+		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_MOD_SEARCH_SCOPES.name);
 
 		Path searchScopes = getProjectDir().toPath().resolve(".idea/scopes/");
 		for (Map.Entry<ModSearchScope, String> entry : SEARCH_SCOPES.entrySet())

@@ -24,6 +24,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,7 +35,10 @@ import com.google.common.io.RecursiveDeleteOption;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.testfixtures.ProjectBuilder;
+import org.gradle.testkit.runner.BuildResult;
+import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
+import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -177,5 +181,11 @@ public abstract class PluginFunctionalTest {
 		try (Writer writer = new FileWriter(file)) {
 			writer.write(String.join("\n", lines));
 		}
+	}
+
+	protected static void assertTaskOutcomeSuccess(BuildResult result, String taskName) {
+
+		BuildTask task = Objects.requireNonNull(result.task(':' + taskName));
+		Assertions.assertEquals(TaskOutcome.SUCCESS, task.getOutcome());
 	}
 }
