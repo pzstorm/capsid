@@ -17,5 +17,5 @@
  */
 package io.pzstorm.capsid;
 
-class CapsidPluginPluginFunctionalTest extends PluginFunctionalTest {
+class CapsidPluginFunctionalTest extends PluginFunctionalTest {
 }

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import org.gradle.testkit.runner.BuildResult;
@@ -36,32 +37,36 @@ import org.junit.jupiter.api.Test;
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.Utils;
 
-class ModSearchScopePluginFunctionalTest extends PluginFunctionalTest {
+class LaunchRunConfigFunctionalTest extends PluginFunctionalTest {
 
-	private static final Map<ModSearchScope, String> SEARCH_SCOPES = ImmutableMap.of(
-			ModSearchScope.MOD_LUA, "mod_lua.xml",
-			ModSearchScope.MOD_MEDIA, "mod_media.xml"
+	private static final Map<LaunchRunConfig, String> RUN_CONFIGS = ImmutableMap.of(
+			LaunchRunConfig.RUN_ZOMBOID, "Run_Zomboid.xml",
+			LaunchRunConfig.RUN_ZOMBOID_LOCAL, "Run_Zomboid_local.xml",
+			LaunchRunConfig.DEBUG_ZOMBOID, "Debug_Zomboid.xml",
+			LaunchRunConfig.DEBUG_ZOMBOID_LOCAL, "Debug_Zomboid_local.xml"
 	);
 
-	ModSearchScopePluginFunctionalTest() {
-		super("modSearchScopes");
+	LaunchRunConfigFunctionalTest() {
+		super("testLaunchRunConfigs");
 	}
 
 	@Test
-	void shouldWriteToFileModSearchScopes() throws IOException {
+	void shouldWriteToFileLaunchRunConfigurationsFromTask() throws IOException {
 
-		List<String> arguments = new ArrayList<>(getRunner().getArguments());
-		arguments.add("createModSearchScopes");
-
+		List<String> arguments = ImmutableList.of(
+				"-PgameDir=" + "C:/ProjectZomboid/",
+				"-PideaHome=" + "C:/IntelliJ IDEA/",
+				"createLaunchRunConfigs"
+		);
 		BuildResult result = getRunner().withArguments(arguments).build();
-		BuildTask task = Objects.requireNonNull(result.task(":createModSearchScopes"));
+		BuildTask task = Objects.requireNonNull(result.task(":createLaunchRunConfigs"));
 		Assertions.assertEquals(TaskOutcome.SUCCESS, task.getOutcome());
 
-		Path searchScopes = getProjectDir().toPath().resolve(".idea/scopes/");
-		for (Map.Entry<ModSearchScope, String> entry : SEARCH_SCOPES.entrySet())
+		Path runConfigurations = getProjectDir().toPath().resolve(".idea/runConfigurations");
+		for (Map.Entry<LaunchRunConfig, String> entry : RUN_CONFIGS.entrySet())
 		{
 			String filename = entry.getValue();
-			File runConfig = searchScopes.resolve(filename).toFile();
+			File runConfig = runConfigurations.resolve(filename).toFile();
 			Assertions.assertTrue(runConfig.exists());
 
 			String expected = Utils.readResourceAsTextFromStream(getClass(), filename);

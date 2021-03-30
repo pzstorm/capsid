@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.Utils;
 
-class LocalPropertiesPluginFunctionalTest extends PluginFunctionalTest {
+class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 
 	@Test
 	void shouldLoadLocalPropertiesFromFile() throws IOException {
