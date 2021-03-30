@@ -50,6 +50,7 @@ public abstract class PluginFunctionalTest {
 
 	private Project project;
 	private File projectDir;
+	private File gameDir, ideaHome;
 	private GradleRunner runner;
 
 	public PluginFunctionalTest() {
@@ -104,8 +105,11 @@ public abstract class PluginFunctionalTest {
 		runner.withProjectDir(projectDir);
 		runner.withDebug(true);
 
-		File gameDir = new File(projectDir, "gameDir");
-		File ideaHome = new File(projectDir, "ideaHome");
+		gameDir = new File(projectDir, "gameDir");
+		Files.createDirectory(gameDir.toPath());
+
+		ideaHome = new File(projectDir, "ideaHome");
+		Files.createDirectory(ideaHome.toPath());
 
 		// add project properties
 		runner.withArguments(
@@ -118,8 +122,8 @@ public abstract class PluginFunctionalTest {
 
 		this.project = ProjectBuilder.builder().withProjectDir(projectDir).build();
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-		ext.set("gameDir", "C:/ProjectZomboid/");
-		ext.set("ideaHome", "C:/IntelliJ IDEA/");
+		ext.set("gameDir", gameDir.toPath().toString());
+		ext.set("ideaHome", ideaHome.toPath().toString());
 		return project;
 	}
 
