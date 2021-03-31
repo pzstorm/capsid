@@ -27,37 +27,37 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.util.UnixPath;
-import io.pzstorm.capsid.property.LocalProperty;
+import io.pzstorm.capsid.property.CapsidProperty;
 
 public class LocalProperties {
 
 	@UnmodifiableView
-	private static final Set<LocalProperty<?>> PROPERTIES;
+	private static final Set<CapsidProperty<?>> PROPERTIES;
 
 	/**
 	 * {@code Path} to Project Zomboid installation directory.
 	 */
-	public static final LocalProperty<UnixPath> GAME_DIR;
+	public static final CapsidProperty<UnixPath> GAME_DIR;
 
 	/**
 	 * {@code Path} to IntelliJ IDEA installation directory.
 	 */
-	public static final LocalProperty<UnixPath> IDEA_HOME;
+	public static final CapsidProperty<UnixPath> IDEA_HOME;
 
 	static
 	{
-		Set<LocalProperty<?>> properties = new HashSet<>();
+		Set<CapsidProperty<?>> properties = new HashSet<>();
 
-		GAME_DIR = new LocalProperty.Builder<UnixPath>("gameDir")
+		GAME_DIR = new CapsidProperty.Builder<UnixPath>("gameDir")
 				.withComment("Path to game installation directory")
 				.withType(UnixPath.class).withEnvironmentVar("PZ_DIR_PATH")
-				.withValidator(LocalProperty.DIRECTORY_PATH_VALIDATOR)
+				.withValidator(CapsidProperty.DIRECTORY_PATH_VALIDATOR)
 				.build();
 
-		IDEA_HOME = new LocalProperty.Builder<UnixPath>("ideaHome")
+		IDEA_HOME = new CapsidProperty.Builder<UnixPath>("ideaHome")
 				.withComment("Path to IntelliJ IDEA installation directory")
 				.withType(UnixPath.class).withEnvironmentVar("IDEA_HOME")
-				.withValidator(LocalProperty.DIRECTORY_PATH_VALIDATOR)
+				.withValidator(CapsidProperty.DIRECTORY_PATH_VALIDATOR)
 				.build();
 
 		properties.add(GAME_DIR);
@@ -74,7 +74,7 @@ public class LocalProperties {
 	 * Returns all registered local properties.
 	 */
 	@UnmodifiableView
-	public static Set<LocalProperty<?>> get() {
+	public static Set<CapsidProperty<?>> get() {
 		return PROPERTIES;
 	}
 
@@ -100,7 +100,7 @@ public class LocalProperties {
 
 			// save properties as project extended properties
 			ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-			for (LocalProperty<?> property : PROPERTIES)
+			for (CapsidProperty<?> property : PROPERTIES)
 			{
 				String foundProperty = properties.getProperty(property.name, "");
 				if (!foundProperty.isEmpty()) {
@@ -122,7 +122,7 @@ public class LocalProperties {
 	 * Find a property that matches the given name.
 	 * @param name property name to match.
 	 */
-	public static @Nullable LocalProperty<?> getProperty(String name) {
+	public static @Nullable CapsidProperty<?> getProperty(String name) {
 		return PROPERTIES.stream().filter(p -> p.name.equals(name)).findFirst().orElse(null);
 	}
 
@@ -154,7 +154,7 @@ public class LocalProperties {
 			sb.deleteCharAt(sb.length() - 1);
 
 			// write properties and their comments to file
-			for (LocalProperty<?> property : PROPERTIES)
+			for (CapsidProperty<?> property : PROPERTIES)
 			{
 				String value = "";
 				Object oProperty = property.findProperty(project);

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.util.Utils;
-import io.pzstorm.capsid.property.LocalProperty;
+import io.pzstorm.capsid.property.CapsidProperty;
 
 class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 
@@ -95,7 +95,7 @@ class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 				"#this is for compatibility and stability purposes as backslashes don't play well."
 		};
 		sb.append(String.join("\n", expectedFileComments));
-		for (LocalProperty<?> property : LocalProperties.get())
+		for (CapsidProperty<?> property : LocalProperties.get())
 		{
 			String sProperty = Objects.requireNonNull(property.findProperty(getProject())).toString();
 
@@ -116,8 +116,8 @@ class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 		// load properties for project before asserting
 		LocalProperties.load(getProject());
 
-		for (LocalProperty<?> localPropertyEnum : LocalProperties.get()) {
-			Assertions.assertNotNull(localPropertyEnum.findProperty(getProject()));
+		for (CapsidProperty<?> capsidPropertyEnum : LocalProperties.get()) {
+			Assertions.assertNotNull(capsidPropertyEnum.findProperty(getProject()));
 		}
 	}
 

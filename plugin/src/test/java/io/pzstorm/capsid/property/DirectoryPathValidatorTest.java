@@ -40,7 +40,7 @@ class DirectoryPathValidatorTest extends PluginUnitTest {
 		Assertions.assertTrue(targetDir.exists());
 		Assertions.assertTrue(targetDir.isDirectory());
 
-		DirectoryPathValidator validator = LocalProperty.DIRECTORY_PATH_VALIDATOR;
+		DirectoryPathValidator validator = CapsidProperty.DIRECTORY_PATH_VALIDATOR;
 
 		UnixPath unixTargetDir = UnixPath.get(targetDir);
 		Assertions.assertTrue(validator.isValid(unixTargetDir));

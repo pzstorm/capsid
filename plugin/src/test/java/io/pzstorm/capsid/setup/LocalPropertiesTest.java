@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginUnitTest;
-import io.pzstorm.capsid.property.LocalProperty;
+import io.pzstorm.capsid.property.CapsidProperty;
 
 class LocalPropertiesTest extends PluginUnitTest {
 
@@ -40,7 +40,7 @@ class LocalPropertiesTest extends PluginUnitTest {
 	@Test
 	void shouldGetAllLocalPropertiesByName() {
 
-		for (LocalProperty<?> value : LocalProperties.get()) {
+		for (CapsidProperty<?> value : LocalProperties.get()) {
 			Assertions.assertEquals(value, LocalProperties.getProperty(value.name));
 		}
 	}

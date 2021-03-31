@@ -32,7 +32,7 @@ import io.pzstorm.capsid.util.UnixPath;
  *
  * @param <T> type of property.
  */
-public class LocalProperty<T> {
+public class CapsidProperty<T> {
 
 	public static final DirectoryPathValidator DIRECTORY_PATH_VALIDATOR = new DirectoryPathValidator();
 
@@ -45,7 +45,7 @@ public class LocalProperty<T> {
 	private final @Nullable T defaultValue;
 	private final PropertyValidator<T> validator;
 
-	private LocalProperty(Builder<T> builder) {
+	private CapsidProperty(Builder<T> builder) {
 
 		this.name = builder.name;
 		this.env = builder.env;
@@ -133,7 +133,7 @@ public class LocalProperty<T> {
 		private boolean required = true;
 
 		/**
-		 * Start building {@link LocalProperty} instance.
+		 * Start building {@link CapsidProperty} instance.
 		 * @param name name of the property to build.
 		 */
 		public Builder(String name) {
@@ -199,11 +199,11 @@ public class LocalProperty<T> {
 		}
 
 		/**
-		 * Returns a new instance of {@link LocalProperty} with held configuration.
+		 * Returns a new instance of {@link CapsidProperty} with held configuration.
 		 */
 		@Contract(" -> new")
-		public LocalProperty<T> build() {
-			return new LocalProperty<>(this);
+		public CapsidProperty<T> build() {
+			return new CapsidProperty<>(this);
 		}
 	}
 }

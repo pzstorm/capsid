@@ -30,7 +30,7 @@ import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.setup.LocalProperties;
-import io.pzstorm.capsid.property.LocalProperty;
+import io.pzstorm.capsid.property.CapsidProperty;
 
 /**
  * This task will initialize local properties by asking for user input.
@@ -52,7 +52,7 @@ public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
 			String format = "Unable to create %s file";
 			throw new IOException(String.format(format, localPropertiesFile.getName()));
 		}
-		Map<LocalProperty<?>, String> PROPERTIES_INPUT_MAP = new HashMap<>();
+		Map<CapsidProperty<?>, String> PROPERTIES_INPUT_MAP = new HashMap<>();
 		PROPERTIES_INPUT_MAP.put(LocalProperties.GAME_DIR,
 				"Enter path to game installation directory:"
 		);
@@ -61,7 +61,7 @@ public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
 		);
 		org.apache.tools.ant.Project antProject = gradleProject.getAnt().getAntProject();
 		Input inputTask = (Input) antProject.createTask("input");
-		for (LocalProperty<?> property : LocalProperties.get())
+		for (CapsidProperty<?> property : LocalProperties.get())
 		{
 			inputTask.setAddproperty(property.name);
 			inputTask.setMessage(PROPERTIES_INPUT_MAP.get(property));

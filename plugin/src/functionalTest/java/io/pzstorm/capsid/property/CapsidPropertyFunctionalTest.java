@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.util.UnixPath;
 
-class LocalPropertyFunctionalTest extends PluginFunctionalTest {
+class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
 
 	@Test
 	void shouldCorrectlyConvertLocalPropertyToUnixPath() throws IOException {
@@ -39,9 +39,9 @@ class LocalPropertyFunctionalTest extends PluginFunctionalTest {
 		Files.createDirectory(targetDir.toPath());
 
 		Assertions.assertTrue(targetDir.exists());
-		LocalProperty<UnixPath> testProperty = new LocalProperty.Builder<UnixPath>("testProperty")
+		CapsidProperty<UnixPath> testProperty = new CapsidProperty.Builder<UnixPath>("testProperty")
 				.withType(UnixPath.class)
-				.withValidator(LocalProperty.DIRECTORY_PATH_VALIDATOR)
+				.withValidator(CapsidProperty.DIRECTORY_PATH_VALIDATOR)
 				.build();
 
 		Project project = getProject();
