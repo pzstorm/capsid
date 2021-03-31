@@ -28,7 +28,7 @@ import org.gradle.api.InvalidUserDataException;
  */
 public class SemVersionValidator implements PropertyValidator<String> {
 
-	private static final Pattern PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+");
+	private static final Pattern PATTERN = Pattern.compile("^\\d+\\.\\d+\\.\\d+(-.*)?$");
 
 	@Override
 	public boolean isValid(String property) {
