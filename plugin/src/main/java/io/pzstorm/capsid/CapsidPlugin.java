@@ -34,6 +34,7 @@ import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
+import io.pzstorm.capsid.mod.ModTasks;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.task.SetupTasks;
 import io.pzstorm.capsid.util.UnixPath;
@@ -95,5 +96,9 @@ public class CapsidPlugin implements Plugin<Project> {
             // set media resource source directories
             media.getResources().setSrcDirs(resourceSrcDirs);
         });
+        // register all mod tasks
+        for (ModTasks task : ModTasks.values()) {
+            task.register(project);
+        }
     }
 }
