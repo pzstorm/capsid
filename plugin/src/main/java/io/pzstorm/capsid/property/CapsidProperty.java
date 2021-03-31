@@ -19,7 +19,6 @@ package io.pzstorm.capsid.property;
 
 import java.util.Objects;
 
-import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.jetbrains.annotations.Contract;
@@ -65,7 +64,7 @@ public class CapsidProperty<T> {
 	 *     <li>Environment variables.</li>
 	 * </ul>
 	 * @return value matching this property or default value.
-	 * @throws InvalidUserDataException when a property was not
+	 * @throws InvalidCapsidPropertyException when a property was not
 	 * 		found or was found but is of unsupported type.
 	 */
 	public @Nullable T findProperty(Project project) {
@@ -81,8 +80,8 @@ public class CapsidProperty<T> {
 				return validator.validate(type.cast(foundProperty));
 			}
 			else {
-				throw new InvalidUserDataException(String.format(msg, foundProperty.getClass().getName()));
 				String msg = "Found capsid property is of unsupported type '%s'";
+				throw new InvalidCapsidPropertyException(String.format(msg, foundProperty.getClass().getName()));
 			}
 		}
 		// try to find a matching system property first
@@ -95,7 +94,7 @@ public class CapsidProperty<T> {
 				return convertAndValidateProperty(envVar);
 			}
 			else if (required && defaultValue == null) {
-				throw new InvalidUserDataException("Unable to find local project property " + name);
+				throw new InvalidCapsidPropertyException("Unable to find capsid property " + name);
 			}
 			else return defaultValue;
 		}
@@ -108,7 +107,7 @@ public class CapsidProperty<T> {
 	 * @param property property to convert and validate.
 	 * @return converted and validated property.
 	 *
-	 * @throws InvalidUserDataException if property is of unsupported type.
+	 * @throws InvalidCapsidPropertyException if property is of unsupported type.
 	 */
 	@SuppressWarnings("unchecked")
 	private T convertAndValidateProperty(String property) {
@@ -119,7 +118,7 @@ public class CapsidProperty<T> {
 		else if (type.equals(String.class)) {
 			return validator.validate((T) property);
 		}
-		else throw new InvalidUserDataException("Unsupported local property type " + type.getName());
+		else throw new InvalidCapsidPropertyException("Unsupported capsid property type " + type.getName());
 	}
 
 	public static class Builder<T> {
