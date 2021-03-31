@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package io.pzstorm.capsid.property;
+package io.pzstorm.capsid.property.validator;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginUnitTest;
-import io.pzstorm.capsid.property.validator.DirectoryPathValidator;
-import io.pzstorm.capsid.property.validator.PropertyValidators;
 import io.pzstorm.capsid.util.UnixPath;
 
 class DirectoryPathValidatorTest extends PluginUnitTest {
