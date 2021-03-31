@@ -82,14 +82,18 @@ public class CapsidPlugin implements Plugin<Project> {
         // set media java source directory
         media.getJava().setSrcDirs(Collections.singletonList("media/lua"));
 
-        List<File> mediaFiles = Arrays.asList(gameDir.convert().resolve("media").toFile().listFiles(pathname ->
-                pathname.isDirectory() && !capsid.isExcludedResource("media/" + pathname.getName()))
-        );
-        Set<File> resourceSrcDirs = new HashSet<>();
-        mediaFiles.forEach(f -> resourceSrcDirs.add(
-                Paths.get(project.getProjectDir().toPath().toString(), "media", f.getName()).toFile())
-        );
-        // set media resource source directories
-        media.getResources().setSrcDirs(resourceSrcDirs);
+        // plugin extension will be configured in evaluation phase
+        project.afterEvaluate(p ->
+        {
+            List<File> mediaFiles = Arrays.asList(gameDir.convert().resolve("media").toFile().listFiles(pathname ->
+                    pathname.isDirectory() && !capsid.isExcludedResource("media/" + pathname.getName()))
+            );
+            Set<File> resourceSrcDirs = new HashSet<>();
+            mediaFiles.forEach(f -> resourceSrcDirs.add(
+                    Paths.get(project.getProjectDir().toPath().toString(), "media", f.getName()).toFile())
+            );
+            // set media resource source directories
+            media.getResources().setSrcDirs(resourceSrcDirs);
+        });
     }
 }
