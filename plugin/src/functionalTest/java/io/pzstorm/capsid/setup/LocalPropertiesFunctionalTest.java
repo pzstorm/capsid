@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -30,50 +29,6 @@ import io.pzstorm.capsid.util.Utils;
 import io.pzstorm.capsid.property.CapsidProperty;
 
 class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
-
-	@Test
-	void shouldLoadLocalPropertiesFromFile() throws IOException {
-
-		writeLocalPropertiesToFile();
-		Assertions.assertDoesNotThrow(() -> getRunner().withArguments(new ArrayList<>()).build());
-		assertLocalPropertiesNotNull(false);
-	}
-
-	@Test
-	void shouldLoadLocalPropertiesFromProjectProperties() throws IOException {
-
-		Assertions.assertDoesNotThrow(() -> getRunner().build());
-		assertLocalPropertiesNotNull(true);
-	}
-
-	@Test
-	void shouldLoadLocalPropertiesFromSystemProperties() throws IOException {
-
-		GradleRunner runner = getRunner();
-		runner.withArguments(
-				String.format("-DgameDir=%s", getGameDirPath().toString()),
-				String.format("-DideaHome=%s", getIdeaHomePath().toString())
-		);
-		Assertions.assertDoesNotThrow(runner::build);
-		assertLocalPropertiesNotNull(true);
-	}
-
-	@Test
-	void shouldLoadLocalPropertiesFromEnvironmentVariables() throws IOException {
-
-		GradleRunner runner = getRunner().withArguments(new ArrayList<>());
-
-		Map<String, String> arguments = new HashMap<>();
-		arguments.put("PZ_DIR_PATH", getGameDirPath().toString());
-		arguments.put("IDEA_HOME", getIdeaHomePath().toString());
-		runner.withEnvironment(arguments);
-
-		// runner cannot run in debug mode with environment variables
-		runner.withDebug(false);
-
-		Assertions.assertDoesNotThrow(runner::build);
-		assertLocalPropertiesNotNull(true);
-	}
 
 	@Test
 	void shouldWriteLocalPropertiesToFile() throws IOException {
@@ -107,27 +62,5 @@ class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 		localProperties.writeToFile(getProject());
 		String actual = Utils.readTextFromFile(localProperties.getFile(getProject()));
 		Assertions.assertEquals(expected, actual);
-	}
-
-	private void assertLocalPropertiesNotNull(boolean writeBeforeAssert) throws IOException {
-
-		if (writeBeforeAssert) {
-			writeLocalPropertiesToFile();
-		}
-		// load properties for project before asserting
-		LocalProperties localProperties = LocalProperties.get();
-		localProperties.load(getProject());
-
-		for (CapsidProperty<?> capsidPropertyEnum : localProperties.getProperties()) {
-			Assertions.assertNotNull(capsidPropertyEnum.findProperty(getProject()));
-		}
-	}
-
-	private void writeLocalPropertiesToFile() throws IOException {
-
-		writeToFile(new File(getProjectDir(), "local.properties"), new String[] {
-				String.format("gameDir=%s", getGameDirPath().toString()),
-				String.format("ideaHome=%s", getIdeaHomePath().toString())
-		});
 	}
 }
