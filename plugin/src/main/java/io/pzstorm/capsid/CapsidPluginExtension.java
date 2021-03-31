@@ -17,14 +17,32 @@
  */
 package io.pzstorm.capsid;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.UnmodifiableView;
 
 @SuppressWarnings("WeakerAccess")
 public class CapsidPluginExtension {
 
-	public Set<String> excludedResourceDirs = new HashSet<>();
+	private final Set<String> excludedResourceDirs = new HashSet<>();
 
+	public void excludeResourceDirs(String...dirPaths) {
+
+		excludedResourceDirs.clear();
+		excludedResourceDirs.addAll(Arrays.asList(dirPaths));
+	}
+
+	@UnmodifiableView
+	@Contract(pure = true)
+	public Set<String> getExcludedResourceDirs() {
+		return Collections.unmodifiableSet(excludedResourceDirs);
+	}
+
+	@Contract(pure = true)
 	public boolean isExcludedResource(String path) {
 		return excludedResourceDirs.contains(path);
 	}
