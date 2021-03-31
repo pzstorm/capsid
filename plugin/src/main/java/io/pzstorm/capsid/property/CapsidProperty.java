@@ -17,6 +17,8 @@
  */
 package io.pzstorm.capsid.property;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Objects;
 
 import org.gradle.api.Project;
@@ -35,13 +37,13 @@ import io.pzstorm.capsid.util.UnixPath;
 public class CapsidProperty<T> {
 
 	public final String name;
-	public final String comment;
 	public final Class<T> type;
+	public final String comment;
 	public final boolean required;
 
 	private final String env;
 	private final @Nullable T defaultValue;
-	private final PropertyValidator<T> validator;
+	private final @Nullable PropertyValidator<T> validator;
 
 	private CapsidProperty(Builder<T> builder) {
 
@@ -75,8 +77,10 @@ public class CapsidProperty<T> {
 			if (foundProperty instanceof String) {
 				return convertAndValidateProperty((String) foundProperty);
 			}
-			else if (type.isInstance(foundProperty)) {
-				return validator.validate(type.cast(foundProperty));
+			else if (type.isInstance(foundProperty))
+			{
+				T result = type.cast(foundProperty);
+				return validator != null ? validator.validate(result) : result;
 			}
 			else {
 				String msg = "Found capsid property is of unsupported type '%s'";
@@ -111,11 +115,24 @@ public class CapsidProperty<T> {
 	@SuppressWarnings("unchecked")
 	private T convertAndValidateProperty(String property) {
 
-		if (type.equals(UnixPath.class)) {
-			return validator.validate((T) UnixPath.get(property));
+		if (type.equals(UnixPath.class))
+		{
+			T result = (T) UnixPath.get(property);
+			return validator != null ? validator.validate(result) : result;
 		}
-		else if (type.equals(String.class)) {
-			return validator.validate((T) property);
+		else if (type.equals(String.class))
+		{
+			T result = (T) property;
+			return validator != null ? validator.validate(result) : result;
+		}
+		else if (type.equals(URL.class))
+		{
+			try {
+				return (T) new URL(property);
+			}
+			catch (MalformedURLException e) {
+				throw new InvalidCapsidPropertyException("Malformed URL property", e);
+			}
 		}
 		else throw new InvalidCapsidPropertyException("Unsupported capsid property type " + type.getName());
 	}
@@ -123,19 +140,24 @@ public class CapsidProperty<T> {
 	public static class Builder<T> {
 
 		private final String name;
-		private String env;
-		private Class<T> type;
+		private final Class<T> type;
+
+		private String env = "";
 		private String comment = "";
-		private PropertyValidator<T> validator;
-		private @Nullable T defaultValue = null;
 		private boolean required = true;
+
+		private @Nullable T defaultValue = null;
+		private @Nullable PropertyValidator<T> validator = null;
 
 		/**
 		 * Start building {@link CapsidProperty} instance.
+		 *
 		 * @param name name of the property to build.
+		 * @param type class type of this property.
 		 */
-		public Builder(String name) {
+		public Builder(String name, Class<T> type) {
 			this.name = name;
+			this.type = type;
 		}
 
 		/**
@@ -144,15 +166,6 @@ public class CapsidProperty<T> {
 		@Contract("_ -> this")
 		public Builder<T> withEnvironmentVar(String env) {
 			this.env = env;
-			return this;
-		}
-
-		/**
-		 * Set property to be of given class type.
-		 */
-		@Contract("_ -> this")
-		public Builder<T> withType(Class<T> type) {
-			this.type = type;
 			return this;
 		}
 

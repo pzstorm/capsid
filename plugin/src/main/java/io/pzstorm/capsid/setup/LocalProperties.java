@@ -55,16 +55,16 @@ public class LocalProperties extends CapsidProperties {
 
 	static
 	{
-		GAME_DIR = new CapsidProperty.Builder<UnixPath>("gameDir")
+		GAME_DIR = new CapsidProperty.Builder<>("gameDir", UnixPath.class)
 				.withComment("Path to game installation directory")
-				.withType(UnixPath.class).withEnvironmentVar("PZ_DIR_PATH")
 				.withValidator(PropertyValidators.DIRECTORY_PATH_VALIDATOR)
+				.withEnvironmentVar("PZ_DIR_PATH")
 				.build();
 
-		IDEA_HOME = new CapsidProperty.Builder<UnixPath>("ideaHome")
+		IDEA_HOME = new CapsidProperty.Builder<>("ideaHome", UnixPath.class)
 				.withComment("Path to IntelliJ IDEA installation directory")
-				.withType(UnixPath.class).withEnvironmentVar("IDEA_HOME")
 				.withValidator(PropertyValidators.DIRECTORY_PATH_VALIDATOR)
+				.withEnvironmentVar("IDEA_HOME")
 				.build();
 
 		PROPERTIES = ImmutableSet.of(GAME_DIR, IDEA_HOME);

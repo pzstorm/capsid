@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.junit.jupiter.api.Assertions;
@@ -40,10 +39,8 @@ class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
 		Files.createDirectory(targetDir.toPath());
 
 		Assertions.assertTrue(targetDir.exists());
-		CapsidProperty<UnixPath> testProperty = new CapsidProperty.Builder<UnixPath>("testProperty")
-				.withValidator(PropertyValidators.DIRECTORY_PATH_VALIDATOR)
-				.withType(UnixPath.class)
-				.build();
+		CapsidProperty<UnixPath> testProperty = new CapsidProperty.Builder<>("testProperty", UnixPath.class)
+				.withValidator(PropertyValidators.DIRECTORY_PATH_VALIDATOR).build();
 
 		Project project = getProject();
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
