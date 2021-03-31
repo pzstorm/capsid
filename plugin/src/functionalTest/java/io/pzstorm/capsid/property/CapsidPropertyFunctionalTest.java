@@ -59,7 +59,7 @@ class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
 
 		// test unsupported type throwing exception
 		ext.set("testProperty", new Object());
-		Assertions.assertThrows(InvalidUserDataException.class,
+		Assertions.assertThrows(InvalidCapsidPropertyException.class,
 				() -> testProperty.findProperty(project)
 		);
 	}

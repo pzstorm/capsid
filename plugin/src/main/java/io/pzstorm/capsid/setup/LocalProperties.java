@@ -17,22 +17,29 @@
  */
 package io.pzstorm.capsid.setup;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Paths;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 import org.gradle.api.Project;
-import org.gradle.api.plugins.ExtraPropertiesExtension;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnmodifiableView;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Unmodifiable;
 
 import io.pzstorm.capsid.CapsidPlugin;
+import io.pzstorm.capsid.property.CapsidProperties;
+import io.pzstorm.capsid.property.CapsidProperty;
 import io.pzstorm.capsid.property.validator.PropertyValidators;
 import io.pzstorm.capsid.util.UnixPath;
-import io.pzstorm.capsid.property.CapsidProperty;
 
-public class LocalProperties {
+public class LocalProperties extends CapsidProperties {
 
-	@UnmodifiableView
+	private static final LocalProperties INSTANCE = new LocalProperties();
+
+	@Unmodifiable
 	private static final Set<CapsidProperty<?>> PROPERTIES;
 
 	/**
@@ -47,8 +54,6 @@ public class LocalProperties {
 
 	static
 	{
-		Set<CapsidProperty<?>> properties = new HashSet<>();
-
 		GAME_DIR = new CapsidProperty.Builder<UnixPath>("gameDir")
 				.withComment("Path to game installation directory")
 				.withType(UnixPath.class).withEnvironmentVar("PZ_DIR_PATH")
@@ -61,75 +66,24 @@ public class LocalProperties {
 				.withValidator(PropertyValidators.DIRECTORY_PATH_VALIDATOR)
 				.build();
 
-		properties.add(GAME_DIR);
-		properties.add(IDEA_HOME);
-
-		PROPERTIES = Collections.unmodifiableSet(properties);
+		PROPERTIES = ImmutableSet.of(GAME_DIR, IDEA_HOME);
 	}
 
 	private LocalProperties() {
-		throw new UnsupportedOperationException();
+		super(Paths.get("local.properties"));
+	}
+
+	public static LocalProperties get() {
+		return INSTANCE;
 	}
 
 	/**
 	 * Returns all registered local properties.
 	 */
-	@UnmodifiableView
-	public static Set<CapsidProperty<?>> get() {
+	@Override
+	@Contract(pure = true)
+	public @Unmodifiable Set<CapsidProperty<?>> getProperties() {
 		return PROPERTIES;
-	}
-
-	/**
-	 * Load properties from local {@code Properties} file.
-	 *
-	 * @param project {@code Project} to load properties to.
-	 *
-	 * @return {@code true} if properties were successfully loaded, {@code false} otherwise.
-	 * @throws IOException when an I/O error occurred while loading file.
-	 */
-	public static boolean load(Project project) throws IOException {
-
-		File propertiesFile = getFile(project);
-		if (!propertiesFile.exists()) {
-			return false;
-		}
-		try (InputStream stream = new FileInputStream(propertiesFile))
-		{
-			// read properties from byte stream
-			Properties properties = new Properties();
-			properties.load(stream);
-
-			// save properties as project extended properties
-			ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-			for (CapsidProperty<?> property : PROPERTIES)
-			{
-				String foundProperty = properties.getProperty(property.name, "");
-				if (!foundProperty.isEmpty()) {
-					ext.set(property.name, foundProperty);
-				}
-				// if no property found from file try other locations
-				else if (!ext.has(property.name)) {
-					ext.set(property.name, property.findProperty(project));
-				}
-			}
-		}
-		catch (IOException e) {
-			throw new RuntimeException("An I/O exception occurred while loading local.properties", e);
-		}
-		return true;
-	}
-
-	/**
-	 * Find a property that matches the given name.
-	 * @param name property name to match.
-	 */
-	public static @Nullable CapsidProperty<?> getProperty(String name) {
-		return PROPERTIES.stream().filter(p -> p.name.equals(name)).findFirst().orElse(null);
-	}
-
-	/** Returns properties {@code File} used to hold local properties. */
-	public static File getFile(Project project) {
-		return project.getProjectDir().toPath().resolve("local.properties").toFile();
 	}
 
 	/**
@@ -138,7 +92,7 @@ public class LocalProperties {
 	 * @param project {@link Project} instance used to resolve the {@code File}.
 	 * @throws IOException when an I/O exception occurred while writing to file.
 	 */
-	public static void writeToFile(Project project) throws IOException {
+	public void writeToFile(Project project) throws IOException {
 
 		try (Writer writer = new FileWriter(getFile(project)))
 		{

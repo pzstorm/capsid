@@ -17,7 +17,6 @@
  */
 package io.pzstorm.capsid.setup;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.junit.jupiter.api.Assertions;
@@ -29,19 +28,20 @@ import io.pzstorm.capsid.property.CapsidProperty;
 class LocalPropertiesTest extends PluginUnitTest {
 
 	@Test
-	void shouldReturnFalseWhenLoadingNonExistingLocalProperties() throws IOException {
+	void shouldReturnFalseWhenLoadingNonExistingLocalProperties() {
 
-		File localProperties = LocalProperties.getFile(getProject());
-		Assertions.assertTrue(localProperties.delete());
+		LocalProperties localProperties = LocalProperties.get();
 
-		Assertions.assertFalse(LocalProperties.load(getProject()));
+		Assertions.assertTrue(localProperties.getFile(getProject()).delete());
+		Assertions.assertFalse(localProperties.load(getProject()));
 	}
 
 	@Test
 	void shouldGetAllLocalPropertiesByName() {
 
-		for (CapsidProperty<?> value : LocalProperties.get()) {
-			Assertions.assertEquals(value, LocalProperties.getProperty(value.name));
+		LocalProperties localProperties = LocalProperties.get();
+		for (CapsidProperty<?> value : localProperties.getProperties()) {
+			Assertions.assertEquals(value, localProperties.getProperty(value.name));
 		}
 	}
 }

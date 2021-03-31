@@ -21,13 +21,13 @@ import javax.annotation.Nullable;
 
 import org.gradle.api.GradleException;
 
-class InvalidCapsidPropertyException extends GradleException {
+public class InvalidCapsidPropertyException extends GradleException {
 
-	InvalidCapsidPropertyException(String message) {
+	public InvalidCapsidPropertyException(String message) {
 		super(message);
 	}
 
-	InvalidCapsidPropertyException(String message, @Nullable Throwable cause) {
+	public InvalidCapsidPropertyException(String message, @Nullable Throwable cause) {
 		super(message, cause);
 	}
 }

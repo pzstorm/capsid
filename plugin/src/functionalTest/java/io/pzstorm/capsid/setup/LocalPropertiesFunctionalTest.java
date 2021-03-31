@@ -61,7 +61,7 @@ class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldLoadLocalPropertiesFromEnvironmentVariables() throws IOException {
 
-		GradleRunner runner = getRunner().withArguments(new ArrayList<>(Collections.singletonList("--stacktrace")));
+		GradleRunner runner = getRunner().withArguments(new ArrayList<>());
 
 		Map<String, String> arguments = new HashMap<>();
 		arguments.put("PZ_DIR_PATH", getGameDirPath().toString());
@@ -78,15 +78,16 @@ class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldWriteLocalPropertiesToFile() throws IOException {
 
+		LocalProperties localProperties = LocalProperties.get();
 		writeToFile(new File(getProjectDir(), "local.properties"), new String[] {
 				String.format("gameDir=%s", getGameDirPath().toString()),
 				String.format("ideaHome=%s", getIdeaHomePath().toString())
 		});
 		// load properties for project before asserting
-		LocalProperties.load(getProject());
+		localProperties.load(getProject());
 
 		// write properties to file
-		LocalProperties.writeToFile(getProject());
+		localProperties.writeToFile(getProject());
 
 		StringBuilder sb = new StringBuilder();
 		String[] expectedFileComments = new String[] {
@@ -95,7 +96,7 @@ class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 				"#this is for compatibility and stability purposes as backslashes don't play well."
 		};
 		sb.append(String.join("\n", expectedFileComments));
-		for (CapsidProperty<?> property : LocalProperties.get())
+		for (CapsidProperty<?> property : localProperties.getProperties())
 		{
 			String sProperty = Objects.requireNonNull(property.findProperty(getProject())).toString();
 
@@ -103,8 +104,8 @@ class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 			sb.append(property.name).append('=').append(sProperty.replace('\\', '/'));
 		}
 		String expected = sb.toString();
-		LocalProperties.writeToFile(getProject());
-		String actual = Utils.readTextFromFile(LocalProperties.getFile(getProject()));
+		localProperties.writeToFile(getProject());
+		String actual = Utils.readTextFromFile(localProperties.getFile(getProject()));
 		Assertions.assertEquals(expected, actual);
 	}
 
@@ -114,9 +115,10 @@ class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
 			writeLocalPropertiesToFile();
 		}
 		// load properties for project before asserting
-		LocalProperties.load(getProject());
+		LocalProperties localProperties = LocalProperties.get();
+		localProperties.load(getProject());
 
-		for (CapsidProperty<?> capsidPropertyEnum : LocalProperties.get()) {
+		for (CapsidProperty<?> capsidPropertyEnum : localProperties.getProperties()) {
 			Assertions.assertNotNull(capsidPropertyEnum.findProperty(getProject()));
 		}
 	}

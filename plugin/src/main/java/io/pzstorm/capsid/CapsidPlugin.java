@@ -18,11 +18,9 @@
 package io.pzstorm.capsid;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 
-import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
@@ -62,13 +60,9 @@ public class CapsidPlugin implements Plugin<Project> {
         // ZomboidDoc can only be executed with Java 8
         javaExtension.getToolchain().getLanguageVersion().set(JavaLanguageVersion.of(8));
 
-        try {
-            // load local properties
-            LocalProperties.load(project);
-        }
-        catch (IOException e) {
-            throw new GradleException("I/O exception occurred while loading properties");
-        }
+        // load local properties
+        LocalProperties.get().load(project);
+
         // register all setup tasks
         for (SetupTasks task : SetupTasks.values()) {
             task.register(project);

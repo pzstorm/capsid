@@ -43,10 +43,11 @@ public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
 
 		// declare locally to resolve only once
 		Project gradleProject = getProject();
+		LocalProperties localProperties = LocalProperties.get();
 		ExtraPropertiesExtension ext = gradleProject.getExtensions().getExtraProperties();
 
 		// make sure the properties file exists
-		File localPropertiesFile = LocalProperties.getFile(gradleProject);
+		File localPropertiesFile = localProperties.getFile(gradleProject);
 		if (!localPropertiesFile.exists() && !localPropertiesFile.createNewFile())
 		{
 			String format = "Unable to create %s file";
@@ -61,7 +62,7 @@ public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
 		);
 		org.apache.tools.ant.Project antProject = gradleProject.getAnt().getAntProject();
 		Input inputTask = (Input) antProject.createTask("input");
-		for (CapsidProperty<?> property : LocalProperties.get())
+		for (CapsidProperty<?> property : localProperties.getProperties())
 		{
 			inputTask.setAddproperty(property.name);
 			inputTask.setMessage(PROPERTIES_INPUT_MAP.get(property));
@@ -72,6 +73,6 @@ public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
 			ext.set(property.name, antProperty);
 		}
 		// write local properties to file
-		LocalProperties.writeToFile(gradleProject);
+		localProperties.writeToFile(gradleProject);
 	}
 }

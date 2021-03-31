@@ -20,6 +20,8 @@ package io.pzstorm.capsid.property.validator;
 import org.gradle.api.InvalidUserDataException;
 import org.jetbrains.annotations.Contract;
 
+import io.pzstorm.capsid.property.InvalidCapsidPropertyException;
+
 /**
  * This class validates properties according to implementation criteria.
  *
@@ -41,7 +43,7 @@ public interface PropertyValidator<T> {
 	 * @param property property to validate.
 	 * @return the given property.
 	 *
-	 * @throws InvalidUserDataException if property is invalid.
+	 * @throws InvalidCapsidPropertyException if property is invalid.
 	 */
 	@Contract(pure = true, value = "_ -> param1")
 	T validate(T property) throws InvalidUserDataException;
