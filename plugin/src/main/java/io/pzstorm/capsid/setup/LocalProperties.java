@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import io.pzstorm.capsid.CapsidPlugin;
+import io.pzstorm.capsid.property.validator.PropertyValidators;
 import io.pzstorm.capsid.util.UnixPath;
 import io.pzstorm.capsid.property.CapsidProperty;
 
@@ -51,13 +52,13 @@ public class LocalProperties {
 		GAME_DIR = new CapsidProperty.Builder<UnixPath>("gameDir")
 				.withComment("Path to game installation directory")
 				.withType(UnixPath.class).withEnvironmentVar("PZ_DIR_PATH")
-				.withValidator(CapsidProperty.DIRECTORY_PATH_VALIDATOR)
+				.withValidator(PropertyValidators.DIRECTORY_PATH_VALIDATOR)
 				.build();
 
 		IDEA_HOME = new CapsidProperty.Builder<UnixPath>("ideaHome")
 				.withComment("Path to IntelliJ IDEA installation directory")
 				.withType(UnixPath.class).withEnvironmentVar("IDEA_HOME")
-				.withValidator(CapsidProperty.DIRECTORY_PATH_VALIDATOR)
+				.withValidator(PropertyValidators.DIRECTORY_PATH_VALIDATOR)
 				.build();
 
 		properties.add(GAME_DIR);

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package io.pzstorm.capsid.property;
+package io.pzstorm.capsid.property.validator;
 
 import org.gradle.api.InvalidUserDataException;
 import org.jetbrains.annotations.Contract;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Contract;
  *
  * @param <T> type of property.
  */
-public abstract class PropertyValidator<T> {
+public interface PropertyValidator<T> {
 
 	/**
 	 * Returns {@code true} if the given property is valid.
@@ -33,7 +33,7 @@ public abstract class PropertyValidator<T> {
 	 * @param property property to validate.
 	 */
 	@Contract(pure = true)
-	public abstract boolean isValid(T property);
+	boolean isValid(T property);
 
 	/**
 	 * Validate the given property.
@@ -44,5 +44,5 @@ public abstract class PropertyValidator<T> {
 	 * @throws InvalidUserDataException if property is invalid.
 	 */
 	@Contract(pure = true, value = "_ -> param1")
-	public abstract T validate(T property) throws InvalidUserDataException;
+	T validate(T property) throws InvalidUserDataException;
 }

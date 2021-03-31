@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package io.pzstorm.capsid.property;
+package io.pzstorm.capsid.property.validator;
 
 import java.io.File;
 
@@ -26,7 +26,7 @@ import io.pzstorm.capsid.util.UnixPath;
 /**
  * This class validates a directory {@link UnixPath}.
  */
-public class DirectoryPathValidator extends PropertyValidator<UnixPath> {
+public class DirectoryPathValidator implements PropertyValidator<UnixPath> {
 
 	// make constructor available only from package
 	DirectoryPathValidator() {}

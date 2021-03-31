@@ -24,6 +24,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
+import io.pzstorm.capsid.property.validator.PropertyValidator;
 import io.pzstorm.capsid.util.UnixPath;
 
 /**
@@ -32,8 +33,6 @@ import io.pzstorm.capsid.util.UnixPath;
  * @param <T> type of property.
  */
 public class CapsidProperty<T> {
-
-	public static final DirectoryPathValidator DIRECTORY_PATH_VALIDATOR = new DirectoryPathValidator();
 
 	public final String name;
 	public final String comment;

@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
+import io.pzstorm.capsid.property.validator.PropertyValidators;
 import io.pzstorm.capsid.util.UnixPath;
 
 class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
@@ -40,8 +41,8 @@ class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
 
 		Assertions.assertTrue(targetDir.exists());
 		CapsidProperty<UnixPath> testProperty = new CapsidProperty.Builder<UnixPath>("testProperty")
+				.withValidator(PropertyValidators.DIRECTORY_PATH_VALIDATOR)
 				.withType(UnixPath.class)
-				.withValidator(CapsidProperty.DIRECTORY_PATH_VALIDATOR)
 				.build();
 
 		Project project = getProject();

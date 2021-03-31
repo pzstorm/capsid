@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginUnitTest;
+import io.pzstorm.capsid.property.validator.DirectoryPathValidator;
+import io.pzstorm.capsid.property.validator.PropertyValidators;
 import io.pzstorm.capsid.util.UnixPath;
 
 class DirectoryPathValidatorTest extends PluginUnitTest {
@@ -40,7 +42,7 @@ class DirectoryPathValidatorTest extends PluginUnitTest {
 		Assertions.assertTrue(targetDir.exists());
 		Assertions.assertTrue(targetDir.isDirectory());
 
-		DirectoryPathValidator validator = CapsidProperty.DIRECTORY_PATH_VALIDATOR;
+		DirectoryPathValidator validator = PropertyValidators.DIRECTORY_PATH_VALIDATOR;
 
 		UnixPath unixTargetDir = UnixPath.get(targetDir);
 		Assertions.assertTrue(validator.isValid(unixTargetDir));
