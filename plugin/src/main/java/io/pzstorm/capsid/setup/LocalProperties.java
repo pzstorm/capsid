@@ -35,12 +35,13 @@ import io.pzstorm.capsid.property.CapsidProperty;
 import io.pzstorm.capsid.property.validator.PropertyValidators;
 import io.pzstorm.capsid.util.UnixPath;
 
+/**
+ * This class represents properties from {@code local.properties} file.
+ */
 public class LocalProperties extends CapsidProperties {
 
 	private static final LocalProperties INSTANCE = new LocalProperties();
-
-	@Unmodifiable
-	private static final Set<CapsidProperty<?>> PROPERTIES;
+	private static final @Unmodifiable Set<CapsidProperty<?>> PROPERTIES;
 
 	/**
 	 * {@code Path} to Project Zomboid installation directory.
@@ -73,6 +74,9 @@ public class LocalProperties extends CapsidProperties {
 		super(Paths.get("local.properties"));
 	}
 
+	/**
+	 * Returns singleton instance of {@link LocalProperties}.
+	 */
 	public static LocalProperties get() {
 		return INSTANCE;
 	}
@@ -92,6 +96,7 @@ public class LocalProperties extends CapsidProperties {
 	 * @param project {@link Project} instance used to resolve the {@code File}.
 	 * @throws IOException when an I/O exception occurred while writing to file.
 	 */
+	@Override
 	public void writeToFile(Project project) throws IOException {
 
 		try (Writer writer = new FileWriter(getFile(project)))
