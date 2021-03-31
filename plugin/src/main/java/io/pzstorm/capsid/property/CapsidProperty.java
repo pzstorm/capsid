@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import io.pzstorm.capsid.util.UnixPath;
 
 /**
- * This class represents a property loaded from local properties file.
+ * This class represents a property loaded from properties file.
  *
  * @param <T> type of property.
  */
@@ -81,8 +81,8 @@ public class CapsidProperty<T> {
 				return validator.validate(type.cast(foundProperty));
 			}
 			else {
-				String msg = "Found project property is of unsupported type '%s'";
 				throw new InvalidUserDataException(String.format(msg, foundProperty.getClass().getName()));
+				String msg = "Found capsid property is of unsupported type '%s'";
 			}
 		}
 		// try to find a matching system property first
