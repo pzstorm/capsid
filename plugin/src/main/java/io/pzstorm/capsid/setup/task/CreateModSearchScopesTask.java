@@ -25,8 +25,14 @@ import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.setup.xml.LaunchRunConfig;
 import io.pzstorm.capsid.setup.xml.ModSearchScope;
 
+/**
+ * This task will create useful IDEA search scopes.
+ *
+ * @see ModSearchScope
+ */
 @SuppressWarnings("WeakerAccess")
 public class CreateModSearchScopesTask extends DefaultTask implements CapsidTask {
 

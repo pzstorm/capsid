@@ -27,7 +27,14 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.CapsidPluginExtension;
 
+/**
+ * This task creates source and resource directories for {@code media} module.
+ * Resource directories can be excluded with {@code excludeResourceDirs} plugin configuration.
+ *
+ * @see CapsidPluginExtension#excludeResourceDirs(String...)
+ */
 @SuppressWarnings("WeakerAccess")
 public class CreateModStructureTask extends DefaultTask implements CapsidTask {
 

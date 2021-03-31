@@ -18,7 +18,6 @@
 package io.pzstorm.capsid.setup.task;
 
 import java.io.IOException;
-
 import javax.xml.transform.TransformerException;
 
 import org.gradle.api.DefaultTask;
@@ -28,6 +27,11 @@ import org.gradle.api.tasks.TaskAction;
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.setup.xml.LaunchRunConfig;
 
+/**
+ * This task will create game launch run configurations for IDEA.
+ *
+ * @see LaunchRunConfig
+ */
 @SuppressWarnings("WeakerAccess")
 public class CreateLaunchConfigsTask extends DefaultTask implements CapsidTask {
 
