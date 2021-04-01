@@ -57,6 +57,7 @@ class CreateModStructureTaskFunctionalTest extends PluginFunctionalTest {
 	}
 
 	@Test
+	@SuppressWarnings("SpellCheckingInspection")
 	void shouldExcludedResourceSrcDirsFromModStructure() throws IOException {
 
 		Set<String> excludedSrcDirs = new HashSet<>(Arrays.asList(

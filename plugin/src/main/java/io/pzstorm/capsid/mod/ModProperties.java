@@ -78,6 +78,7 @@ public class ModProperties extends CapsidProperties {
 				.isRequired(false)
 				.build();
 
+		//noinspection SpellCheckingInspection
 		MOD_PZ_VERSION = new CapsidProperty.Builder<String>("mod.pzversion", String.class)
 				.withValidator(PropertyValidators.SEM_VERSION_VALIDATOR)
 				.withEnvironmentVar("MOD_VERSION")

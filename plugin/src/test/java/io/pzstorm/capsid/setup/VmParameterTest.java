@@ -71,6 +71,7 @@ class VmParameterTest extends PluginUnitTest {
 	}
 
 	@Test
+	@SuppressWarnings("SpellCheckingInspection")
 	void shouldCorrectlyFormatAdvancedRuntimeOption() {
 
 		Map<String, Boolean> advancedOptions = new HashMap<>();

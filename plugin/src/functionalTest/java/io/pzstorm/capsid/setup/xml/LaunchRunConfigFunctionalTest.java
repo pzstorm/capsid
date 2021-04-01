@@ -50,6 +50,7 @@ class LaunchRunConfigFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldWriteToFileLaunchRunConfigurationsFromTask() throws IOException {
 
+		@SuppressWarnings("SpellCheckingInspection")
 		List<String> arguments = ImmutableList.of(
 				String.format("-PgameDir=%s", getGameDirPath().toString()),
 				String.format("-PideaHome=%s", getIdeaHomePath().toString()),

@@ -17,6 +17,7 @@
  */
 package io.pzstorm.capsid.setup;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class VmParameter {
 
 	/** Controls whether the game should start in debug mode. */
@@ -31,7 +32,7 @@ public class VmParameter {
 	/** Enables invoking of concurrent GC by using the {@code System.gc()} request. */
 	public final boolean useConcMarkSweepGC;
 
-	/** Enables the dumping of minidumps upon fatal errors on Windows platform. */
+	/** Enables the dumping of mini-dumps upon fatal errors on Windows platform. */
 	public final boolean createMinidumpOnCrash;
 
 	/** Disables completely the use of pre-allocated exception. */

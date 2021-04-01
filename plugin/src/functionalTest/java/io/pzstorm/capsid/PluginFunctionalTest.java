@@ -124,6 +124,7 @@ public abstract class PluginFunctionalTest {
 		Files.createDirectory(ideaHome.convert());
 
 		// add project properties
+		//noinspection SpellCheckingInspection
 		runner.withArguments(
 				"-PgameDir=" + gameDir.toString(),
 				"-PideaHome=" + ideaHome.toString()
