@@ -53,6 +53,7 @@ class DirectoryPathValidatorTest extends PluginUnitTest {
 		);
 		File targetFile = new File(WORKSPACE, "targetFile");
 		Assertions.assertTrue(targetFile.createNewFile());
+		targetFile.deleteOnExit();
 
 		// target is not a directory
 		UnixPath unixTargetFile = UnixPath.get(targetFile);
