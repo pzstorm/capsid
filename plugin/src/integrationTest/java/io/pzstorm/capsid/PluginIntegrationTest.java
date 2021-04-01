@@ -89,7 +89,7 @@ public abstract class PluginIntegrationTest {
 			Files.createDirectories(new File(gameMediaDir, dir).toPath());
 		}
 		ideaHome = UnixPath.get(new File(projectDir, "ideaHome"));
-		Files.createFile(ideaHome.convert());
+		Files.createDirectory(ideaHome.convert());
 
 		try (Writer writer = new FileWriter(localProperties)) {
 			writer.write(String.join("\n",
