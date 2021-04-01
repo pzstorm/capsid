@@ -38,28 +38,36 @@ gradlePlugin {
     }
 }
 
-// Add a source set for the functional test suite
 sourceSets {
     functionalTest {
         compileClasspath += sourceSets.main.output
         runtimeClasspath += sourceSets.main.output
     }
+    integrationTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
 }
 
-gradlePlugin.testSourceSets(sourceSets.functionalTest)
+gradlePlugin.testSourceSets(sourceSets.functionalTest, sourceSets.integrationTest)
 configurations {
     functionalTestImplementation.extendsFrom(implementation, testImplementation)
+    integrationTestImplementation.extendsFrom(implementation, testImplementation)
 }
 
-// Add a task to run the functional tests
+// Register tasks to run functional and integration tests
 tasks.register('functionalTest', Test) {
     testClassesDirs = sourceSets.functionalTest.output.classesDirs
     classpath = sourceSets.functionalTest.runtimeClasspath
 }
+tasks.register('integrationTest', Test) {
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
 
 tasks.named('check') {
-    // Run the functional tests as part of `check`
-    it.dependsOn(tasks.functionalTest)
+    // Run functional and integration tests as part of `check`
+    it.dependsOn(tasks.functionalTest, tasks.integrationTest)
 }
 
 test {
