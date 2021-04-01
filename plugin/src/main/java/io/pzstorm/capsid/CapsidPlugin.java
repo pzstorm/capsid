@@ -36,6 +36,7 @@ import io.pzstorm.capsid.mod.ModTasks;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.task.SetupTasks;
 import io.pzstorm.capsid.util.UnixPath;
+import io.pzstorm.capsid.zomboid.ZomboidScript;
 
 @SuppressWarnings("UnstableApiUsage")
 public class CapsidPlugin implements Plugin<Project> {
@@ -94,5 +95,7 @@ public class CapsidPlugin implements Plugin<Project> {
         for (ModTasks task : ModTasks.values()) {
             task.register(project);
         }
+        // configure zomboid project elements
+        ZomboidScript.configure(project);
     }
 }
