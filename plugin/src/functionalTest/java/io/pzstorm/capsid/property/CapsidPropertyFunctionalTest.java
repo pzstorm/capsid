@@ -17,23 +17,17 @@
  */
 package io.pzstorm.capsid.property;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gradle.api.Project;
-import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
-import io.pzstorm.capsid.property.validator.PropertyValidators;
 import io.pzstorm.capsid.setup.LocalProperties;
-import io.pzstorm.capsid.util.UnixPath;
 
 class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
 
@@ -55,12 +49,7 @@ class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldLoadLocalPropertiesFromSystemProperties() throws IOException {
 
-		GradleRunner runner = getRunner();
-		runner.withArguments(
-				String.format("-DgameDir=%s", getGameDirPath().toString()),
-				String.format("-DideaHome=%s", getIdeaHomePath().toString())
-		);
-		Assertions.assertDoesNotThrow(runner::build);
+		Assertions.assertDoesNotThrow(getRunner()::build);
 		assertLocalPropertiesNotNull(true);
 	}
 
@@ -81,35 +70,6 @@ class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
 		assertLocalPropertiesNotNull(true);
 	}
 
-	@Test
-	void shouldCorrectlyConvertLocalPropertyToUnixPath() throws IOException {
-
-		File targetDir = getProjectDir().toPath().resolve("targetDir").toFile();
-		Files.createDirectory(targetDir.toPath());
-
-		Assertions.assertTrue(targetDir.exists());
-		CapsidProperty<UnixPath> testProperty = new CapsidProperty.Builder<>("testProperty", UnixPath.class)
-				.withValidator(PropertyValidators.DIRECTORY_PATH_VALIDATOR).build();
-
-		Project project = getProject();
-		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-		UnixPath expectedPath = UnixPath.get(targetDir);
-
-		// test converting from string to path
-		ext.set("testProperty", expectedPath.toString());
-		Assertions.assertEquals(expectedPath, testProperty.findProperty(project));
-
-		// test not converting and just validating
-		ext.set("testProperty", expectedPath);
-		Assertions.assertEquals(expectedPath, testProperty.findProperty(project));
-
-		// test unsupported type throwing exception
-		ext.set("testProperty", new Object());
-		Assertions.assertThrows(InvalidCapsidPropertyException.class,
-				() -> testProperty.findProperty(project)
-		);
-	}
-
 	private void assertLocalPropertiesNotNull(boolean writeBeforeAssert) throws IOException {
 
 		if (writeBeforeAssert) {
@@ -126,7 +86,7 @@ class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
 
 	private void writeLocalPropertiesToFile() throws IOException {
 
-		writeToFile(new File(getProjectDir(), "local.properties"), new String[] {
+		writeToProjectFile("local.properties", new String[] {
 				String.format("gameDir=%s", getGameDirPath().toString()),
 				String.format("ideaHome=%s", getIdeaHomePath().toString())
 		});

@@ -49,6 +49,7 @@ public abstract class PluginIntegrationTest {
 
 	private Project project;
 	private Plugin<Project> plugin;
+	private UnixPath gameDir, ideaHome;
 
 	@BeforeAll
 	static void cleanTemporaryDirectories() throws IOException {
@@ -78,23 +79,23 @@ public abstract class PluginIntegrationTest {
 		File localProperties = new File(projectDir, "local.properties");
 		Assertions.assertTrue(localProperties.createNewFile());
 
-		File gameDir = new File(projectDir, "gameDir");
-		Files.createDirectory(gameDir.toPath());
+		gameDir = UnixPath.get(new File(projectDir, "gameDir"));
+		Files.createDirectory(gameDir.convert());
 
-		File gameMediaDir = new File(gameDir, "media");
+		File gameMediaDir = new File(gameDir.toString(), "media");
 		Files.createDirectory(gameMediaDir.toPath());
 
 		for (String dir : new String[] {"lua", "maps", "models"}) {
 			Files.createDirectories(new File(gameMediaDir, dir).toPath());
 		}
-		File ideaHome = new File(projectDir, "ideaHome");
-		Files.createFile(ideaHome.toPath());
+		ideaHome = UnixPath.get(new File(projectDir, "ideaHome"));
+		Files.createFile(ideaHome.convert());
 
 		try (Writer writer = new FileWriter(localProperties)) {
 			writer.write(String.join("\n",
 					// property values with backslashes are considered malformed
-					"gameDir=" + UnixPath.get(gameDir).toString(),
-					"ideaHome=" + UnixPath.get(ideaHome).toString()
+					"gameDir=" + gameDir.toString(),
+					"ideaHome=" + ideaHome.toString()
 			));
 		}
 		project = ProjectBuilder.builder().withProjectDir(projectDir).build();
@@ -121,5 +122,19 @@ public abstract class PluginIntegrationTest {
 
 	protected Plugin<Project> getPlugin() {
 		return plugin;
+	}
+
+	protected UnixPath getGameDirPath() {
+		return gameDir;
+	}
+
+	protected UnixPath getIdeaHomePath() {
+		return ideaHome;
+	}
+
+	protected void writeToProjectFile(String path, String[] lines) throws IOException {
+		try (Writer writer = new FileWriter(project.getProjectDir().toPath().resolve(path).toFile())) {
+			writer.write(String.join("\n", lines));
+		}
 	}
 }

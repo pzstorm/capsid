@@ -174,11 +174,7 @@ public abstract class PluginFunctionalTest {
 	}
 
 	protected void writeToProjectFile(String path, String[] lines) throws IOException {
-		writeToFile(projectDir.toPath().resolve(path).toFile(), lines);
-	}
-
-	protected static void writeToFile(File file, String[] lines) throws IOException {
-		try (Writer writer = new FileWriter(file)) {
+		try (Writer writer = new FileWriter(projectDir.toPath().resolve(path).toFile())) {
 			writer.write(String.join("\n", lines));
 		}
 	}

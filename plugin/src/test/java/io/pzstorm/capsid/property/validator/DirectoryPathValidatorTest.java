@@ -33,8 +33,7 @@ class DirectoryPathValidatorTest extends PluginUnitTest {
 	@Test
 	void shouldCorrectlyValidateDirectoryPath() throws IOException {
 
-		File projectDir = getProject().getProjectDir();
-		File targetDir = new File(projectDir, "targetDir");
+		File targetDir = new File(WORKSPACE, "targetDir");
 		Files.createDirectory(targetDir.toPath());
 
 		Assertions.assertTrue(targetDir.exists());
@@ -52,7 +51,7 @@ class DirectoryPathValidatorTest extends PluginUnitTest {
 		Assertions.assertThrows(InvalidUserDataException.class,
 				() -> validator.validate(unixTargetDir)
 		);
-		File targetFile = new File(projectDir, "targetFile");
+		File targetFile = new File(WORKSPACE, "targetFile");
 		Assertions.assertTrue(targetFile.createNewFile());
 
 		// target is not a directory

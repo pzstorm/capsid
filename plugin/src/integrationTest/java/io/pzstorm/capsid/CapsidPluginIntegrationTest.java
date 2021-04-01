@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("UnstableApiUsage")
-class CapsidPluginTest extends PluginUnitTest {
+class CapsidPluginIntegrationTest extends PluginIntegrationTest {
 
 	@Test
 	void shouldApplyAllCorePlugins() {

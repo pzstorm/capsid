@@ -17,24 +17,33 @@
  */
 package io.pzstorm.capsid.setup;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.pzstorm.capsid.PluginFunctionalTest;
+import io.pzstorm.capsid.PluginIntegrationTest;
 import io.pzstorm.capsid.util.Utils;
 import io.pzstorm.capsid.property.CapsidProperty;
 
-class LocalPropertiesFunctionalTest extends PluginFunctionalTest {
+class LocalPropertiesIntegrationTest extends PluginIntegrationTest {
+
+	@Test
+	void shouldReturnFalseWhenLoadingNonExistingLocalProperties() {
+
+		LocalProperties localProperties = LocalProperties.get();
+
+		Assertions.assertTrue(localProperties.getFile(getProject()).delete());
+		Assertions.assertFalse(localProperties.load(getProject()));
+	}
+
 
 	@Test
 	void shouldWriteLocalPropertiesToFile() throws IOException {
 
 		LocalProperties localProperties = LocalProperties.get();
-		writeToFile(new File(getProjectDir(), "local.properties"), new String[] {
+		writeToProjectFile("local.properties", new String[] {
 				String.format("gameDir=%s", getGameDirPath().toString()),
 				String.format("ideaHome=%s", getIdeaHomePath().toString())
 		});
