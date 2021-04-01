@@ -57,22 +57,22 @@ configurations {
 
 // Register tasks to run functional and integration tests
 tasks.register('functionalTest', Test) {
-    testClassesDirs = sourceSets.functionalTest.output.classesDirs
-    classpath = sourceSets.functionalTest.runtimeClasspath
+    it.useJUnitPlatform()
+    it.testLogging.events "passed", "skipped", "failed"
+    it.testClassesDirs = sourceSets.functionalTest.output.classesDirs
+    it.classpath = sourceSets.functionalTest.runtimeClasspath
 }
 tasks.register('integrationTest', Test) {
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
+    it.useJUnitPlatform()
+    it.testLogging.events "passed", "skipped", "failed"
+    it.testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    it.classpath = sourceSets.integrationTest.runtimeClasspath
 }
-
+test {
+    useJUnitPlatform()
+    testLogging.events "passed", "skipped", "failed"
+}
 tasks.named('check') {
     // Run functional and integration tests as part of `check`
     it.dependsOn(tasks.functionalTest, tasks.integrationTest)
-}
-
-test {
-    useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
 }
