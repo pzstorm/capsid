@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Set;
 
+import org.gradle.api.Project;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.plugins.Convention;
 import org.gradle.api.plugins.JavaPluginConvention;
@@ -39,7 +40,7 @@ class CapsidPluginIntegrationTest extends PluginIntegrationTest {
 	@Test
 	void shouldApplyAllCorePlugins() {
 
-		PluginContainer plugins = getProject().getPlugins();
+		PluginContainer plugins = getProject(true).getPlugins();
 		for (CorePlugin plugin : CorePlugin.values()) {
 			Assertions.assertTrue(plugins.hasPlugin(plugin.getID()));
 		}
@@ -48,7 +49,7 @@ class CapsidPluginIntegrationTest extends PluginIntegrationTest {
 	@Test
 	void shouldAddMavenCentralRepository() {
 
-		RepositoryHandler repositories = getProject().getRepositories();
+		RepositoryHandler repositories = getProject(true).getRepositories();
 		Assertions.assertEquals(1, repositories.size());
 		Assertions.assertNotNull(repositories.findByName("MavenRepo"));
 	}
@@ -57,7 +58,7 @@ class CapsidPluginIntegrationTest extends PluginIntegrationTest {
 	void shouldConfigureJavaToolchainLanguageLevel() {
 
 		JavaPluginExtension java = Objects.requireNonNull(
-				getProject().getExtensions().getByType(JavaPluginExtension.class)
+				getProject(true).getExtensions().getByType(JavaPluginExtension.class)
 		);
 		JavaToolchainSpec toolchain = java.getToolchain();
 		Assertions.assertEquals(8, toolchain.getLanguageVersion().get().asInt());
@@ -66,14 +67,15 @@ class CapsidPluginIntegrationTest extends PluginIntegrationTest {
 	@Test
 	void shouldCreateCustomSourceSetsWithSourceDirs() {
 
-		Convention convention = getProject().getConvention();
+		Project project = getProject(true);
+		Convention convention = project.getConvention();
 		JavaPluginConvention javaPlugin = convention.getPlugin(JavaPluginConvention.class);
 		SourceSetContainer sourceSets = javaPlugin.getSourceSets();
 
 		SourceSet mediaSourceSet = sourceSets.getByName("media");
 		Set<File> sourceDirs = mediaSourceSet.getJava().getSrcDirs();
 
-		Path expectedPath = getProject().getProjectDir().toPath().resolve("media/lua");
+		Path expectedPath = project.getProjectDir().toPath().resolve("media/lua");
 		Assertions.assertTrue(sourceDirs.stream().anyMatch(d -> d.toPath().equals(expectedPath)));
 	}
 }

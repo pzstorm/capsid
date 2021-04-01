@@ -28,6 +28,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
 
@@ -69,7 +71,6 @@ public abstract class PluginIntegrationTest {
 	}
 
 	@BeforeEach
-	@SuppressWarnings("unchecked")
 	void createProjectAndApplyPlugin() throws IOException {
 
 		File projectDir = generateProjectDirectory();
@@ -99,7 +100,6 @@ public abstract class PluginIntegrationTest {
 			));
 		}
 		project = ProjectBuilder.builder().withProjectDir(projectDir).build();
-		plugin = project.getPlugins().apply("io.pzstorm.capsid");
 	}
 
 	private File generateProjectDirectory() {
@@ -116,11 +116,21 @@ public abstract class PluginIntegrationTest {
 		return new File(PARENT_TEMP_DIR, "test" + new Random().nextInt(1000));
 	}
 
-	protected Project getProject() {
+
+	protected Project getProject(boolean applyPlugin) {
+
+		if (applyPlugin) {
+			applyCapsidPlugin();
+		}
 		return project;
 	}
 
-	protected Plugin<Project> getPlugin() {
+	@SuppressWarnings("unchecked")
+	protected void applyCapsidPlugin() {
+		plugin = project.getPlugins().apply("io.pzstorm.capsid");
+	}
+
+	protected @Nullable Plugin<Project> getPlugin() {
 		return plugin;
 	}
 

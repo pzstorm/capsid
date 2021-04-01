@@ -35,14 +35,14 @@ class CapsidPropertyIntegrationTest extends PluginIntegrationTest {
 	@Test
 	void shouldCorrectlyConvertLocalPropertyToUnixPath() throws IOException {
 
-		File targetDir = new File(getProject().getProjectDir(), "targetDir");
+		Project project = getProject(false);
+		File targetDir = new File(project.getProjectDir(), "targetDir");
 		Files.createDirectory(targetDir.toPath());
 
 		Assertions.assertTrue(targetDir.exists());
 		CapsidProperty<UnixPath> testProperty = new CapsidProperty.Builder<>("testProperty", UnixPath.class)
 				.withValidator(PropertyValidators.DIRECTORY_PATH_VALIDATOR).build();
-
-		Project project = getProject();
+		
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 		UnixPath expectedPath = UnixPath.get(targetDir);
 

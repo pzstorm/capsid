@@ -20,6 +20,7 @@ package io.pzstorm.capsid.setup;
 import java.io.IOException;
 import java.util.*;
 
+import org.gradle.api.Project;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,26 +33,29 @@ class LocalPropertiesIntegrationTest extends PluginIntegrationTest {
 	@Test
 	void shouldReturnFalseWhenLoadingNonExistingLocalProperties() {
 
+		Project project = getProject(false);
 		LocalProperties localProperties = LocalProperties.get();
 
-		Assertions.assertTrue(localProperties.getFile(getProject()).delete());
-		Assertions.assertFalse(localProperties.load(getProject()));
+		Assertions.assertTrue(localProperties.getFile(project).delete());
+		Assertions.assertFalse(localProperties.load(project));
 	}
 
 
 	@Test
 	void shouldWriteLocalPropertiesToFile() throws IOException {
 
+		Project project = getProject(false);
 		LocalProperties localProperties = LocalProperties.get();
+
 		writeToProjectFile("local.properties", new String[] {
 				String.format("gameDir=%s", getGameDirPath().toString()),
 				String.format("ideaHome=%s", getIdeaHomePath().toString())
 		});
 		// load properties for project before asserting
-		localProperties.load(getProject());
+		localProperties.load(project);
 
 		// write properties to file
-		localProperties.writeToFile(getProject());
+		localProperties.writeToFile(project);
 
 		StringBuilder sb = new StringBuilder();
 		String[] expectedFileComments = new String[] {
@@ -62,14 +66,14 @@ class LocalPropertiesIntegrationTest extends PluginIntegrationTest {
 		sb.append(String.join("\n", expectedFileComments));
 		for (CapsidProperty<?> property : localProperties.getProperties())
 		{
-			String sProperty = Objects.requireNonNull(property.findProperty(getProject())).toString();
+			String sProperty = Objects.requireNonNull(property.findProperty(project)).toString();
 
 			sb.append("\n\n").append("#").append(property.comment).append('\n');
 			sb.append(property.name).append('=').append(sProperty.replace('\\', '/'));
 		}
 		String expected = sb.toString();
-		localProperties.writeToFile(getProject());
-		String actual = Utils.readTextFromFile(localProperties.getFile(getProject()));
+		localProperties.writeToFile(project);
+		String actual = Utils.readTextFromFile(localProperties.getFile(project));
 		Assertions.assertEquals(expected, actual);
 	}
 }
