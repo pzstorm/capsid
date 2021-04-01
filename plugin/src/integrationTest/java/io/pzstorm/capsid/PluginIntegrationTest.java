@@ -80,7 +80,7 @@ public abstract class PluginIntegrationTest {
 		File localProperties = new File(projectDir, "local.properties");
 		Assertions.assertTrue(localProperties.createNewFile());
 
-		gameDir = UnixPath.get(new File(projectDir, "gameDir"));
+		gameDir = UnixPath.get(new File(projectDir, "gameDir").getAbsoluteFile());
 		Files.createDirectory(gameDir.convert());
 
 		File gameMediaDir = new File(gameDir.toString(), "media");
@@ -89,7 +89,7 @@ public abstract class PluginIntegrationTest {
 		for (String dir : new String[] {"lua", "maps", "models"}) {
 			Files.createDirectories(new File(gameMediaDir, dir).toPath());
 		}
-		ideaHome = UnixPath.get(new File(projectDir, "ideaHome"));
+		ideaHome = UnixPath.get(new File(projectDir, "ideaHome").getAbsoluteFile());
 		Files.createDirectory(ideaHome.convert());
 
 		try (Writer writer = new FileWriter(localProperties)) {
