@@ -17,13 +17,14 @@
  */
 package io.pzstorm.capsid;
 
-import org.gradle.api.DefaultTask;
+import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 
 /**
  * Standard contract for all plugin task implementations.
  */
+@NonNullApi
 public interface CapsidTask extends Task {
 
 	/**
