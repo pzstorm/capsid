@@ -106,6 +106,8 @@ public class CapsidPlugin implements Plugin<Project> {
         for (ZomboidTasks task : ZomboidTasks.values()) {
             task.register(project);
         }
+        TaskContainer tasks = project.getTasks();
+        tasks.getByName("classes").dependsOn(tasks.getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
     }
 
     /**
@@ -146,8 +148,6 @@ public class CapsidPlugin implements Plugin<Project> {
             Path jarPath = Paths.get("lib", String.format("zomboid-%s.jar", modPzVersion));
             dependencies.add("zomboidRuntimeOnly", project.files(jarPath));
         }
-        TaskContainer tasks = project.getTasks();
-        tasks.getByName("classes").dependsOn(tasks.getByName("zomboidClasses"));
     }
 
     public static File getZomboidClassesDir(Project project) {
