@@ -28,6 +28,7 @@ import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
+import org.gradle.api.tasks.TaskContainer;
 
 import io.pzstorm.capsid.mod.ModProperties;
 import io.pzstorm.capsid.setup.LocalProperties;
@@ -70,5 +71,7 @@ public class ZomboidScript {
 			Path jarPath = Paths.get("lib", String.format("zomboid-%s.jar", modPzVersion));
 			dependencies.add("zomboidRuntimeOnly", project.files(jarPath));
 		}
+		TaskContainer tasks = project.getTasks();
+		tasks.getByName("classes").dependsOn(tasks.getByName("zomboidClasses"));
 	}
 }
