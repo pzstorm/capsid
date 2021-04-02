@@ -24,8 +24,8 @@ import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.Sync;
 
+import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.CapsidTask;
-import io.pzstorm.capsid.setup.LocalProperties;
 
 /**
  * This task will sync {@code zomboidClassesDir} with game install directory.
@@ -40,7 +40,7 @@ public class ZomboidClassesTask extends Sync implements CapsidTask {
 		setDescription(description);
 
 		setIncludeEmptyDirs(false);
-		from(LocalProperties.GAME_DIR.findProperty(project));
+		from(CapsidPlugin.getGameDirProperty(project));
 		include("**/*.class", "stdlib.lbc");
 
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();

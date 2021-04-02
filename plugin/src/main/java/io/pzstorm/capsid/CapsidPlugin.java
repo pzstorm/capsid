@@ -73,7 +73,7 @@ public class CapsidPlugin implements Plugin<Project> {
             task.register(project);
         }
         // path to game installation directory
-        UnixPath gameDir = Objects.requireNonNull(LocalProperties.GAME_DIR.findProperty(project));
+        File gameDir = CapsidPlugin.getGameDirProperty(project);
 
         Convention convention = project.getConvention();
         JavaPluginConvention javaPlugin = convention.getPlugin(JavaPluginConvention.class);
@@ -85,7 +85,7 @@ public class CapsidPlugin implements Plugin<Project> {
         // plugin extension will be configured in evaluation phase
         project.afterEvaluate(p ->
         {
-            List<File> mediaFiles = Arrays.asList(gameDir.convert().resolve("media").toFile().listFiles(pathname ->
+            List<File> mediaFiles = Arrays.asList(new File(gameDir, "media").listFiles(pathname ->
                     pathname.isDirectory() && !capsid.isExcludedResource("media/" + pathname.getName()))
             );
             Set<File> resourceSrcDirs = new HashSet<>();
@@ -130,15 +130,14 @@ public class CapsidPlugin implements Plugin<Project> {
         configurations.getByName("implementation").extendsFrom(configurations.create("zomboidImplementation"));
 
         DependencyHandler dependencies = project.getDependencies();
-        UnixPath gameDirProperty = LocalProperties.GAME_DIR.findProperty(project);
-        Path gameDir = Objects.requireNonNull(gameDirProperty).convert().toAbsolutePath();
+        File gameDir = CapsidPlugin.getGameDirProperty(project);
 
         // Project Zomboid libraries
-        ConfigurableFileTree zomboidLibraries = project.fileTree(gameDir.toFile(), tree -> tree.include("*.jar"));
+        ConfigurableFileTree zomboidLibraries = project.fileTree(gameDir, tree -> tree.include("*.jar"));
         dependencies.add("zomboidRuntimeOnly", zomboidLibraries);
 
         // Project Zomboid assets
-        ConfigurableFileCollection zomboidAssets = project.files(gameDir.resolve("media"));
+        ConfigurableFileCollection zomboidAssets = project.files(new File(gameDir, "media"));
         dependencies.add("zomboidImplementation", zomboidAssets);
 
         // Project Zomboid classes
@@ -156,5 +155,17 @@ public class CapsidPlugin implements Plugin<Project> {
 
     public static File getZomboidSourcesDir(Project project) {
         return new File(project.getBuildDir(), "generated/sources/zomboid").getAbsoluteFile();
+    }
+
+    /**
+     * Returns {@code Path} to Project Zomboid installation directory.
+     *
+     * @param project {@link Project} requesting the property.
+     * @see LocalProperties#GAME_DIR
+     */
+    public static File getGameDirProperty(Project project) {
+
+        UnixPath property = Objects.requireNonNull(LocalProperties.GAME_DIR.findProperty(project));
+        return property.convert().toAbsolutePath().toFile();
     }
 }

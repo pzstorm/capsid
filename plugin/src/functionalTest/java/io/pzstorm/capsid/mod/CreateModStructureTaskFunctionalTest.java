@@ -27,9 +27,8 @@ import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.PluginFunctionalTest;
-import io.pzstorm.capsid.setup.LocalProperties;
-import io.pzstorm.capsid.util.UnixPath;
 
 class CreateModStructureTaskFunctionalTest extends PluginFunctionalTest {
 
@@ -43,10 +42,9 @@ class CreateModStructureTaskFunctionalTest extends PluginFunctionalTest {
 		BuildResult result = getRunner().withArguments(arguments).build();
 		assertTaskOutcomeSuccess(result, ModTasks.CREATE_MOD_STRUCTURE.name);
 
-		UnixPath gameDir = Objects.requireNonNull(LocalProperties.GAME_DIR.findProperty(getProject()));
-
 		Set<String> expectedDirNames = new HashSet<>();
-		Arrays.stream(gameDir.convert().resolve("media").toFile().listFiles(File::isDirectory))
+		File gameDir = CapsidPlugin.getGameDirProperty(getProject());
+		Arrays.stream(new File(gameDir, "media").listFiles(File::isDirectory))
 				.forEach(f -> expectedDirNames.add(f.getName()));
 
 		Set<String> actualDirNames = new HashSet<>();
@@ -75,17 +73,16 @@ class CreateModStructureTaskFunctionalTest extends PluginFunctionalTest {
 		List<String> arguments = new ArrayList<>(runner.getArguments());
 		arguments.add(ModTasks.CREATE_MOD_STRUCTURE.name);
 
-		UnixPath gameDir = Objects.requireNonNull(LocalProperties.GAME_DIR.findProperty(getProject()));
-		File gameDirFile = gameDir.convert().toFile();
+		File gameDir = CapsidPlugin.getGameDirProperty(getProject());
 
 		for (String excludedSrcDirName : excludedSrcDirs) {
-			Files.createDirectory(new File(gameDirFile, excludedSrcDirName).toPath());
+			Files.createDirectory(new File(gameDir, excludedSrcDirName).toPath());
 		}
 		BuildResult result = getRunner().withArguments(arguments).build();
 		assertTaskOutcomeSuccess(result, ModTasks.CREATE_MOD_STRUCTURE.name);
 
 		Set<String> expectedDirNames = new HashSet<>();
-		Arrays.stream(gameDirFile.toPath().resolve("media").toFile().listFiles(File::isDirectory))
+		Arrays.stream(gameDir.toPath().resolve("media").toFile().listFiles(File::isDirectory))
 				.filter(f -> !excludedSrcDirs.contains("media/" + f.getName()))
 				.forEach(f -> expectedDirNames.add(f.getName()));
 
