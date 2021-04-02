@@ -26,7 +26,7 @@ public enum ModTasks {
 	CREATE_MOD_STRUCTURE(CreateModStructureTask.class, "createModStructure",
 			"mod", "Create default mod directory structure."
 	);
-	final String name, group, description;
+	public final String name, group, description;
 	final Class<? extends CapsidTask> type;
 
 	ModTasks(Class<? extends CapsidTask> type, String name, String group, String description) {
