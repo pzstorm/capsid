@@ -18,25 +18,29 @@
 package io.pzstorm.capsid;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.artifacts.dsl.DependencyHandler;
+import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
-import org.gradle.api.plugins.Convention;
-import org.gradle.api.plugins.ExtensionContainer;
-import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.plugins.*;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskContainer;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
+import io.pzstorm.capsid.mod.ModProperties;
 import io.pzstorm.capsid.mod.ModTasks;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.task.SetupTasks;
 import io.pzstorm.capsid.util.UnixPath;
-import io.pzstorm.capsid.zomboid.ZomboidScript;
+import io.pzstorm.capsid.zomboid.ZomboidTasks;
 
 @SuppressWarnings("UnstableApiUsage")
 public class CapsidPlugin implements Plugin<Project> {
@@ -95,7 +99,56 @@ public class CapsidPlugin implements Plugin<Project> {
         for (ModTasks task : ModTasks.values()) {
             task.register(project);
         }
-        // configure zomboid project elements
-        ZomboidScript.configure(project);
+        // configure project from zomboid script
+        configureZomboid(project);
+
+        // register all zomboid tasks
+        for (ZomboidTasks task : ZomboidTasks.values()) {
+            task.register(project);
+        }
+    }
+
+    /**
+     * Configure project from {@code zomboid.gradle}.
+     *
+     * @param project {@link Project} to configure.
+     */
+    private static void configureZomboid(Project project) {
+
+        ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
+
+        // directory containing Project Zomboid classes
+        File classesDir = new File(project.getBuildDir(), "classes/zomboid").getAbsoluteFile();
+        ext.set("zomboidClassesDir",classesDir);
+
+        // directory containing Project Zomboid sources
+        File sourcesDir = new File(project.getBuildDir(), "generated/sources/zomboid").getAbsoluteFile();
+        ext.set("zomboidSourcesDir", sourcesDir);
+
+        ConfigurationContainer configurations = project.getConfigurations();
+        configurations.getByName("runtimeOnly").extendsFrom(configurations.create("zomboidRuntimeOnly"));
+        configurations.getByName("implementation").extendsFrom(configurations.create("zomboidImplementation"));
+
+        DependencyHandler dependencies = project.getDependencies();
+        UnixPath gameDirProperty = LocalProperties.GAME_DIR.findProperty(project);
+        Path gameDir = Objects.requireNonNull(gameDirProperty).convert().toAbsolutePath();
+
+        // Project Zomboid libraries
+        ConfigurableFileTree zomboidLibraries = project.fileTree(gameDir.toFile(), tree -> tree.include("*.jar"));
+        dependencies.add("zomboidRuntimeOnly", zomboidLibraries);
+
+        // Project Zomboid assets
+        ConfigurableFileCollection zomboidAssets = project.files(gameDir.resolve("media"));
+        dependencies.add("zomboidImplementation", zomboidAssets);
+
+        // Project Zomboid classes
+        String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
+        if (modPzVersion != null)
+        {
+            Path jarPath = Paths.get("lib", String.format("zomboid-%s.jar", modPzVersion));
+            dependencies.add("zomboidRuntimeOnly", project.files(jarPath));
+        }
+        TaskContainer tasks = project.getTasks();
+        tasks.getByName("classes").dependsOn(tasks.getByName("zomboidClasses"));
     }
 }
