@@ -118,12 +118,10 @@ public class CapsidPlugin implements Plugin<Project> {
         ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 
         // directory containing Project Zomboid classes
-        File classesDir = new File(project.getBuildDir(), "classes/zomboid").getAbsoluteFile();
-        ext.set("zomboidClassesDir",classesDir);
+        ext.set("zomboidClassesDir", getZomboidClassesDir(project));
 
         // directory containing Project Zomboid sources
-        File sourcesDir = new File(project.getBuildDir(), "generated/sources/zomboid").getAbsoluteFile();
-        ext.set("zomboidSourcesDir", sourcesDir);
+        ext.set("zomboidSourcesDir", getZomboidSourcesDir(project));
 
         ConfigurationContainer configurations = project.getConfigurations();
         configurations.getByName("runtimeOnly").extendsFrom(configurations.create("zomboidRuntimeOnly"));
@@ -150,5 +148,13 @@ public class CapsidPlugin implements Plugin<Project> {
         }
         TaskContainer tasks = project.getTasks();
         tasks.getByName("classes").dependsOn(tasks.getByName("zomboidClasses"));
+    }
+
+    public static File getZomboidClassesDir(Project project) {
+        return new File(project.getBuildDir(), "classes/zomboid").getAbsoluteFile();
+    }
+
+    public static File getZomboidSourcesDir(Project project) {
+        return new File(project.getBuildDir(), "generated/sources/zomboid").getAbsoluteFile();
     }
 }
