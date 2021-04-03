@@ -105,22 +105,23 @@ public class LaunchRunConfig extends XMLDocument {
 		optionWorkDir.setAttribute("value", gameDir.toString().replace('\\', '/'));
 		configuration.appendChild(optionWorkDir);
 
-		// TODO: uncomment this when zomboidClasses task is implemented
 		// <method v="2">
-//		Element method = document.createElement("method");
-//		method.setAttribute("v", "2");
-//		configuration.appendChild(method);
-//
-//		Element optionBeforeRunTask = document.createElement("option");
-//
-//		optionBeforeRunTask.setAttribute("name", "Gradle.BeforeRunTask");
-//		optionBeforeRunTask.setAttribute("enabled", "true");
-//		optionBeforeRunTask.setAttribute("tasks", "zomboidClasses");
-//		optionBeforeRunTask.setAttribute("externalProjectPath", project.getPath());
-//		optionBeforeRunTask.setAttribute("vmOptions", "");
-//		optionBeforeRunTask.setAttribute("scriptParameters", "");
-//
-//		method.appendChild(optionBeforeRunTask);
+		Element method = document.createElement("method");
+		method.setAttribute("v", "2");
+		configuration.appendChild(method);
+
+		// <option name="Gradle.BeforeRunTask" enabled="true" tasks="zomboidClasses"
+		// externalProjectPath="$PROJECT_DIR$" vmOptions="" scriptParameters="" />
+		Element optionBeforeRunTask = document.createElement("option");
+
+		optionBeforeRunTask.setAttribute("name", "Gradle.BeforeRunTask");
+		optionBeforeRunTask.setAttribute("enabled", "true");
+		optionBeforeRunTask.setAttribute("tasks", "zomboidClasses");
+		optionBeforeRunTask.setAttribute("externalProjectPath", project.getPath());
+		optionBeforeRunTask.setAttribute("vmOptions", "");
+		optionBeforeRunTask.setAttribute("scriptParameters", "");
+
+		method.appendChild(optionBeforeRunTask);
 
 		return (LaunchRunConfig) super.configure(project);
 	}
