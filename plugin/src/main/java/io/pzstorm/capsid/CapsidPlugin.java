@@ -40,7 +40,7 @@ import io.pzstorm.capsid.mod.ModTasks;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.task.SetupTasks;
 import io.pzstorm.capsid.util.UnixPath;
-import io.pzstorm.capsid.zomboid.ZomboidTasks;
+import io.pzstorm.capsid.zomboid.task.ZomboidTasks;
 
 @SuppressWarnings("UnstableApiUsage")
 public class CapsidPlugin implements Plugin<Project> {
