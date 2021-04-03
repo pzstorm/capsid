@@ -28,7 +28,7 @@ import org.gradle.api.Task;
 public interface CapsidTask extends Task {
 
 	/**
-	 * Configure this task with basic metadata.
+	 * Apply the configuration to this task.
 	 *
 	 * @param group task group which this task belongs to.
 	 * @param description description for this task.
