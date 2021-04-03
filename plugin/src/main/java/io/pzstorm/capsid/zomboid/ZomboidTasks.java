@@ -25,6 +25,9 @@ public enum ZomboidTasks {
 
 	ZOMBOID_CLASSES(ZomboidClassesTask.class, "zomboidClasses",
 			"zomboid", "Assembles Project Zomboid classes."
+	),
+	DECOMPILE_ZOMBOID(DecompileZomboidTask.class, "decompileZomboid",
+			"zomboid", "Decompile Project Zomboid classes."
 	);
 	public final String name, group, description;
 	final Class<? extends CapsidTask> type;
