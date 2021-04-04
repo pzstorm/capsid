@@ -117,7 +117,7 @@ public class LaunchRunConfig extends XMLDocument {
 		optionBeforeRunTask.setAttribute("name", "Gradle.BeforeRunTask");
 		optionBeforeRunTask.setAttribute("enabled", "true");
 		optionBeforeRunTask.setAttribute("tasks", "zomboidClasses");
-		optionBeforeRunTask.setAttribute("externalProjectPath", project.getPath());
+		optionBeforeRunTask.setAttribute("externalProjectPath", "$PROJECT_DIR$");
 		optionBeforeRunTask.setAttribute("vmOptions", "");
 		optionBeforeRunTask.setAttribute("scriptParameters", "");
 
