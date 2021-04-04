@@ -18,8 +18,11 @@
 package io.pzstorm.capsid.util;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,5 +63,28 @@ public class Utils {
 	 */
 	public static String readTextFromFile(File file) throws IOException {
 		return String.join("\n", Files.readLines(file, StandardCharsets.UTF_8));
+	}
+
+	/**
+	 * Finds the resource {@code File} with the given name. A resource is some data (images, audio, text, etc)
+	 * that can be accessed by class code in a way that is independent of the location of the code.
+	 *
+	 * @param name the resource name.
+	 *
+	 * @throws FileNotFoundException if the resource was not found.
+	 * @see ClassLoader#getResource(String)
+	 */
+	public static File getFileFromResources(String name) throws FileNotFoundException {
+
+		URL resource = Utils.class.getClassLoader().getResource(name);
+		if (resource == null) {
+			throw new FileNotFoundException("Unable to find resource for path '" + name + '\'');
+		}
+		try {
+			return new File(Objects.requireNonNull(resource).toURI());
+		}
+		catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
