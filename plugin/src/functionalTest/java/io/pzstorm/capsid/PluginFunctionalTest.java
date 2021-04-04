@@ -117,8 +117,11 @@ public abstract class PluginFunctionalTest {
 		File gameMediaDir = new File(gameDir.convert().toFile(), "media");
 		Files.createDirectory(gameMediaDir.toPath());
 
-		for (String dir : new String[] {"lua", "maps", "models"}) {
-			Files.createDirectories(new File(gameMediaDir, dir).toPath());
+		for (String dir : new String[] {"lua", "maps", "models"})
+		{
+			Path createDir = new File(gameMediaDir, dir).toPath().toAbsolutePath();
+			Files.createDirectory(createDir);
+			Assertions.assertTrue(createDir.toFile().exists());
 		}
 		ideaHome = UnixPath.get(new File(projectDir, "ideaHome"));
 		Files.createDirectory(ideaHome.convert());
