@@ -25,6 +25,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import com.google.common.io.Files;
 
@@ -85,6 +87,48 @@ public class Utils {
 		}
 		catch (URISyntaxException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Unzip the given {@code Zip} archive to destination directory.
+	 *
+	 * @param archive {@code Zip} archive to unzip.
+	 * @param destination destination directory to unzip to.
+	 *
+	 * @throws IOException if an I/O error occurred while unzipping archive.
+	 */
+	public static void unzipArchive(File archive, File destination) throws IOException {
+
+		try (ZipInputStream zis = new ZipInputStream(new FileInputStream(archive)))
+		{
+			byte[] buffer = new byte[1024];
+			ZipEntry zipEntry = zis.getNextEntry();
+			while (zipEntry != null)
+			{
+				File newFile = new File(destination, zipEntry.getName());
+				if (!zipEntry.isDirectory())
+				{
+					// fix for Windows-created archives
+					File parent = newFile.getParentFile();
+					if (!parent.isDirectory() && !parent.mkdirs()) {
+						throw new IOException("Failed to create directory " + parent);
+					}
+					// write file content
+					try (FileOutputStream fos = new FileOutputStream(newFile))
+					{
+						//@formatter:off
+						int len; while ((len = zis.read(buffer)) > 0) {
+							fos.write(buffer, 0, len);
+						} //@formatter:on
+					}
+				}
+				else if (!newFile.isDirectory() && !newFile.mkdirs()) {
+					throw new IOException("Failed to create directory " + newFile);
+				}
+				zis.closeEntry();
+				zipEntry = zis.getNextEntry();
+			}
 		}
 	}
 }
