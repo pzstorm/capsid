@@ -25,6 +25,9 @@ out/
 *.tar.gz
 *.rar
 
+# Exclude testing resources
+!**/resources/*
+
 # virtual machine crash logs
 hs_err_pid*
 
