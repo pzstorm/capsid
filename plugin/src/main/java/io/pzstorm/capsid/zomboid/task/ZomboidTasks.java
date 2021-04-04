@@ -31,6 +31,9 @@ public enum ZomboidTasks {
 	),
 	ZOMBOID_JAR(ZomboidJarTask.class, "zomboidJar",
 			"zomboid", "Assembles a jar archive containing game classes."
+	),
+	ZOMBOID_SOURCES_JAR(ZomboidSourcesJarTask.class, "zomboidSourcesJar",
+			"zomboid", "Assembles a jar containing decompiled game sources."
 	);
 	public final String name, group, description;
 	final Class<? extends CapsidTask> type;
