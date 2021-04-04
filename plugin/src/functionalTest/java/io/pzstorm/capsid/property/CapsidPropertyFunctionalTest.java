@@ -58,10 +58,10 @@ class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
 
 		GradleRunner runner = getRunner().withArguments(new ArrayList<>());
 
-		Map<String, String> arguments = new HashMap<>();
-		arguments.put("PZ_DIR_PATH", getGameDirPath().toString());
-		arguments.put("IDEA_HOME", getIdeaHomePath().toString());
-		runner.withEnvironment(arguments);
+		Map<String, String> environment = new HashMap<>();
+		environment.put("PZ_DIR_PATH", getGameDirPath().convert().toAbsolutePath().toString());
+		environment.put("IDEA_HOME", getIdeaHomePath().convert().toAbsolutePath().toString());
+		runner.withEnvironment(environment);
 
 		// runner cannot run in debug mode with environment variables
 		runner.withDebug(false);
