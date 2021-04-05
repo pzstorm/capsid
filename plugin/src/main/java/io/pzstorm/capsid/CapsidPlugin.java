@@ -111,16 +111,9 @@ public class CapsidPlugin implements Plugin<Project> {
 
         // register project configurations
         ConfigurationContainer configurations = project.getConfigurations();
-
-        Configuration implementation = configurations.getByName("implementation");
-        Configuration runtimeOnly = configurations.getByName("runtimeOnly");
-
-        Configuration zomboidRuntimeOnly = configurations.create("zomboidRuntimeOnly");
-        Configuration zomboidImplementation = configurations.create("zomboidImplementation");
-
-        runtimeOnly.extendsFrom(zomboidRuntimeOnly);
-        implementation.extendsFrom(zomboidImplementation);
-
+        for (Configurations configuration : Configurations.values()) {
+            configuration.register(configurations);
+        }
         // register project dependencies
         DependencyHandler dependencies = project.getDependencies();
 
