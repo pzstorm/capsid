@@ -33,7 +33,6 @@ import org.jetbrains.annotations.Unmodifiable;
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.property.CapsidProperties;
 import io.pzstorm.capsid.property.CapsidProperty;
-import io.pzstorm.capsid.property.validator.PropertyValidators;
 
 /**
  * This class represents properties from {@code mod.info} file.
@@ -79,8 +78,7 @@ public class ModProperties extends CapsidProperties {
 				.build();
 
 		//noinspection SpellCheckingInspection
-		MOD_PZ_VERSION = new CapsidProperty.Builder<String>("mod.pzversion", String.class)
-				.withValidator(PropertyValidators.SEM_VERSION_VALIDATOR)
+		MOD_PZ_VERSION = new CapsidProperty.Builder<>("mod.pzversion", String.class)
 				.withEnvironmentVar("MOD_VERSION")
 				.isRequired(false)
 				.build();
