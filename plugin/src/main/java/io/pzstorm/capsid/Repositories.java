@@ -27,7 +27,14 @@ public enum Repositories {
 	 *
 	 * @see RepositoryHandler#mavenCentral()
 	 */
-	MAVEN_CENTRAL(RepositoryHandler::mavenCentral);
+	MAVEN_CENTRAL(RepositoryHandler::mavenCentral),
+
+	/**
+	 * Represents Maven local cache repository.
+	 *
+	 * @see RepositoryHandler#mavenLocal()
+	 */
+	MAVEN_LOCAL(RepositoryHandler::mavenLocal);
 
 	private final RepositorySupplier repository;
 
