@@ -27,6 +27,7 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
+import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.*;
@@ -55,9 +56,11 @@ public class CapsidPlugin implements Plugin<Project> {
         // apply all core plugins to this project
         CorePlugin.applyAll(project);
 
-        // add Maven Central repository
-        project.getRepositories().mavenCentral();
-
+        // register all declared repositories
+        RepositoryHandler repositories = project.getRepositories();
+        for (Repositories repository : Repositories.values()) {
+            repository.register(repositories);
+        }
         JavaPluginExtension javaExtension = Objects.requireNonNull(
                 extensions.getByType(JavaPluginExtension.class)
         );
