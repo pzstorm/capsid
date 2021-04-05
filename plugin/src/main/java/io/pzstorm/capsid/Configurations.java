@@ -25,12 +25,13 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("ConstantConditions")
 public enum Configurations {
 
 	/**
 	 * Project Zomboid dependencies only available during runtime.
 	 */
-	ZOMBOID_RUNTIME_ONLY("zomboidRuntimeOnly", new String[] { "runtimeOnly" } , null),
+	ZOMBOID_RUNTIME_ONLY("zomboidRuntimeOnly", new String[] { "runtimeOnly" }, null),
 
 	/**
 	 * Project Zomboid dependencies available during compile and runtime.
