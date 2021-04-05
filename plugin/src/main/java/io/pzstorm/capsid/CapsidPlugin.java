@@ -18,13 +18,11 @@
 package io.pzstorm.capsid;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
@@ -35,7 +33,6 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
-import io.pzstorm.capsid.mod.ModProperties;
 import io.pzstorm.capsid.mod.ModTasks;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.task.SetupTasks;
@@ -116,21 +113,8 @@ public class CapsidPlugin implements Plugin<Project> {
         }
         // register project dependencies
         DependencyHandler dependencies = project.getDependencies();
-
-        // Project Zomboid libraries
-        dependencies.add("zomboidRuntimeOnly",
-                project.fileTree(gameDir, tree -> tree.include("*.jar"))
-        );
-        // Project Zomboid assets
-        dependencies.add("zomboidImplementation",
-                project.files(new File(gameDir, "media"))
-        );
-        // Project Zomboid classes
-        String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
-        if (modPzVersion != null)
-        {
-            Path jarPath = Paths.get("lib", String.format("zomboid-%s.jar", modPzVersion));
-            dependencies.add("zomboidRuntimeOnly", project.files(jarPath));
+        for (Dependencies dependency : Dependencies.values()) {
+            dependency.register(project, dependencies);
         }
         // register all zomboid tasks
         for (ZomboidTasks task : ZomboidTasks.values()) {
