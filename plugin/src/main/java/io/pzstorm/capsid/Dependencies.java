@@ -53,7 +53,7 @@ public enum Dependencies {
 		}
 		else return null;
 	});
-	private final String configuration;
+	final String configuration;
 	private final DependencyResolver resolver;
 
 	Dependencies(String configuration, DependencyResolver resolver) {
