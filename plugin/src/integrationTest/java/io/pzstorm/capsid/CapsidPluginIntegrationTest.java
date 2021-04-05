@@ -47,10 +47,10 @@ class CapsidPluginIntegrationTest extends PluginIntegrationTest {
 	}
 
 	@Test
-	void shouldAddMavenCentralRepository() {
+	void shouldRegisterAllRepositories() {
 
 		RepositoryHandler repositories = getProject(true).getRepositories();
-		Assertions.assertEquals(1, repositories.size());
+		Assertions.assertEquals(2, repositories.size());
 		Assertions.assertNotNull(repositories.findByName("MavenRepo"));
 	}
 
