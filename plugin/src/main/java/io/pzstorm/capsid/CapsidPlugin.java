@@ -24,10 +24,9 @@ import java.util.*;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
-import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.*;
@@ -99,24 +98,6 @@ public class CapsidPlugin implements Plugin<Project> {
         for (ModTasks task : ModTasks.values()) {
             task.register(project);
         }
-        // configure project from zomboid script
-        configureZomboid(project);
-
-        // register all zomboid tasks
-        for (ZomboidTasks task : ZomboidTasks.values()) {
-            task.register(project);
-        }
-        TaskContainer tasks = project.getTasks();
-        tasks.getByName("classes").dependsOn(tasks.getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
-    }
-
-    /**
-     * Configure project from {@code zomboid.gradle}.
-     *
-     * @param project {@link Project} to configure.
-     */
-    private static void configureZomboid(Project project) {
-
         ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 
         // directory containing Project Zomboid classes
@@ -125,21 +106,29 @@ public class CapsidPlugin implements Plugin<Project> {
         // directory containing Project Zomboid sources
         ext.set("zomboidSourcesDir", getZomboidSourcesDir(project));
 
+        // register project configurations
         ConfigurationContainer configurations = project.getConfigurations();
-        configurations.getByName("runtimeOnly").extendsFrom(configurations.create("zomboidRuntimeOnly"));
-        configurations.getByName("implementation").extendsFrom(configurations.create("zomboidImplementation"));
 
+        Configuration implementation = configurations.getByName("implementation");
+        Configuration runtimeOnly = configurations.getByName("runtimeOnly");
+
+        Configuration zomboidRuntimeOnly = configurations.create("zomboidRuntimeOnly");
+        Configuration zomboidImplementation = configurations.create("zomboidImplementation");
+
+        runtimeOnly.extendsFrom(zomboidRuntimeOnly);
+        implementation.extendsFrom(zomboidImplementation);
+
+        // register project dependencies
         DependencyHandler dependencies = project.getDependencies();
-        File gameDir = CapsidPlugin.getGameDirProperty(project);
 
         // Project Zomboid libraries
-        ConfigurableFileTree zomboidLibraries = project.fileTree(gameDir, tree -> tree.include("*.jar"));
-        dependencies.add("zomboidRuntimeOnly", zomboidLibraries);
-
+        dependencies.add("zomboidRuntimeOnly",
+                project.fileTree(gameDir, tree -> tree.include("*.jar"))
+        );
         // Project Zomboid assets
-        ConfigurableFileCollection zomboidAssets = project.files(new File(gameDir, "media"));
-        dependencies.add("zomboidImplementation", zomboidAssets);
-
+        dependencies.add("zomboidImplementation",
+                project.files(new File(gameDir, "media"))
+        );
         // Project Zomboid classes
         String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
         if (modPzVersion != null)
@@ -147,6 +136,12 @@ public class CapsidPlugin implements Plugin<Project> {
             Path jarPath = Paths.get("lib", String.format("zomboid-%s.jar", modPzVersion));
             dependencies.add("zomboidRuntimeOnly", project.files(jarPath));
         }
+        // register all zomboid tasks
+        for (ZomboidTasks task : ZomboidTasks.values()) {
+            task.register(project);
+        }
+        TaskContainer tasks = project.getTasks();
+        tasks.getByName("classes").dependsOn(tasks.getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
     }
 
     public static File getZomboidClassesDir(Project project) {
