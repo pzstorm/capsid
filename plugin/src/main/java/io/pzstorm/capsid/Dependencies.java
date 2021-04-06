@@ -60,7 +60,18 @@ public enum Dependencies {
 	 * @see <a href="https://search.maven.org/artifact/io.github.cocolabs/pz-zdoc">
 	 *     Artifact on Central Maven</a>
 	 */
-	ZOMBOID_DOC("zomboidDoc", project -> "io.github.cocolabs:pz-zdoc:3.+");
+	ZOMBOID_DOC("zomboidDoc", project -> "io.github.cocolabs:pz-zdoc:3.+"),
+
+	/**
+	 * Lua library compiled with ZomboidDoc.
+	 */
+	LUA_LIBRARY("compileOnly", project -> {
+		String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
+		if (modPzVersion != null) {
+			return project.files(String.format("lib/zdoc-lua-%s.jar", modPzVersion));
+		}
+		else return null;
+	});
 
 	final String configuration;
 	private final DependencyResolver resolver;
