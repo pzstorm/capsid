@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.gradle.api.GradleException;
+import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.jetbrains.annotations.Nullable;
@@ -72,6 +73,16 @@ public enum Configurations {
 			resolve(entry, configurations).extendsFrom(config);
 		}
 		return config;
+	}
+
+	/**
+	 * Resolve a {@link Configuration} matching this enum from {@code ConfigurationContainer}.
+	 *
+	 * @param project {@code Project} to resolve the configuration from.
+	 * @return configuration with the given name. Never returns {@code null}.
+	 */
+	public Configuration resolve(Project project) {
+		return resolve(name, project.getConfigurations());
 	}
 
 	/**
