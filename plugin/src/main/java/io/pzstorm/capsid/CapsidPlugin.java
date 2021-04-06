@@ -106,6 +106,9 @@ public class CapsidPlugin implements Plugin<Project> {
         // directory containing Project Zomboid sources
         ext.set("zomboidSourcesDir", getZomboidSourcesDir(project));
 
+        // directory containing generated lua library
+        ext.set("zDocLuaDir", project.file(project.getBuildDir().getPath() + "/generated/sources/zdoc"));
+
         // register project configurations
         ConfigurationContainer configurations = project.getConfigurations();
         for (Configurations configuration : Configurations.values()) {
