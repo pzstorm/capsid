@@ -88,7 +88,7 @@ public enum Dependencies {
 	 * @param dependencies handler used to register dependency.
 	 * @return instance of the registered dependency or {@code null} if none registered.
 	 */
-	public @Nullable Dependency register(Project project, DependencyHandler dependencies) {
+	@Nullable Dependency register(Project project, DependencyHandler dependencies) {
 
 		Object dependencyNotation = resolver.resolveDependency(project);
 		if (dependencyNotation != null) {

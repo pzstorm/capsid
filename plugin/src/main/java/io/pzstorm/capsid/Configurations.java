@@ -58,7 +58,7 @@ public enum Configurations {
 	 * @param configurations where to register the configuration.
 	 * @return the registered configuration.
 	 */
-	public Configuration register(ConfigurationContainer configurations) {
+	Configuration register(ConfigurationContainer configurations) {
 
 		Configuration config = configurations.create(name);
 

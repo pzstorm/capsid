@@ -45,7 +45,7 @@ public enum Repositories {
 	/**
 	 * Register this repository with the given {@link RepositoryHandler}.
 	 */
-	public ArtifactRepository register(RepositoryHandler handler) {
+	ArtifactRepository register(RepositoryHandler handler) {
 		return repository.get(handler);
 	}
 }
