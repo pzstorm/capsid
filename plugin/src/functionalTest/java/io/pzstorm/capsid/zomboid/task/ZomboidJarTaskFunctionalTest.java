@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.PluginFunctionalTest;
+import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.util.Utils;
 
 class ZomboidJarTaskFunctionalTest extends PluginFunctionalTest {
@@ -40,7 +41,7 @@ class ZomboidJarTaskFunctionalTest extends PluginFunctionalTest {
 	void shouldAssembleJarArchiveContainingGameClasses() throws IOException {
 
 		File source = CapsidPlugin.getGameDirProperty(getProject());
-		Assertions.assertTrue(CapsidPlugin.getZomboidClassesDir(getProject()).mkdirs());
+		Assertions.assertTrue(ProjectProperty.ZOMBOID_CLASSES_DIR.get(getProject()).mkdirs());
 
 		File destination = new File(getProject().getProjectDir(), "lib");
 		Assertions.assertTrue(destination.mkdirs());

@@ -29,8 +29,8 @@ import org.gradle.api.tasks.JavaExec;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
 
-import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.util.UnixPath;
 
@@ -50,7 +50,7 @@ public class DecompileZomboidTask extends JavaExec implements CapsidTask {
 		UnixPath property = LocalProperties.IDEA_HOME.findProperty(project);
 		if (property != null)
 		{
-			File zomboidClassesDir = CapsidPlugin.getZomboidClassesDir(project);
+			File zomboidClassesDir = ProjectProperty.ZOMBOID_CLASSES_DIR.get(project);
 			onlyIf(t -> zomboidClassesDir.exists() && zomboidClassesDir.listFiles().length > 0);
 
 			// set task to run with Java 11
@@ -67,7 +67,7 @@ public class DecompileZomboidTask extends JavaExec implements CapsidTask {
 			List<String> parameters = new ArrayList<>(Arrays.asList(
 					"-hdc=0", "-dgs=1", "-rsy=1", "-rbr=1", "-lit=1", "-nls=1", "-mpm=60"
 			));
-			File zomboidSourcesDir = CapsidPlugin.getZomboidSourcesDir(project);
+			File zomboidSourcesDir = ProjectProperty.ZOMBOID_SOURCES_DIR.get(project);
 			// decompiler will throw error if destination dir doesn't exist
 			//noinspection ResultOfMethodCallIgnored
 			zomboidSourcesDir.mkdirs();

@@ -22,8 +22,8 @@ import java.io.File;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 
-import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.zomboid.ZomboidJar;
 
 /**
@@ -38,7 +38,7 @@ public class ZomboidJarTask extends ZomboidJar implements CapsidTask {
 		setIncludeEmptyDirs(false);
 		getArchiveBaseName().set("zomboid");
 
-		File zomboidClassesDir = CapsidPlugin.getZomboidClassesDir(project);
+		File zomboidClassesDir = ProjectProperty.ZOMBOID_CLASSES_DIR.get(project);
 
 		from(zomboidClassesDir);
 		getDestinationDirectory().set(new File(project.getProjectDir(), "lib"));

@@ -27,16 +27,15 @@ import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.PluginFunctionalTest;
-import io.pzstorm.capsid.zomboid.task.ZomboidTasks;
+import io.pzstorm.capsid.ProjectProperty;
 
 class ZomboidClassesTaskFunctionalTest extends PluginFunctionalTest {
 
 	@Test
 	void shouldSyncZomboidClassesFromInstallDirectory() throws IOException {
 
-		File zomboidClassesDir = CapsidPlugin.getZomboidClassesDir(getProject());
+		File zomboidClassesDir = ProjectProperty.ZOMBOID_CLASSES_DIR.get(getProject());
 		Assertions.assertFalse(zomboidClassesDir.exists());
 
 		File gameDir = getGameDirPath().convert().toAbsolutePath().toFile();

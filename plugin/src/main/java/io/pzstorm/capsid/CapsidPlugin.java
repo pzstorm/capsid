@@ -98,17 +98,10 @@ public class CapsidPlugin implements Plugin<Project> {
         for (ModTasks task : ModTasks.values()) {
             task.register(project);
         }
-        ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-
-        // directory containing Project Zomboid classes
-        ext.set("zomboidClassesDir", getZomboidClassesDir(project));
-
-        // directory containing Project Zomboid sources
-        ext.set("zomboidSourcesDir", getZomboidSourcesDir(project));
-
-        // directory containing generated lua library
-        ext.set("zDocLuaDir", project.file(project.getBuildDir().getPath() + "/generated/sources/zdoc"));
-
+        // register all project properties
+        for (ProjectProperty<?> property : ProjectProperty.PROPERTIES) {
+            property.register(project);
+        }
         // register project configurations
         ConfigurationContainer configurations = project.getConfigurations();
         for (Configurations configuration : Configurations.values()) {
@@ -125,14 +118,6 @@ public class CapsidPlugin implements Plugin<Project> {
         }
         TaskContainer tasks = project.getTasks();
         tasks.getByName("classes").dependsOn(tasks.getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
-    }
-
-    public static File getZomboidClassesDir(Project project) {
-        return new File(project.getBuildDir(), "classes/zomboid").getAbsoluteFile();
-    }
-
-    public static File getZomboidSourcesDir(Project project) {
-        return new File(project.getBuildDir(), "generated/sources/zomboid").getAbsoluteFile();
     }
 
     /**
