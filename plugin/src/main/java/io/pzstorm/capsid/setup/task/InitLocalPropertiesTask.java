@@ -35,7 +35,6 @@ import io.pzstorm.capsid.property.CapsidProperty;
 /**
  * This task will initialize local properties by asking for user input.
  */
-@SuppressWarnings("WeakerAccess")
 public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
 
 	@TaskAction

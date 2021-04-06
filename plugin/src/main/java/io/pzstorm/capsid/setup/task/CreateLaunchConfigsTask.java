@@ -32,7 +32,6 @@ import io.pzstorm.capsid.setup.xml.LaunchRunConfig;
  *
  * @see LaunchRunConfig
  */
-@SuppressWarnings("WeakerAccess")
 public class CreateLaunchConfigsTask extends DefaultTask implements CapsidTask {
 
 	@TaskAction
