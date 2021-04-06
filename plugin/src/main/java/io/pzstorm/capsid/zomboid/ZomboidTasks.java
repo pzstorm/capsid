@@ -38,6 +38,9 @@ public enum ZomboidTasks {
 	),
 	ZOMBOID_LUA_JAR(ZomboidLuaJarTask.class, "zomboidLuaJar",
 			"zomboid", "Assembles a jar containing compiled Lua classes"
+	),
+	ZOMBOID_VERSION(ZomboidVersionTask.class, "zomboidVersion",
+			"zomboid", "Save and print Project Zomboid game version."
 	);
 	public final String name, group, description;
 	final Class<? extends CapsidTask> type;
