@@ -15,30 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package io.pzstorm.capsid.setup.task;
+package io.pzstorm.capsid.zomboid;
 
 import org.gradle.api.Project;
 
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.zomboid.task.*;
 
-/**
- * Tasks that help setup modding work environment.
- */
-public enum SetupTasks {
+public enum ZomboidTasks {
 
-	INIT_LOCAL_PROPERTIES(InitLocalPropertiesTask.class, "initLocalProperties",
-			"build setup", "Initialize local project properties."
+	ZOMBOID_CLASSES(ZomboidClassesTask.class, "zomboidClasses",
+			"zomboid", "Assembles Project Zomboid classes."
 	),
-	CREATE_LAUNCH_CONFIGS(CreateLaunchConfigsTask.class, "createLaunchRunConfigs",
-			"build setup", "Create game launch run configurations."
+	DECOMPILE_ZOMBOID(DecompileZomboidTask.class, "decompileZomboid",
+			"zomboid", "Decompile Project Zomboid classes."
 	),
-	CREATE_MOD_SEARCH_SCOPES(CreateModSearchScopesTask.class, "createModSearchScopes",
-			"build setup", "Create IDEA search scopes for mod files."
+	ZOMBOID_JAR(ZomboidJarTask.class, "zomboidJar",
+			"zomboid", "Assembles a jar archive containing game classes."
+	),
+	ZOMBOID_SOURCES_JAR(ZomboidSourcesJarTask.class, "zomboidSourcesJar",
+			"zomboid", "Assembles a jar containing decompiled game sources."
+	),
+	ZOMBOID_LUA_JAR(ZomboidLuaJarTask.class, "zomboidLuaJar",
+			"zomboid", "Assembles a jar containing compiled Lua classes"
 	);
 	public final String name, group, description;
 	final Class<? extends CapsidTask> type;
 
-	SetupTasks(Class<? extends CapsidTask> type, String name, String group, String description) {
+	ZomboidTasks(Class<? extends CapsidTask> type, String name, String group, String description) {
 		this.type = type;
 		this.name = name;
 		this.group = group;

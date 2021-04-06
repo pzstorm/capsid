@@ -34,6 +34,7 @@ import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.util.Utils;
+import io.pzstorm.capsid.zomboid.ZomboidTasks;
 
 class ZomboidJarTaskFunctionalTest extends PluginFunctionalTest {
 

@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.ProjectProperty;
+import io.pzstorm.capsid.zomboid.ZomboidTasks;
 
 class ZomboidClassesTaskFunctionalTest extends PluginFunctionalTest {
 

@@ -25,6 +25,7 @@ import org.gradle.api.Project;
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.zomboid.ZomboidJar;
+import io.pzstorm.capsid.zomboid.ZomboidTasks;
 
 /**
  * This task assembles a jar containing decompiled game sources.

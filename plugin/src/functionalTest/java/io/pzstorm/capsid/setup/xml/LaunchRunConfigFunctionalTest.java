@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
-import io.pzstorm.capsid.setup.task.SetupTasks;
+import io.pzstorm.capsid.setup.SetupTasks;
 import io.pzstorm.capsid.util.Utils;
 
 class LaunchRunConfigFunctionalTest extends PluginFunctionalTest {

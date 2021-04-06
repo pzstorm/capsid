@@ -33,6 +33,7 @@ import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.util.UnixPath;
+import io.pzstorm.capsid.zomboid.ZomboidTasks;
 
 /**
  * Decompile game classes with FernFlower using default IDEA settings.
