@@ -37,6 +37,7 @@ class DependenciesIntegrationTest extends PluginIntegrationTest {
 	void shouldRegisterDependencies() {
 
 		Project project1 = getProject(false);
+		project1.getPlugins().apply("java");
 
 		ExtraPropertiesExtension ext = project1.getExtensions().getExtraProperties();
 		File gameDir =  new File(project1.getRootDir(), "gameDir");
@@ -60,6 +61,7 @@ class DependenciesIntegrationTest extends PluginIntegrationTest {
 			dependencyData.put(value, dependency);
 		}
 		Project project2 = ProjectBuilder.builder().build();
+		project2.getPlugins().apply("java");
 
 		gameDir =  new File(project2.getRootDir(), "gameDir");
 		project2.getExtensions().getExtraProperties().set("gameDir", gameDir.toPath().toString());
