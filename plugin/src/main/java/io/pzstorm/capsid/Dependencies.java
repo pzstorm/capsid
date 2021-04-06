@@ -32,16 +32,16 @@ public enum Dependencies {
 	/**
 	 * Libraries used by Project Zomboid during runtime.
 	 */
-	ZOMBOID_LIBRARIES("zomboidRuntimeOnly", project -> {
-		return project.fileTree(CapsidPlugin.getGameDirProperty(project), t -> t.include("*.jar"));
-	}),
+	ZOMBOID_LIBRARIES("zomboidRuntimeOnly", project ->
+			project.fileTree(CapsidPlugin.getGameDirProperty(project), t -> t.include("*.jar"))
+	),
 
 	/**
 	 * Project Zomboid assets in {@code media} directory.
 	 */
-	ZOMBOID_ASSETS("zomboidImplementation", project -> {
-		return project.files(new File(CapsidPlugin.getGameDirProperty(project), "media"));
-	}),
+	ZOMBOID_ASSETS("zomboidImplementation", project ->
+			project.files(new File(CapsidPlugin.getGameDirProperty(project), "media"))
+	),
 
 	/**
 	 * Project Zomboid Java classes used during runtime.
