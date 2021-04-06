@@ -52,7 +52,16 @@ public enum Dependencies {
 			return project.files(Paths.get("lib", String.format("zomboid-%s.jar", modPzVersion)));
 		}
 		else return null;
-	});
+	}),
+
+	/**
+	 * Lua library compiler for Project Zomboid.
+	 *
+	 * @see <a href="https://search.maven.org/artifact/io.github.cocolabs/pz-zdoc">
+	 *     Artifact on Central Maven</a>
+	 */
+	ZOMBOID_DOC("zomboidDoc", project -> "io.github.cocolabs:pz-zdoc:3.+");
+
 	final String configuration;
 	private final DependencyResolver resolver;
 

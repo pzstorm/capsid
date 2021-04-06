@@ -36,7 +36,12 @@ public enum Configurations {
 	/**
 	 * Project Zomboid dependencies available during compile and runtime.
 	 */
-	ZOMBOID_IMPLEMENTATION("zomboidImplementation", new String[] { "implementation"}, null);
+	ZOMBOID_IMPLEMENTATION("zomboidImplementation", new String[] { "implementation"}, null),
+
+	/**
+	 * Zomboid Doc dependencies only available during runtime.
+	 */
+	ZOMBOID_DOC("zomboidDoc", null, new String[] { "zomboidRuntimeOnly" });
 
 	private final String name;
 	private final String[] extendedTo, extendsFrom;
