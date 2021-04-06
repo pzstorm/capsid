@@ -19,11 +19,12 @@ package io.pzstorm.capsid;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
-import org.jetbrains.annotations.Nullable;
 
 import io.pzstorm.capsid.mod.ModProperties;
 
@@ -32,16 +33,16 @@ public enum Dependencies {
 	/**
 	 * Libraries used by Project Zomboid during runtime.
 	 */
-	ZOMBOID_LIBRARIES("zomboidRuntimeOnly", project ->
+	ZOMBOID_LIBRARIES("zomboidRuntimeOnly", project -> new Object[] {
 			project.fileTree(CapsidPlugin.getGameDirProperty(project), t -> t.include("*.jar"))
-	),
+	}),
 
 	/**
 	 * Project Zomboid assets in {@code media} directory.
 	 */
-	ZOMBOID_ASSETS("zomboidImplementation", project ->
+	ZOMBOID_ASSETS("zomboidImplementation", project -> new Object[] {
 			project.files(new File(CapsidPlugin.getGameDirProperty(project), "media"))
-	),
+	}),
 
 	/**
 	 * Project Zomboid Java classes used during runtime.
@@ -49,9 +50,9 @@ public enum Dependencies {
 	ZOMBOID_CLASSES("zomboidRuntimeOnly", project -> {
 		String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
 		if (modPzVersion != null) {
-			return project.files(Paths.get("lib", String.format("zomboid-%s.jar", modPzVersion)));
+			return new Object[]{ project.files(Paths.get("lib", String.format("zomboid-%s.jar", modPzVersion))) };
 		}
-		else return null;
+		else return new Object[0];
 	}),
 
 	/**
@@ -60,7 +61,10 @@ public enum Dependencies {
 	 * @see <a href="https://search.maven.org/artifact/io.github.cocolabs/pz-zdoc">
 	 *     Artifact on Central Maven</a>
 	 */
-	ZOMBOID_DOC("zomboidDoc", project -> "io.github.cocolabs:pz-zdoc:3.+"),
+	ZOMBOID_DOC("zomboidDoc", project -> new Object[]{
+			"io.github.cocolabs:pz-zdoc:3.+",
+			project.files(ProjectProperty.ZOMBOID_CLASSES_DIR.get(project))
+	}),
 
 	/**
 	 * Lua library compiled with ZomboidDoc.
@@ -68,9 +72,9 @@ public enum Dependencies {
 	LUA_LIBRARY("compileOnly", project -> {
 		String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
 		if (modPzVersion != null) {
-			return project.files(String.format("lib/zdoc-lua-%s.jar", modPzVersion));
+			return new Object[]{ project.files(String.format("lib/zdoc-lua-%s.jar", modPzVersion)) };
 		}
-		else return null;
+		else return new Object[0];
 	});
 
 	final String configuration;
@@ -82,18 +86,19 @@ public enum Dependencies {
 	}
 
 	/**
-	 * Register this dependency for {@code Project} with the given {@code DependencyHandler}.
+	 * Register dependencies for {@code Project} with the given {@code DependencyHandler}.
 	 *
-	 * @param project {@code Project} to register the dependency for.
-	 * @param dependencies handler used to register dependency.
-	 * @return instance of the registered dependency or {@code null} if none registered.
+	 * @param project {@code Project} to register the dependencies for.
+	 * @param dependencies handler used to register dependencies.
+	 * @return {@code Set} of registered dependencies empty {@code Set} if none registered.
 	 */
-	@Nullable Dependency register(Project project, DependencyHandler dependencies) {
+	Set<Dependency> register(Project project, DependencyHandler dependencies) {
 
-		Object dependencyNotation = resolver.resolveDependency(project);
-		if (dependencyNotation != null) {
-			return dependencies.add(configuration, dependencyNotation);
+		Set<Dependency> result = new HashSet<>();
+		Object[] dependencyNotations = resolver.resolveDependencies(project);
+		for (Object notation : dependencyNotations) {
+			result.add(dependencies.add(configuration, notation));
 		}
-		else return null;
+		return result;
 	}
 }

@@ -18,15 +18,14 @@
 package io.pzstorm.capsid;
 
 import org.gradle.api.Project;
-import org.jetbrains.annotations.Nullable;
 
 public interface DependencyResolver {
 
 	/**
-	 * Resolve dependency notation for given project.
+	 * Resolve dependency notations for given project.
 	 *
-	 * @param project {@code Project} resolving the dependency
-	 * @return dependency notation or {@code null} if none available.
+	 * @param project {@code Project} resolving dependencies.
+	 * @return resolved dependency notations.
 	 */
-	@Nullable Object resolveDependency(Project project);
+	Object[] resolveDependencies(Project project);
 }

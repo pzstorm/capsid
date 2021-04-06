@@ -20,11 +20,13 @@ package io.pzstorm.capsid;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.testfixtures.ProjectBuilder;
@@ -46,7 +48,7 @@ class DependenciesIntegrationTest extends PluginIntegrationTest {
 
 		DependencyHandler handler1 = project1.getDependencies();
 		ConfigurationContainer configurations1 = project1.getConfigurations();
-		Map<Dependencies, Dependency> dependencyData = new HashMap<>();
+		Map<Dependencies, Set<Dependency>> dependencyData = new HashMap<>();
 
 		// register all configurations before resolving them
 		for (Configurations value : Configurations.values()) {
@@ -55,10 +57,13 @@ class DependenciesIntegrationTest extends PluginIntegrationTest {
 		for (Dependencies value : Dependencies.values())
 		{
 			Configuration configuration = configurations1.getByName(value.configuration);
-			Dependency dependency = value.register(project1, handler1);
+			Set<Dependency> dependencies = value.register(project1, handler1);
 
-			Assertions.assertTrue(configuration.getDependencies().contains(dependency));
-			dependencyData.put(value, dependency);
+			DependencySet dependencySet = configuration.getDependencies();
+			for (Dependency dependency : dependencies) {
+				Assertions.assertTrue(dependencySet.contains(dependency));
+			}
+			dependencyData.put(value, dependencies);
 		}
 		Project project2 = ProjectBuilder.builder().build();
 		project2.getPlugins().apply("java");
@@ -72,11 +77,14 @@ class DependenciesIntegrationTest extends PluginIntegrationTest {
 		for (Configurations value : Configurations.values()) {
 			value.register(configurations2);
 		}
-		// confirm that repositories are not registered in new project
+		// confirm that dependencies are not registered in new project
 		for (Dependencies value : Dependencies.values())
 		{
 			Configuration configuration = configurations2.getByName(value.configuration);
-			Assertions.assertFalse(configuration.getDependencies().contains(dependencyData.get(value)));
+			DependencySet dependencySet = configuration.getDependencies();
+			for (Dependency dependency : dependencyData.get(value)) {
+				Assertions.assertFalse(dependencySet.contains(dependency));
+			}
 		}
 	}
 }
