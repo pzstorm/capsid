@@ -47,6 +47,9 @@ public enum ZomboidTasks {
 	),
 	COMPILE_ZOMBOID_LUA(CompileZomboidLuaTask.class, "compileZomboidLua",
 			"zomboid", "Compile Lua library from modding API."
+	),
+	UPDATE_ZOMBOID_LUA(UpdateZomboidLuaTask.class, "updateZomboidLua",
+			"zomboid", "Run ZomboidDoc to update compiled Lua library."
 	);
 	public final String name, group, description;
 	final Class<? extends CapsidTask> type;
