@@ -17,42 +17,28 @@
  */
 package io.pzstorm.capsid.zomboid.task;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-import org.gradle.api.GradleException;
-import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
-import org.gradle.api.tasks.JavaExec;
-import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
-import io.pzstorm.capsid.Configurations;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.util.UnixPath;
-import io.pzstorm.capsid.zomboid.ZomboidTasks;
-import io.pzstorm.capsid.zomboid.ZomboidUtils;
 
 /**
  * This task will annotate vanilla Lua with {@code EmmyLua}.
  */
 @NonNullApi
-public class AnnotateZomboidLuaTask extends JavaExec implements CapsidTask {
+public class AnnotateZomboidLuaTask extends ZomboidJavaExec implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {
 
-		setGroup(group);
-		setDescription(description);
-
-		setMain("io.cocolabs.pz.zdoc.Main");
-		classpath(Configurations.ZOMBOID_DOC.resolve(project));
+		super.configure(group, description, project);
 
 		Path gameDir = Objects.requireNonNull(LocalProperties.GAME_DIR.findProperty(project)).convert();
 		Path zDocLuaDir = ProjectProperty.ZDOC_LUA_DIR.get(project).toPath();
@@ -60,22 +46,5 @@ public class AnnotateZomboidLuaTask extends JavaExec implements CapsidTask {
 		args("annotate", "-i", UnixPath.get(Paths.get(gameDir.toString(), "media/lua")).toString(),
 				"-o", UnixPath.get(Paths.get(zDocLuaDir.toString(), "media/lua")).toString()
 		);
-		dependsOn(project.getTasks().getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
-	}
-
-	/**
-	 * @throws IOException if an I/O error occurred while handling version file.
-	 * @throws GradleException if unable to find dependency or dependency has unexpected name.
-	 * @throws InvalidUserDataException if constructed semantic version is malformed.
-	 */
-	@TaskAction
-	void execute() throws IOException {
-
-		Project project = getProject();
-
-		// write semantic version to file
-		try (Writer writer = new FileWriter(ZomboidUtils.getZomboidVersionFile(project))) {
-			writer.write(ZomboidUtils.getZomboidDocVersion(project).toString());
-		}
 	}
 }
