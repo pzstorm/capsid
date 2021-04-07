@@ -72,4 +72,9 @@ class SemanticVersionTest extends PluginUnitTest {
 			Assertions.assertEquals(entry.getValue(), new SemanticVersion(entry.getKey()).classifier);
 		}
 	}
+
+	@Test
+	void shouldConvertSemanticVersionToString() {
+		Assertions.assertEquals("3.1.0", new SemanticVersion("3.1.0").toString());
+	}
 }

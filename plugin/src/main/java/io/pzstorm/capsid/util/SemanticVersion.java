@@ -55,6 +55,6 @@ public class SemanticVersion {
 
 	@Override
 	public String toString() {
-		return major + '.' + minor + '.' + patch + classifier;
+		return String.format("%d.%d.%d%s", major, minor, patch, classifier);
 	}
 }
