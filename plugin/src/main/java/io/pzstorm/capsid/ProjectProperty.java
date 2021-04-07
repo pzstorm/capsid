@@ -46,6 +46,11 @@ public class ProjectProperty<T> {
 	 */
 	public static final ProjectProperty<File> ZDOC_LUA_DIR;
 
+	/**
+	 * File containing last ZomboidDoc version text.
+	 */
+	public static final ProjectProperty<File> ZDOC_VERSION_FILE;
+
 	static
 	{
 		Set<ProjectProperty<?>> properties = new HashSet<>();
@@ -64,6 +69,11 @@ public class ProjectProperty<T> {
 				project.file(project.getBuildDir().getPath() + "/generated/sources/zdoc")
 		);
 		properties.add(ZDOC_LUA_DIR);
+
+		ZDOC_VERSION_FILE = new ProjectProperty<>("zDocVersionFile", project ->
+				project.file("zdoc.version")
+		);
+		properties.add(ZDOC_VERSION_FILE);
 
 		PROPERTIES = Collections.unmodifiableSet(properties);
 	}
