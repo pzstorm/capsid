@@ -41,6 +41,9 @@ public enum ZomboidTasks {
 	),
 	ZOMBOID_VERSION(ZomboidVersionTask.class, "zomboidVersion",
 			"zomboid", "Save and print Project Zomboid game version."
+	),
+	ANNOTATE_ZOMBOID_LUA(AnnotateZomboidLuaTask.class, "annotateZomboidLua",
+			"zomboid", "Annotate vanilla Lua with EmmyLua."
 	);
 	public final String name, group, description;
 	final Class<? extends CapsidTask> type;
