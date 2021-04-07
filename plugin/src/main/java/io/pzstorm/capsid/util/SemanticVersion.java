@@ -57,4 +57,19 @@ public class SemanticVersion {
 	public String toString() {
 		return String.format("%d.%d.%d%s", major, minor, patch, classifier);
 	}
+
+	public static class Comparator implements java.util.Comparator<SemanticVersion> {
+
+		@Override
+		public int compare(SemanticVersion o1, SemanticVersion o2) {
+
+			if (!o1.major.equals(o2.major)) {
+				return o1.major.compareTo(o2.major);
+			}
+			if (!o1.minor.equals(o2.minor)) {
+				return o1.minor.compareTo(o2.minor);
+			}
+			return o1.patch.compareTo(o2.patch);
+		}
+	}
 }

@@ -17,7 +17,9 @@
  */
 package io.pzstorm.capsid.util;
 
-import java.util.Map;
+import java.util.*;
+
+import com.google.common.collect.ImmutableList;
 
 import org.apache.groovy.util.Maps;
 import org.gradle.api.InvalidUserDataException;
@@ -70,6 +72,25 @@ class SemanticVersionTest extends PluginUnitTest {
 		);
 		for (Map.Entry<String, String> entry : validVersions.entrySet()) {
 			Assertions.assertEquals(entry.getValue(), new SemanticVersion(entry.getKey()).classifier);
+		}
+	}
+
+	@Test
+	void shouldCorrectlyCompareSemanticVersions() {
+
+		List<SemanticVersion> semanticVersionsList = ImmutableList.of(
+				new SemanticVersion("0.1.0"),
+				new SemanticVersion("0.2.0"),
+				new SemanticVersion("0.3.0"),
+				new SemanticVersion("0.3.1"),
+				new SemanticVersion("1.5.3")
+		);
+		SortedSet<SemanticVersion> semanticVersions = new TreeSet<>(new SemanticVersion.Comparator());
+		semanticVersions.addAll(semanticVersionsList);
+
+		List<SemanticVersion> semVerList = new ArrayList<>(semanticVersions);
+		for (int i = 0; i < semVerList.size(); i++) {
+			Assertions.assertEquals(semVerList.get(i), semanticVersionsList.get(i));
 		}
 	}
 
