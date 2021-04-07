@@ -17,7 +17,6 @@
  */
 package io.pzstorm.capsid.zomboid.task;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
@@ -38,13 +37,12 @@ public class AnnotateZomboidLuaTask extends ZomboidJavaExec implements CapsidTas
 	@Override
 	public void configure(String group, String description, Project project) {
 
-		super.configure(group, description, project);
+		UnixPath gameDir = Objects.requireNonNull(LocalProperties.GAME_DIR.findProperty(project));
+		UnixPath zDocLuaDir = UnixPath.get(ProjectProperty.ZDOC_LUA_DIR.get(project));
 
-		Path gameDir = Objects.requireNonNull(LocalProperties.GAME_DIR.findProperty(project)).convert();
-		Path zDocLuaDir = ProjectProperty.ZDOC_LUA_DIR.get(project).toPath();
-
-		args("annotate", "-i", UnixPath.get(Paths.get(gameDir.toString(), "media/lua")).toString(),
-				"-o", UnixPath.get(Paths.get(zDocLuaDir.toString(), "media/lua")).toString()
+		args("annotate", "-i", Paths.get(gameDir.toString(), "media/lua").toString(),
+				"-o", Paths.get(zDocLuaDir.toString(), "media/lua").toString()
 		);
+		super.configure(group, description, project);
 	}
 }
