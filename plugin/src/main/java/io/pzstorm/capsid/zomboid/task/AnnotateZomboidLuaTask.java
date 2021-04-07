@@ -17,15 +17,12 @@
  */
 package io.pzstorm.capsid.zomboid.task;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.gradle.api.GradleException;
 import org.gradle.api.InvalidUserDataException;
@@ -38,9 +35,9 @@ import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.Configurations;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.setup.LocalProperties;
-import io.pzstorm.capsid.util.SemanticVersion;
 import io.pzstorm.capsid.util.UnixPath;
 import io.pzstorm.capsid.zomboid.ZomboidTasks;
+import io.pzstorm.capsid.zomboid.ZomboidUtils;
 
 /**
  * This task will annotate vanilla Lua with {@code EmmyLua}.
@@ -76,26 +73,9 @@ public class AnnotateZomboidLuaTask extends JavaExec implements CapsidTask {
 
 		Project project = getProject();
 
-		File versionFile = ProjectProperty.ZDOC_VERSION_FILE.get(project);
-		if (!versionFile.exists() && !versionFile.createNewFile()) {
-			throw new IOException("Unable to create 'zdoc.version' file");
-		}
-		// find ZomboidDoc dependency file from configuration
-		File dependency = Configurations.ZOMBOID_DOC.resolve(project).getFiles().stream()
-				.filter(f -> f.getName().startsWith("pz-zdoc")).findFirst().orElseThrow(
-						() -> new GradleException("Unable to find ZomboidDoc dependency"));
-
-		// get and validate dependency name
-		String dependencyName = dependency.getName();
-
-		String pattern = "pz-zdoc-(\\d+\\.\\d+\\.\\d+(-.*)?)\\.jar";
-		Matcher matcher = Pattern.compile(pattern).matcher(dependencyName);
-		if (!matcher.find()) {
-			throw new GradleException("Unexpected ZomboidDoc dependency name: " + dependencyName);
-		}
 		// write semantic version to file
-		try (Writer writer = new FileWriter(versionFile)) {
-			writer.write(new SemanticVersion(matcher.group(1)).toString());
+		try (Writer writer = new FileWriter(ZomboidUtils.getZomboidVersionFile(project))) {
+			writer.write(ZomboidUtils.getZomboidDocVersion(project).toString());
 		}
 	}
 }
