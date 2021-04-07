@@ -44,6 +44,9 @@ public enum ZomboidTasks {
 	),
 	ANNOTATE_ZOMBOID_LUA(AnnotateZomboidLuaTask.class, "annotateZomboidLua",
 			"zomboid", "Annotate vanilla Lua with EmmyLua."
+	),
+	COMPILE_ZOMBOID_LUA(CompileZomboidLuaTask.class, "compileZomboidLua",
+			"zomboid", "Compile Lua library from modding API."
 	);
 	public final String name, group, description;
 	final Class<? extends CapsidTask> type;
