@@ -23,7 +23,6 @@ import java.io.Writer;
 
 import org.gradle.api.GradleException;
 import org.gradle.api.InvalidUserDataException;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.TaskAction;
@@ -33,7 +32,6 @@ import io.pzstorm.capsid.Configurations;
 import io.pzstorm.capsid.zomboid.ZomboidTasks;
 import io.pzstorm.capsid.zomboid.ZomboidUtils;
 
-@NonNullApi
 public class ZomboidJavaExec extends JavaExec implements CapsidTask {
 
 	@Override

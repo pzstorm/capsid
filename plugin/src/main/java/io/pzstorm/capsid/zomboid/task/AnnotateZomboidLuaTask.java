@@ -20,7 +20,6 @@ package io.pzstorm.capsid.zomboid.task;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 
 import io.pzstorm.capsid.CapsidTask;
@@ -31,7 +30,6 @@ import io.pzstorm.capsid.util.UnixPath;
 /**
  * This task will annotate vanilla Lua with {@code EmmyLua}.
  */
-@NonNullApi
 public class AnnotateZomboidLuaTask extends ZomboidJavaExec implements CapsidTask {
 
 	@Override

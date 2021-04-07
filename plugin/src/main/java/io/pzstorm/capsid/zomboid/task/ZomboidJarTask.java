@@ -19,7 +19,6 @@ package io.pzstorm.capsid.zomboid.task;
 
 import java.io.File;
 
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 
 import io.pzstorm.capsid.CapsidTask;
@@ -30,7 +29,6 @@ import io.pzstorm.capsid.zomboid.ZomboidTasks;
 /**
  * This task assembles a jar archive containing game classes.
  */
-@NonNullApi
 public class ZomboidJarTask extends ZomboidJar implements CapsidTask {
 
 	@Override

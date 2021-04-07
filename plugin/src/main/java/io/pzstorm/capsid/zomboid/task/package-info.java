@@ -15,33 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+@NonNullApi
 package io.pzstorm.capsid.zomboid.task;
 
-import java.util.Objects;
-
-import org.gradle.api.Project;
-import org.gradle.api.plugins.ExtraPropertiesExtension;
-import org.gradle.api.tasks.Sync;
-
-import io.pzstorm.capsid.CapsidPlugin;
-import io.pzstorm.capsid.CapsidTask;
-
-/**
- * This task will sync {@code zomboidClassesDir} with game install directory.
- */
-public class ZomboidClassesTask extends Sync implements CapsidTask {
-
-	@Override
-	public void configure(String group, String description, Project project) {
-
-		setGroup(group);
-		setDescription(description);
-
-		setIncludeEmptyDirs(false);
-		from(CapsidPlugin.getGameDirProperty(project));
-		include("**/*.class", "stdlib.lbc");
-
-		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-		into(Objects.requireNonNull(ext.get("zomboidClassesDir")));
-	}
-}
+import org.gradle.api.NonNullApi;

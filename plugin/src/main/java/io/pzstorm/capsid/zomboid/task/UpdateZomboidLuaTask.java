@@ -29,7 +29,6 @@ import io.pzstorm.capsid.util.SemanticVersion;
 import io.pzstorm.capsid.zomboid.ZomboidTasks;
 import io.pzstorm.capsid.zomboid.ZomboidUtils;
 
-@NonNullApi
 public class UpdateZomboidLuaTask extends DefaultTask implements CapsidTask {
 
 	@Override

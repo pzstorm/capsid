@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.tasks.JavaExec;
@@ -39,7 +38,6 @@ import io.pzstorm.capsid.zomboid.ZomboidTasks;
  * Decompile game classes with FernFlower using default IDEA settings.
  * Default task behaviour is to decompile all class files found in game root directory.
  */
-@NonNullApi
 public class DecompileZomboidTask extends JavaExec implements CapsidTask {
 
 	@Override

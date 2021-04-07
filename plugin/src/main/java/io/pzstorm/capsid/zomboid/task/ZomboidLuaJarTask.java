@@ -17,13 +17,11 @@
  */
 package io.pzstorm.capsid.zomboid.task;
 
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.zomboid.ZomboidJar;
 
-@NonNullApi
 public class ZomboidLuaJarTask extends ZomboidJar implements CapsidTask {
 
 	@Override

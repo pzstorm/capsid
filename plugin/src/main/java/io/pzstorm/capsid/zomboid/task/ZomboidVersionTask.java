@@ -23,7 +23,6 @@ import java.nio.charset.StandardCharsets;
 
 import com.google.common.collect.ImmutableList;
 
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.JavaExec;
@@ -38,7 +37,6 @@ import io.pzstorm.capsid.zomboid.ZomboidTasks;
 /**
  * This task saves and prints Project Zomboid game version.
  */
-@NonNullApi
 public class ZomboidVersionTask extends JavaExec implements CapsidTask {
 
 	@Override
