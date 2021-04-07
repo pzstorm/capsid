@@ -19,8 +19,12 @@ package io.pzstorm.capsid.zomboid;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.google.common.io.Files;
 
 import org.gradle.api.GradleException;
 import org.gradle.api.InvalidUserDataException;
@@ -73,5 +77,20 @@ public class ZomboidUtils {
 			throw new GradleException("Unexpected ZomboidDoc dependency name: " + dependencyName);
 		}
 		return new SemanticVersion(matcher.group(1));
+	}
+
+	/**
+	 * Returns last used ZomboidDoc version used by given {@code Project}.
+	 *
+	 * @throws IOException If an I/O error occurred while creating or reading file.
+	 */
+	public static SemanticVersion getLastZomboidDocVersion(Project project) throws IOException {
+
+		File versionFile = getZomboidVersionFile(project);
+		List<String> content = Files.readLines(versionFile, StandardCharsets.UTF_8);
+		if (!content.isEmpty()) {
+			return new SemanticVersion(content.get(0));
+		}
+		throw new InvalidUserDataException("ZomboidDoc version file is empty");
 	}
 }
