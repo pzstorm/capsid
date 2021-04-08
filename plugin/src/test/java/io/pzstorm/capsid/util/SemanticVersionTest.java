@@ -20,8 +20,8 @@ package io.pzstorm.capsid.util;
 import java.util.*;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
-import org.apache.groovy.util.Maps;
 import org.gradle.api.InvalidUserDataException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class SemanticVersionTest extends PluginUnitTest {
 	@Test
 	void shouldConstructSemanticVersionsWithValidNumbers() {
 
-		Map<String, Integer[]> validVersions = Maps.of(
+		Map<String, Integer[]> validVersions = ImmutableMap.of(
 				"1.4.2", new Integer[] { 1, 4, 2 },
 				"0.1.3", new Integer[] { 0, 1, 3 },
 				"3.5.1-beta", new Integer[] { 3, 5, 1 },
@@ -65,7 +65,7 @@ class SemanticVersionTest extends PluginUnitTest {
 	@Test
 	void shouldConstructSemanticVersionsWithValidClassifiers() {
 
-		Map<String, String> validVersions = Maps.of(
+		Map<String, String> validVersions = ImmutableMap.of(
 				"0.1.0-alpha", "alpha",
 				"0.4.6-0rc", "0rc",
 				"1.0.0", ""
