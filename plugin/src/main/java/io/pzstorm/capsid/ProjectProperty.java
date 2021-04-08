@@ -51,6 +51,11 @@ public class ProjectProperty<T> {
 	 */
 	public static final ProjectProperty<File> ZDOC_VERSION_FILE;
 
+	/**
+	 * File where mod properties are stored.
+	 */
+	public static final ProjectProperty<File> MOD_INFO_FILE;
+
 	static
 	{
 		Set<ProjectProperty<?>> properties = new HashSet<>();
@@ -74,6 +79,11 @@ public class ProjectProperty<T> {
 				project.file("zdoc.version")
 		);
 		properties.add(ZDOC_VERSION_FILE);
+
+		MOD_INFO_FILE = new ProjectProperty<>("modInfoFile", project ->
+				project.file("mod.info")
+		);
+		properties.add(MOD_INFO_FILE);
 
 		PROPERTIES = Collections.unmodifiableSet(properties);
 	}
