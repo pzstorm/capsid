@@ -18,29 +18,39 @@
 package io.pzstorm.capsid.mod;
 
 import org.gradle.api.Project;
+import org.gradle.api.tasks.TaskContainer;
 
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.mod.task.LoadModInfoTask;
+import io.pzstorm.capsid.mod.task.SaveModInfoTask;
 
 public enum ModTasks {
 
-	CREATE_MOD_STRUCTURE(CreateModStructureTask.class, "createModStructure",
+	CREATE_MOD_STRUCTURE(CreateModStructureTask.class, true,"createModStructure",
 			"mod", "Create default mod directory structure."
 	);
 	public final String name, group, description;
+	public final boolean register;
 	final Class<? extends CapsidTask> type;
 
-	ModTasks(Class<? extends CapsidTask> type, String name, String group, String description) {
+	ModTasks(Class<? extends CapsidTask> type, boolean register, String name, String group, String description) {
 		this.type = type;
 		this.name = name;
 		this.group = group;
+		this.register = register;
 		this.description = description;
 	}
 
 	/**
-	 * Configure and register this task for the given {@code Project}.
+	 * Configure and create or register this task for the given {@code Project}.
 	 * @param project {@code Project} register this task.
 	 */
-	public void register(Project project) {
-		project.getTasks().register(name, type, t -> t.configure(group, description, project));
+	public void createOrRegister(Project project) {
+
+		TaskContainer tasks = project.getTasks();
+		if (register) {
+			tasks.register(name, type, t -> t.configure(group, description, project));
+		}
+		else tasks.create(name, type, t -> t.configure(group, description, project));
 	}
 }

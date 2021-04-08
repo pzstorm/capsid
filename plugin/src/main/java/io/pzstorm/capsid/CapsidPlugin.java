@@ -96,7 +96,7 @@ public class CapsidPlugin implements Plugin<Project> {
         });
         // register all mod tasks
         for (ModTasks task : ModTasks.values()) {
-            task.register(project);
+            task.createOrRegister(project);
         }
         // register all project properties
         for (ProjectProperty<?> property : ProjectProperty.PROPERTIES) {
