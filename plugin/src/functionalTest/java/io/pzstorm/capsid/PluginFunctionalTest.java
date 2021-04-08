@@ -183,9 +183,13 @@ public abstract class PluginFunctionalTest {
 		}
 	}
 
-	protected static void assertTaskOutcomeSuccess(BuildResult result, String taskName) {
+	protected static void assertTaskOutcome(BuildResult result, String taskName, TaskOutcome outcome) {
 
 		BuildTask task = Objects.requireNonNull(result.task(':' + taskName));
-		Assertions.assertEquals(TaskOutcome.SUCCESS, task.getOutcome());
+		Assertions.assertEquals(outcome, task.getOutcome());
+	}
+
+	protected static void assertTaskOutcomeSuccess(BuildResult result, String taskName) {
+		assertTaskOutcome(result, taskName, TaskOutcome.SUCCESS);
 	}
 }
