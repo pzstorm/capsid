@@ -28,6 +28,9 @@ public enum ModTasks {
 
 	CREATE_MOD_STRUCTURE(CreateModStructureTask.class, true,"createModStructure",
 			"mod", "Create default mod directory structure."
+	),
+	LOAD_MOD_INFO(LoadModInfoTask.class, false, "loadModInfo",
+			"mod", "Load mod metadata information."
 	);
 	public final String name, group, description;
 	public final boolean register;
