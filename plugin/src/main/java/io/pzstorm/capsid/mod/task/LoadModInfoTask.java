@@ -32,6 +32,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.ProjectProperty;
+import io.pzstorm.capsid.mod.ModProperties;
 
 /**
  * This task loads mod metadata information from {@code mod.info} file.
@@ -45,14 +46,13 @@ public class LoadModInfoTask extends DefaultTask implements CapsidTask {
 		setGroup(group);
 		setDescription(description);
 
+		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 		File modInfoFile = ProjectProperty.MOD_INFO_FILE.get(project);
 		if (modInfoFile.exists())
 		{
 			Properties properties = new Properties();
 			try (InputStream inputStream = new FileInputStream(modInfoFile))
 			{
-				ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-
 				// load properties from properties file
 				properties.load(inputStream);
 

@@ -34,12 +34,13 @@ import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginIntegrationTest;
 import io.pzstorm.capsid.ProjectProperty;
+import io.pzstorm.capsid.mod.ModProperties;
 
 class LoadModInfoTaskIntegrationTest extends PluginIntegrationTest {
 
 	private static final Map<String, String> MOD_METADATA = new ImmutableMap.Builder<String, String>()
 			.put("name", "TestMod").put("description", "None")
-			.put("id", "test-mod").put("url", "https://github.com/pzstorm/capsid/")
+			.put("url", "https://github.com/pzstorm/capsid/")
 			.put("modversion", "0.1.0").put("pzverison", "41.50-IWBUMS")
 			.build();
 
@@ -74,7 +75,6 @@ class LoadModInfoTaskIntegrationTest extends PluginIntegrationTest {
 	}
 
 	@Test
-	void whenModInfoFileDoesNotExistShouldNotLoadProperties() {
 	void whenModInfoFileMissingShouldInheritFromProjectName() {
 
 		// make sure mod.info file is deleted
@@ -85,6 +85,9 @@ class LoadModInfoTaskIntegrationTest extends PluginIntegrationTest {
 
 		Assertions.assertEquals(project.getName(), ModProperties.MOD_NAME.findProperty(project));
 	}
+
+	@Test
+	void whenModInfoFileMissingShouldNotLoadProperties() {
 
 		// make sure mod.info file is deleted
 		Assertions.assertTrue(ProjectProperty.MOD_INFO_FILE.get(project).delete());
