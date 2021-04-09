@@ -115,14 +115,14 @@ public class CapsidProperty<T> {
 	@SuppressWarnings("unchecked")
 	private T convertAndValidateProperty(String property) {
 
-		if (type.equals(UnixPath.class))
-		{
-			T result = (T) UnixPath.get(property);
-			return validator != null ? validator.validate(result) : result;
-		}
-		else if (type.equals(String.class))
+		if (type.equals(String.class))
 		{
 			T result = (T) property;
+			return validator != null ? validator.validate(result) : result;
+		}
+		else if (type.equals(UnixPath.class))
+		{
+			T result = (T) UnixPath.get(property);
 			return validator != null ? validator.validate(result) : result;
 		}
 		else if (type.equals(URL.class))
