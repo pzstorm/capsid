@@ -17,14 +17,12 @@
  */
 package io.pzstorm.capsid.zomboid.task;
 
-import java.util.Objects;
-
 import org.gradle.api.Project;
-import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.Sync;
 
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.ProjectProperty;
 
 /**
  * This task will sync {@code zomboidClassesDir} with game install directory.
@@ -37,9 +35,7 @@ public class ZomboidClassesTask extends Sync implements CapsidTask {
 
 		setIncludeEmptyDirs(false);
 		from(CapsidPlugin.getGameDirProperty(project));
+		into(ProjectProperty.ZOMBOID_CLASSES_DIR.get(project));
 		include("**/*.class", "stdlib.lbc");
-
-		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-		into(Objects.requireNonNull(ext.get("zomboidClassesDir")));
 	}
 }
