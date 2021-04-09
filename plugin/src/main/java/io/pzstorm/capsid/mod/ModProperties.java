@@ -65,10 +65,13 @@ public class ModProperties extends CapsidProperties {
 	static
 	{
 		MOD_NAME = new CapsidProperty.Builder<>("mod.name", String.class)
-				.withEnvironmentVar("MOD_NAME").build();
+				.withEnvironmentVar("MOD_NAME")
+				.withDefaultValue("Project Zomboid mod")
+				.build();
 
 		MOD_DESCRIPTION = new CapsidProperty.Builder<>("mod.desc", String.class)
 				.withEnvironmentVar("MOD_DESC")
+				.withDefaultValue("No description available.")
 				.isRequired(false)
 				.build();
 
