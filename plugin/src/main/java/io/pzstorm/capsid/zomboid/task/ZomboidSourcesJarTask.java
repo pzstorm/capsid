@@ -33,6 +33,7 @@ public class ZomboidSourcesJarTask extends ZomboidJar implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {
+		CapsidTask.super.configure(group, description, project);
 
 		getArchiveBaseName().set("zomboid");
 		getArchiveClassifier().set("sources");
