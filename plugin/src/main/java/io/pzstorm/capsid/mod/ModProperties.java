@@ -118,7 +118,10 @@ public class ModProperties extends CapsidProperties {
 				.isRequired(false)
 				.build();
 
-		PROPERTIES = ImmutableSet.of(MOD_NAME, MOD_DESCRIPTION, MOD_URL, MOD_PZ_VERSION);
+		PROPERTIES = ImmutableSet.of(
+				MOD_NAME, MOD_POSTER, MOD_DESCRIPTION,
+				MOD_ID, MOD_URL, MOD_VERSION, MOD_PZ_VERSION
+		);
 	}
 
 	private ModProperties() {
