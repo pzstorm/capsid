@@ -29,6 +29,9 @@ public enum ModTasks {
 	CREATE_MOD_STRUCTURE(CreateModStructureTask.class, true,"createModStructure",
 			"mod", "Create default mod directory structure."
 	),
+	SAVE_MOD_INFO(SaveModInfoTask.class, true, "saveModInfo",
+			"mod", "Save mod metadata to file."
+	),
 	LOAD_MOD_INFO(LoadModInfoTask.class, false, "loadModInfo",
 			"mod", "Load mod metadata information."
 	);
