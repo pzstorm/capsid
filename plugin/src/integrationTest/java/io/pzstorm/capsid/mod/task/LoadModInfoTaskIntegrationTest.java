@@ -75,6 +75,16 @@ class LoadModInfoTaskIntegrationTest extends PluginIntegrationTest {
 
 	@Test
 	void whenModInfoFileDoesNotExistShouldNotLoadProperties() {
+	void whenModInfoFileMissingShouldInheritFromProjectName() {
+
+		// make sure mod.info file is deleted
+		Assertions.assertTrue(ProjectProperty.MOD_INFO_FILE.get(project).delete());
+
+		// apply plugin before validating properties
+		applyCapsidPlugin();
+
+		Assertions.assertEquals(project.getName(), ModProperties.MOD_NAME.findProperty(project));
+	}
 
 		// make sure mod.info file is deleted
 		Assertions.assertTrue(ProjectProperty.MOD_INFO_FILE.get(project).delete());
