@@ -21,23 +21,23 @@ import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskContainer;
 
 import io.pzstorm.capsid.CapsidTask;
-import io.pzstorm.capsid.mod.task.InitModInfoTask;
-import io.pzstorm.capsid.mod.task.LoadModInfoTask;
-import io.pzstorm.capsid.mod.task.SaveModInfoTask;
+import io.pzstorm.capsid.mod.task.InitModMetadataTask;
+import io.pzstorm.capsid.mod.task.LoadModMetadataTask;
+import io.pzstorm.capsid.mod.task.SaveModMetadataTask;
 
 public enum ModTasks {
 
 	CREATE_MOD_STRUCTURE(CreateModStructureTask.class, true,
 			"createModStructure", "Create default mod directory structure."
 	),
-	SAVE_MOD_INFO(SaveModInfoTask.class, true,
-			"saveModInfo", "Save mod metadata to file."
+	SAVE_MOD_INFO(SaveModMetadataTask.class, true,
+			"saveModMetadata", "Save mod metadata to file."
 	),
-	LOAD_MOD_INFO(LoadModInfoTask.class, false,
-			"loadModInfo", "Load mod metadata information."
+	LOAD_MOD_INFO(LoadModMetadataTask.class, false,
+			"loadModMetadata", "Load mod metadata information."
 	),
-	INIT_MOD_INFO(InitModInfoTask.class, false,
-			"initModInfo", "Initialize mod metadata information."
+	INIT_MOD_INFO(InitModMetadataTask.class, false,
+			"initModMetadata", "Initialize mod metadata information."
 	);
 	public final String name, description;
 	public final boolean register;

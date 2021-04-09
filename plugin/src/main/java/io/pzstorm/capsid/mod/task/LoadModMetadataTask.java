@@ -38,7 +38,7 @@ import io.pzstorm.capsid.mod.ModProperties;
  * This task loads mod metadata information from {@code mod.info} file.
  */
 @NonNullApi
-public class LoadModInfoTask extends DefaultTask implements CapsidTask {
+public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {

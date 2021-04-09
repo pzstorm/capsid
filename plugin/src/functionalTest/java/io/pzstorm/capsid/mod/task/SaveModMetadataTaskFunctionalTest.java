@@ -28,7 +28,7 @@ import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.mod.ModTasks;
 import io.pzstorm.capsid.zomboid.ZomboidTasks;
 
-class SaveModInfoTaskFunctionalTest extends PluginFunctionalTest {
+class SaveModMetadataTaskFunctionalTest extends PluginFunctionalTest {
 
 	@Test
 	void shouldSuccessfullyExecuteSaveModInfoTask() {

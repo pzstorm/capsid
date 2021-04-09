@@ -41,7 +41,7 @@ import io.pzstorm.capsid.property.CapsidProperty;
  * This task initializes mod metadata information.
  */
 @NonNullApi
-public class InitModInfoTask extends DefaultTask implements CapsidTask {
+public class InitModMetadataTask extends DefaultTask implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {

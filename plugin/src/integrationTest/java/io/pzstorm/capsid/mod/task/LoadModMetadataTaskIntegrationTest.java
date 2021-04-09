@@ -36,7 +36,7 @@ import io.pzstorm.capsid.PluginIntegrationTest;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.mod.ModProperties;
 
-class LoadModInfoTaskIntegrationTest extends PluginIntegrationTest {
+class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 
 	private static final Map<String, String> MOD_METADATA = new ImmutableMap.Builder<String, String>()
 			.put("name", "TestMod").put("description", "None")

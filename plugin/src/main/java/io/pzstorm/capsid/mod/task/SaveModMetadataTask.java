@@ -33,7 +33,7 @@ import io.pzstorm.capsid.zomboid.ZomboidTasks;
  * This task will save mod metadata to file.
  */
 @NonNullApi
-public class SaveModInfoTask extends DefaultTask implements CapsidTask {
+public class SaveModMetadataTask extends DefaultTask implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {
