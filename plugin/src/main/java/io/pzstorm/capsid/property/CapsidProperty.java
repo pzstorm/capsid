@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+import com.google.common.base.Strings;
+
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.jetbrains.annotations.Contract;
@@ -111,13 +113,17 @@ public class CapsidProperty<T> {
 	 * Convert and validate the given property to {@code Class} {@link #type}.
 	 *
 	 * @param property property to convert and validate.
-	 * @return converted and validated property.
+	 * @return converted property or {@code null} if property is {@code null} or empty.
 	 *
 	 * @throws InvalidCapsidPropertyException if property is of unsupported type.
 	 */
 	@SuppressWarnings("unchecked")
-	private T convertAndValidateProperty(String property) {
+	@Contract("null -> null")
+	private @Nullable T convertAndValidateProperty(String property) {
 
+		if (Strings.isNullOrEmpty(property)) {
+			return null;
+		}
 		if (type.equals(String.class))
 		{
 			T result = (T) property;
@@ -147,7 +153,7 @@ public class CapsidProperty<T> {
 				throw new InvalidCapsidPropertyException("Malformed URL property", e);
 			}
 		}
-		else throw new InvalidCapsidPropertyException("Unsupported capsid property type " + type.getName());
+		throw new InvalidCapsidPropertyException("Unsupported capsid property type " + type.getName());
 	}
 
 	public static class Builder<T> {
