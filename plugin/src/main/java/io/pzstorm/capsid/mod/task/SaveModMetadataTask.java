@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.gradle.api.DefaultTask;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
 
@@ -32,7 +31,6 @@ import io.pzstorm.capsid.zomboid.ZomboidTasks;
 /**
  * This task will save mod metadata to file.
  */
-@NonNullApi
 public class SaveModMetadataTask extends DefaultTask implements CapsidTask {
 
 	@Override

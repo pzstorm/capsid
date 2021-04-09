@@ -17,7 +17,10 @@
  */
 package io.pzstorm.capsid.mod.task;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +29,10 @@ import java.util.Properties;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
-import org.gradle.api.*;
+import org.gradle.api.DefaultTask;
+import org.gradle.api.GradleException;
+import org.gradle.api.InvalidUserDataException;
+import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 
 import io.pzstorm.capsid.CapsidPlugin;
@@ -37,7 +43,6 @@ import io.pzstorm.capsid.mod.ModProperties;
 /**
  * This task loads mod metadata information from {@code mod.info} file.
  */
-@NonNullApi
 public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 
 	@Override

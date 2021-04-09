@@ -26,7 +26,6 @@ import com.google.common.collect.ImmutableMap;
 
 import org.apache.tools.ant.taskdefs.Input;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.TaskAction;
@@ -40,7 +39,6 @@ import io.pzstorm.capsid.property.CapsidProperty;
 /**
  * This task initializes mod metadata information.
  */
-@NonNullApi
 public class InitModMetadataTask extends DefaultTask implements CapsidTask {
 
 	@Override
