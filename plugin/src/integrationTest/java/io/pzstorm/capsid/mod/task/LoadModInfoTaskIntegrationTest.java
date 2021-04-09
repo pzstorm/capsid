@@ -96,8 +96,13 @@ class LoadModInfoTaskIntegrationTest extends PluginIntegrationTest {
 		applyCapsidPlugin();
 
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-		for (Map.Entry<String, String> entry : MOD_METADATA.entrySet()) {
-			Assertions.assertFalse(ext.has("mod." + entry.getKey()));
+		for (Map.Entry<String, String> entry : MOD_METADATA.entrySet())
+		{
+			String key = "mod." + entry.getKey();
+			// mod name and ID properties are always loaded
+			if (!key.equals(ModProperties.MOD_NAME.name) && !key.equals(ModProperties.MOD_ID.name)) {
+				Assertions.assertFalse(ext.has(key));
+			}
 		}
 	}
 
