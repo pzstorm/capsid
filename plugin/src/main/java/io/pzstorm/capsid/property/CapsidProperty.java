@@ -19,6 +19,8 @@ package io.pzstorm.capsid.property;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 import org.gradle.api.Project;
@@ -121,17 +123,22 @@ public class CapsidProperty<T> {
 			T result = (T) property;
 			return validator != null ? validator.validate(result) : result;
 		}
-		else if (type.equals(SemanticVersion.class))
+		if (type.equals(SemanticVersion.class))
 		{
 			T result = (T) new SemanticVersion(property);
 			return validator != null ? validator.validate(result) : result;
 		}
-		else if (type.equals(UnixPath.class))
+		if (type.equals(Path.class))
+		{
+			T result = (T) Paths.get(property);
+			return validator != null ? validator.validate(result) : result;
+		}
+		if (type.equals(UnixPath.class))
 		{
 			T result = (T) UnixPath.get(property);
 			return validator != null ? validator.validate(result) : result;
 		}
-		else if (type.equals(URL.class))
+		if (type.equals(URL.class))
 		{
 			try {
 				return (T) new URL(property);
