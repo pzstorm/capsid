@@ -27,19 +27,12 @@ import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.mod.ModProperties;
-import io.pzstorm.capsid.zomboid.ZomboidTasks;
 
 /**
  * This task will save mod metadata to file.
  */
 @NonNullApi
 public class SaveModInfoTask extends DefaultTask implements CapsidTask {
-
-	@Override
-	public void configure(String group, String description, Project project) {
-		CapsidTask.super.configure(group, description, project);
-		dependsOn(project.getTasks().named(ZomboidTasks.ZOMBOID_VERSION.name));
-	}
 
 	@TaskAction
 	void execute() throws IOException {
