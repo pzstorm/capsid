@@ -48,9 +48,7 @@ public class ZomboidVersionTask extends JavaExec implements CapsidTask {
 		setArgs(ImmutableList.of("version"));
 
 		setStandardOutput(new ByteArrayOutputStream());
-
 		dependsOn(ZomboidTasks.ZOMBOID_CLASSES.name);
-		finalizedBy(ModTasks.SAVE_MOD_INFO.name);
 	}
 
 	@TaskAction
