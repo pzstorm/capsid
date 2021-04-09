@@ -19,8 +19,9 @@ package io.pzstorm.capsid.setup.task;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
 
 import org.apache.tools.ant.taskdefs.Input;
 import org.gradle.api.DefaultTask;
@@ -42,36 +43,31 @@ public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
 
 		// declare locally to resolve only once
 		Project gradleProject = getProject();
-		LocalProperties localProperties = LocalProperties.get();
 		ExtraPropertiesExtension ext = gradleProject.getExtensions().getExtraProperties();
 
 		// make sure the properties file exists
-		File localPropertiesFile = localProperties.getFile(gradleProject);
-		if (!localPropertiesFile.exists() && !localPropertiesFile.createNewFile())
-		{
-			String format = "Unable to create %s file";
-			throw new IOException(String.format(format, localPropertiesFile.getName()));
+		File propertiesFile = LocalProperties.get().getFile(gradleProject);
+		if (!propertiesFile.exists() && !propertiesFile.createNewFile()) {
+			throw new IOException(String.format("Unable to create %s file", propertiesFile.getName()));
 		}
-		Map<CapsidProperty<?>, String> PROPERTIES_INPUT_MAP = new HashMap<>();
-		PROPERTIES_INPUT_MAP.put(LocalProperties.GAME_DIR,
-				"Enter path to game installation directory:"
-		);
-		PROPERTIES_INPUT_MAP.put(LocalProperties.IDEA_HOME,
-				"\nEnter path to IntelliJ IDEA installation directory:"
+		Map<CapsidProperty<?>, String> PROPERTIES_INPUT_MAP = ImmutableMap.of(
+				LocalProperties.GAME_DIR, "Enter path to game installation directory:",
+				LocalProperties.IDEA_HOME,  "\nEnter path to IntelliJ IDEA installation directory:"
 		);
 		org.apache.tools.ant.Project antProject = gradleProject.getAnt().getAntProject();
 		Input inputTask = (Input) antProject.createTask("input");
-		for (CapsidProperty<?> property : localProperties.getProperties())
+		for (Map.Entry<CapsidProperty<?>, String> entry : PROPERTIES_INPUT_MAP.entrySet())
 		{
+			CapsidProperty<?> property = entry.getKey();
+
 			inputTask.setAddproperty(property.name);
-			inputTask.setMessage(PROPERTIES_INPUT_MAP.get(property));
+			inputTask.setMessage(entry.getValue());
 			inputTask.execute();
 
 			// transfer properties from ant to gradle
-			String antProperty = antProject.getProperty(property.name);
-			ext.set(property.name, antProperty);
+			ext.set(property.name, antProject.getProperty(property.name));
 		}
 		// write local properties to file
-		localProperties.writeToFile(gradleProject);
+		LocalProperties.get().writeToFile(gradleProject);
 	}
 }
