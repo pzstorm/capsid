@@ -101,5 +101,7 @@ public class LoadModInfoTask extends DefaultTask implements CapsidTask {
 
 			CapsidPlugin.LOGGER.warn("WARN: Unable to find mod.info file");
 		}
+		// these properties are loaded without file
+		ext.set(ModProperties.MOD_ID.name, project.getRootProject().getName());
 	}
 }

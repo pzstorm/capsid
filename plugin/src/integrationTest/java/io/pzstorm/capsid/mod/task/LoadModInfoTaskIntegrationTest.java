@@ -115,4 +115,14 @@ class LoadModInfoTaskIntegrationTest extends PluginIntegrationTest {
 		Assertions.assertEquals("pzstorm", ext.get("repo.owner"));
 		Assertions.assertEquals("capsid", ext.get("repo.name"));
 	}
+
+	@Test
+	void shouldInheritModIdPropertyFromRootProjectName() {
+
+		// apply plugin before validating properties
+		applyCapsidPlugin();
+
+		String projectName = project.getRootProject().getName();
+		Assertions.assertEquals(projectName, ModProperties.MOD_ID.findProperty(project));
+	}
 }
