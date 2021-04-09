@@ -33,9 +33,7 @@ public class ZomboidClassesTask extends Sync implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {
-
-		setGroup(group);
-		setDescription(description);
+		CapsidTask.super.configure(group, description, project);
 
 		setIncludeEmptyDirs(false);
 		from(CapsidPlugin.getGameDirProperty(project));

@@ -42,9 +42,7 @@ public class LoadModInfoTask extends DefaultTask implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {
-
-		setGroup(group);
-		setDescription(description);
+		CapsidTask.super.configure(group, description, project);
 
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 		File modInfoFile = ProjectProperty.MOD_INFO_FILE.get(project);

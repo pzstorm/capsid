@@ -26,9 +26,7 @@ public class ZomboidLuaJarTask extends ZomboidJar implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {
-
-		setGroup(group);
-		setDescription(description);
+		CapsidTask.super.configure(group, description, project);
 
 		getArchiveBaseName().set("zdoc-lua");
 

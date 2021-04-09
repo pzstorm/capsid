@@ -41,9 +41,7 @@ public class ZomboidVersionTask extends JavaExec implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {
-
-		setGroup(group);
-		setDescription(description);
+		CapsidTask.super.configure(group, description, project);
 
 		setMain("io.cocolabs.pz.zdoc.Main");
 		setClasspath(Configurations.ZOMBOID_DOC.resolve(project));

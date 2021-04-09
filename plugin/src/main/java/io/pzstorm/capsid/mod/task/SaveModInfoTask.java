@@ -37,10 +37,7 @@ public class SaveModInfoTask extends DefaultTask implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {
-
-		setGroup(group);
-		setDescription(description);
-
+		CapsidTask.super.configure(group, description, project);
 		dependsOn(project.getTasks().named(ZomboidTasks.ZOMBOID_VERSION.name));
 	}
 

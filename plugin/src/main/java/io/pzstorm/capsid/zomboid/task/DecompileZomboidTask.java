@@ -57,9 +57,7 @@ public class DecompileZomboidTask extends JavaExec implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {
-
-		setGroup(group);
-		setDescription(description);
+		CapsidTask.super.configure(group, description, project);
 
 		UnixPath property = LocalProperties.IDEA_HOME.findProperty(project);
 		if (property != null)

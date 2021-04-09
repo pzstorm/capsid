@@ -33,9 +33,7 @@ public class UpdateZomboidLuaTask extends DefaultTask implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {
-
-		setGroup(group);
-		setDescription(description);
+		CapsidTask.super.configure(group, description, project);
 
 		try {
 			int compareResult = new SemanticVersion.Comparator().compare(
