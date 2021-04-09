@@ -35,6 +35,9 @@ public enum ModTasks {
 	),
 	LOAD_MOD_INFO(LoadModInfoTask.class, false,
 			"loadModInfo", "Load mod metadata information."
+	),
+	INIT_MOD_INFO(InitModInfoTask.class, false,
+			"initModInfo", "Initialize mod metadata information."
 	);
 	public final String name, description;
 	public final boolean register;
