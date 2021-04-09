@@ -71,6 +71,11 @@ public class CapsidPlugin implements Plugin<Project> {
         for (SetupTasks task : SetupTasks.values()) {
             task.register(project);
         }
+        ExtraPropertiesExtension ext = extensions.getExtraProperties();
+        // if game directory property is not initialize do not continue
+        if (!ext.has(LocalProperties.GAME_DIR.name)) {
+            return;
+        }
         // path to game installation directory
         File gameDir = CapsidPlugin.getGameDirProperty(project);
 
