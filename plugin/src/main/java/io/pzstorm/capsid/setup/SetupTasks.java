@@ -30,21 +30,20 @@ import io.pzstorm.capsid.setup.task.InitLocalPropertiesTask;
 public enum SetupTasks {
 
 	INIT_LOCAL_PROPERTIES(InitLocalPropertiesTask.class, "initLocalProperties",
-			"build setup", "Initialize local project properties."
+			"Initialize local project properties."
 	),
 	CREATE_LAUNCH_CONFIGS(CreateLaunchConfigsTask.class, "createLaunchRunConfigs",
-			"build setup", "Create game launch run configurations."
+			"Create game launch run configurations."
 	),
 	CREATE_MOD_SEARCH_SCOPES(CreateModSearchScopesTask.class, "createModSearchScopes",
-			"build setup", "Create IDEA search scopes for mod files."
+			"Create IDEA search scopes for mod files."
 	);
-	public final String name, group, description;
+	public final String name, description;
 	final Class<? extends CapsidTask> type;
 
-	SetupTasks(Class<? extends CapsidTask> type, String name, String group, String description) {
+	SetupTasks(Class<? extends CapsidTask> type, String name, String description) {
 		this.type = type;
 		this.name = name;
-		this.group = group;
 		this.description = description;
 	}
 
@@ -53,6 +52,6 @@ public enum SetupTasks {
 	 * @param project {@code Project} register this task.
 	 */
 	public void register(Project project) {
-		project.getTasks().register(name, type, t -> t.configure(group, description, project));
+		project.getTasks().register(name, type, t -> t.configure("build setup", description, project));
 	}
 }

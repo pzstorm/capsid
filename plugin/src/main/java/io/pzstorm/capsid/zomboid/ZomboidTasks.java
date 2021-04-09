@@ -25,39 +25,38 @@ import io.pzstorm.capsid.zomboid.task.*;
 public enum ZomboidTasks {
 
 	ZOMBOID_CLASSES(ZomboidClassesTask.class, "zomboidClasses",
-			"zomboid", "Assembles Project Zomboid classes."
+			"Assembles Project Zomboid classes."
 	),
 	DECOMPILE_ZOMBOID(DecompileZomboidTask.class, "decompileZomboid",
-			"zomboid", "Decompile Project Zomboid classes."
+			"Decompile Project Zomboid classes."
 	),
 	ZOMBOID_JAR(ZomboidJarTask.class, "zomboidJar",
-			"zomboid", "Assembles a jar archive containing game classes."
+			"Assembles a jar archive containing game classes."
 	),
 	ZOMBOID_SOURCES_JAR(ZomboidSourcesJarTask.class, "zomboidSourcesJar",
-			"zomboid", "Assembles a jar containing decompiled game sources."
+			"Assembles a jar containing decompiled game sources."
 	),
 	ZOMBOID_LUA_JAR(ZomboidLuaJarTask.class, "zomboidLuaJar",
-			"zomboid", "Assembles a jar containing compiled Lua classes"
+			"Assembles a jar containing compiled Lua classes"
 	),
 	ZOMBOID_VERSION(ZomboidVersionTask.class, "zomboidVersion",
-			"zomboid", "Save and print Project Zomboid game version."
+			"Save and print Project Zomboid game version."
 	),
 	ANNOTATE_ZOMBOID_LUA(AnnotateZomboidLuaTask.class, "annotateZomboidLua",
-			"zomboid", "Annotate vanilla Lua with EmmyLua."
+			"Annotate vanilla Lua with EmmyLua."
 	),
 	COMPILE_ZOMBOID_LUA(CompileZomboidLuaTask.class, "compileZomboidLua",
-			"zomboid", "Compile Lua library from modding API."
+			"Compile Lua library from modding API."
 	),
 	UPDATE_ZOMBOID_LUA(UpdateZomboidLuaTask.class, "updateZomboidLua",
-			"zomboid", "Run ZomboidDoc to update compiled Lua library."
+			"Run ZomboidDoc to update compiled Lua library."
 	);
-	public final String name, group, description;
+	public final String name, description;
 	final Class<? extends CapsidTask> type;
 
-	ZomboidTasks(Class<? extends CapsidTask> type, String name, String group, String description) {
+	ZomboidTasks(Class<? extends CapsidTask> type, String name, String description) {
 		this.type = type;
 		this.name = name;
-		this.group = group;
 		this.description = description;
 	}
 
@@ -66,6 +65,6 @@ public enum ZomboidTasks {
 	 * @param project {@code Project} register this task.
 	 */
 	public void register(Project project) {
-		project.getTasks().register(name, type, t -> t.configure(group, description, project));
+		project.getTasks().register(name, type, t -> t.configure("zomboid", description, project));
 	}
 }

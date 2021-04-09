@@ -21,28 +21,28 @@ import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskContainer;
 
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.mod.task.InitModInfoTask;
 import io.pzstorm.capsid.mod.task.LoadModInfoTask;
 import io.pzstorm.capsid.mod.task.SaveModInfoTask;
 
 public enum ModTasks {
 
-	CREATE_MOD_STRUCTURE(CreateModStructureTask.class, true,"createModStructure",
-			"mod", "Create default mod directory structure."
+	CREATE_MOD_STRUCTURE(CreateModStructureTask.class, true,
+			"createModStructure", "Create default mod directory structure."
 	),
-	SAVE_MOD_INFO(SaveModInfoTask.class, true, "saveModInfo",
-			"mod", "Save mod metadata to file."
+	SAVE_MOD_INFO(SaveModInfoTask.class, true,
+			"saveModInfo", "Save mod metadata to file."
 	),
-	LOAD_MOD_INFO(LoadModInfoTask.class, false, "loadModInfo",
-			"mod", "Load mod metadata information."
+	LOAD_MOD_INFO(LoadModInfoTask.class, false,
+			"loadModInfo", "Load mod metadata information."
 	);
-	public final String name, group, description;
+	public final String name, description;
 	public final boolean register;
 	final Class<? extends CapsidTask> type;
 
-	ModTasks(Class<? extends CapsidTask> type, boolean register, String name, String group, String description) {
+	ModTasks(Class<? extends CapsidTask> type, boolean register, String name, String description) {
 		this.type = type;
 		this.name = name;
-		this.group = group;
 		this.register = register;
 		this.description = description;
 	}
@@ -55,8 +55,8 @@ public enum ModTasks {
 
 		TaskContainer tasks = project.getTasks();
 		if (register) {
-			tasks.register(name, type, t -> t.configure(group, description, project));
+			tasks.register(name, type, t -> t.configure("mod", description, project));
 		}
-		else tasks.create(name, type, t -> t.configure(group, description, project));
+		else tasks.create(name, type, t -> t.configure("mod", description, project));
 	}
 }
