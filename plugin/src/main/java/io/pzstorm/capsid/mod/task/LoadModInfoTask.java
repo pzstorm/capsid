@@ -93,13 +93,14 @@ public class LoadModInfoTask extends DefaultTask implements CapsidTask {
 				throw new GradleException("I/O exception occurred while loading mod info.", e);
 			}
 		}
-		else {
-			// mod inherits its name from project name
-			ext.set(ModProperties.MOD_NAME.name, project.getName());
+		else CapsidPlugin.LOGGER.warn("WARN: Unable to find mod.info file");
 
-			CapsidPlugin.LOGGER.warn("WARN: Unable to find mod.info file");
+		// these properties can be loaded without file
+		if (!ext.has(ModProperties.MOD_NAME.name)) {
+			ext.set(ModProperties.MOD_NAME.name, project.getName());
 		}
-		// these properties are loaded without file
-		ext.set(ModProperties.MOD_ID.name, project.getRootProject().getName());
+		if (!ext.has(ModProperties.MOD_ID.name)) {
+			ext.set(ModProperties.MOD_ID.name, project.getRootProject().getName());
+		}
 	}
 }
