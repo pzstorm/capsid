@@ -94,10 +94,6 @@ public class CapsidPlugin implements Plugin<Project> {
             // set media resource source directories
             media.getResources().setSrcDirs(resourceSrcDirs);
         });
-        // register all mod tasks
-        for (ModTasks task : ModTasks.values()) {
-            task.createOrRegister(project);
-        }
         // register all project properties
         for (ProjectProperty<?> property : ProjectProperty.PROPERTIES) {
             property.register(project);
@@ -118,6 +114,11 @@ public class CapsidPlugin implements Plugin<Project> {
         }
         TaskContainer tasks = project.getTasks();
         tasks.getByName("classes").dependsOn(tasks.getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
+
+        // register all mod tasks
+        for (ModTasks task : ModTasks.values()) {
+            task.createOrRegister(project);
+        }
     }
 
     /**
