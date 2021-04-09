@@ -126,7 +126,7 @@ public class ModProperties extends CapsidProperties {
 					CapsidPlugin.LOGGER.warn("WARN: Missing property value " + property.name);
 				}
 				// remove 'mod.' part of the property before appending
-				sb.append(property.name.substring(4)).append('=').append(value);
+				sb.append(property.name.substring(4)).append('=').append(value).append('\n');
 			}
 			writer.write(sb.toString());
 		}
