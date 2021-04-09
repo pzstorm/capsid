@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import io.pzstorm.capsid.property.validator.PropertyValidator;
+import io.pzstorm.capsid.util.SemanticVersion;
 import io.pzstorm.capsid.util.UnixPath;
 
 /**
@@ -118,6 +119,11 @@ public class CapsidProperty<T> {
 		if (type.equals(String.class))
 		{
 			T result = (T) property;
+			return validator != null ? validator.validate(result) : result;
+		}
+		else if (type.equals(SemanticVersion.class))
+		{
+			T result = (T) new SemanticVersion(property);
 			return validator != null ? validator.validate(result) : result;
 		}
 		else if (type.equals(UnixPath.class))
