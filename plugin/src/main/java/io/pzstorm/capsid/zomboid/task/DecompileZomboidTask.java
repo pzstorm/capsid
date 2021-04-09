@@ -18,12 +18,17 @@
 package io.pzstorm.capsid.zomboid.task;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
+import com.google.common.base.Splitter;
 
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtensionContainer;
+import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
@@ -37,6 +42,16 @@ import io.pzstorm.capsid.zomboid.ZomboidTasks;
 /**
  * Decompile game classes with FernFlower using default IDEA settings.
  * Default task behaviour is to decompile all class files found in game root directory.
+ * <p>
+ * This can be changed by defining specific files to decompile with project property 'decompileFiles'.
+ * Each specified file path has to be a package path relative to destination root directory.
+ * When specifying multiple file paths remember to separate them with comma delimiter.
+ * </p>
+ * <ul><li>example:</li>
+ * <pre>
+ * gradle decompileZomboid -PdecompileFiles=zombie/FileGuidPair.class,zombie/GameTime.class
+ * </pre></ul>
+ * </p>
  */
 public class DecompileZomboidTask extends JavaExec implements CapsidTask {
 
@@ -52,8 +67,10 @@ public class DecompileZomboidTask extends JavaExec implements CapsidTask {
 			File zomboidClassesDir = ProjectProperty.ZOMBOID_CLASSES_DIR.get(project);
 			onlyIf(t -> zomboidClassesDir.exists() && zomboidClassesDir.listFiles().length > 0);
 
-			// set task to run with Java 11
 			ExtensionContainer extensions = project.getExtensions();
+			ExtraPropertiesExtension ext = extensions.getExtraProperties();
+
+			// set task to run with Java 11
 			JavaToolchainService toolchain = extensions.getByType(JavaToolchainService.class);
 			getJavaLauncher().set(toolchain.launcherFor(
 					t -> t.getLanguageVersion().set(JavaLanguageVersion.of(11)))
@@ -72,7 +89,13 @@ public class DecompileZomboidTask extends JavaExec implements CapsidTask {
 			zomboidSourcesDir.mkdirs();
 
 			// decompile from this directory
-			parameters.add(zomboidClassesDir.toPath().toString());
+			Path from = zomboidClassesDir.toPath();
+			if (ext.has("decompileFiles"))
+			{
+				String decompileFiles = (String) Objects.requireNonNull(ext.get("decompileFiles"));
+				Splitter.on(',').split(decompileFiles).forEach(f -> parameters.add(from.resolve(f).toString()));
+			}
+			else parameters.add(from.toString());
 
 			// decompile to this directory
 			parameters.add(zomboidClassesDir.toPath().toString());
