@@ -46,7 +46,7 @@ public class InitModMetadataTask extends DefaultTask implements CapsidTask {
 		CapsidTask.super.configure(group, description, project);
 
 		onlyIf(t -> !ProjectProperty.MOD_INFO_FILE.get(project).exists());
-		finalizedBy(project.getTasks().getByName(ModTasks.SAVE_MOD_INFO.name));
+		finalizedBy(project.getTasks().getByName(ModTasks.SAVE_MOD_METADATA.name));
 	}
 
 	@TaskAction

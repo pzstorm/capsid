@@ -35,10 +35,10 @@ class SaveModMetadataTaskFunctionalTest extends PluginFunctionalTest {
 
 		GradleRunner runner = getRunner();
 		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add(ModTasks.SAVE_MOD_INFO.name);
+		arguments.add(ModTasks.SAVE_MOD_METADATA.name);
 		arguments.add("-x" + ZomboidTasks.ZOMBOID_VERSION.name);
 
 		BuildResult result = runner.withArguments(arguments).build();
-		assertTaskOutcomeSuccess(result, ModTasks.SAVE_MOD_INFO.name);
+		assertTaskOutcomeSuccess(result, ModTasks.SAVE_MOD_METADATA.name);
 	}
 }

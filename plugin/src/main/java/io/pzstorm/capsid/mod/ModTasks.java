@@ -30,13 +30,13 @@ public enum ModTasks {
 	CREATE_MOD_STRUCTURE(CreateModStructureTask.class, true,
 			"createModStructure", "Create default mod directory structure."
 	),
-	SAVE_MOD_INFO(SaveModMetadataTask.class, true,
+	SAVE_MOD_METADATA(SaveModMetadataTask.class, true,
 			"saveModMetadata", "Save mod metadata to file."
 	),
-	LOAD_MOD_INFO(LoadModMetadataTask.class, false,
+	LOAD_MOD_METADATA(LoadModMetadataTask.class, false,
 			"loadModMetadata", "Load mod metadata information."
 	),
-	INIT_MOD_INFO(InitModMetadataTask.class, false,
+	INIT_MOD_METADATA(InitModMetadataTask.class, false,
 			"initModMetadata", "Initialize mod metadata information."
 	);
 	public final String name, description;
