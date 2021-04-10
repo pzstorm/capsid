@@ -107,7 +107,7 @@ public class ModProperties extends CapsidProperties {
 				.isRequired(false)
 				.build();
 
-		MOD_VERSION = new CapsidProperty.Builder<>("mod.version", SemanticVersion.class)
+		MOD_VERSION = new CapsidProperty.Builder<>("mod.modversion", SemanticVersion.class)
 				.withEnvironmentVar("MOD_VERSION")
 				.withDefaultValue(new SemanticVersion("0.1.0"))
 				.build();
