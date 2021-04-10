@@ -24,6 +24,7 @@ import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.mod.task.InitModMetadataTask;
 import io.pzstorm.capsid.mod.task.LoadModMetadataTask;
 import io.pzstorm.capsid.mod.task.SaveModMetadataTask;
+import io.pzstorm.capsid.mod.task.ShowModMetadataTask;
 
 public enum ModTasks {
 
@@ -38,6 +39,9 @@ public enum ModTasks {
 	),
 	INIT_MOD_METADATA(InitModMetadataTask.class, false,
 			"initModMetadata", "Initialize mod metadata information."
+	),
+	SHOW_MOD_METADATA(ShowModMetadataTask.class, false,
+			"showModMetadata", "Print mod metadata information."
 	);
 	public final String name, description;
 	public final boolean register;
