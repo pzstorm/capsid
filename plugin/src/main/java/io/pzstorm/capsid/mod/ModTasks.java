@@ -21,10 +21,7 @@ import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskContainer;
 
 import io.pzstorm.capsid.CapsidTask;
-import io.pzstorm.capsid.mod.task.InitModMetadataTask;
-import io.pzstorm.capsid.mod.task.LoadModMetadataTask;
-import io.pzstorm.capsid.mod.task.SaveModMetadataTask;
-import io.pzstorm.capsid.mod.task.ShowModMetadataTask;
+import io.pzstorm.capsid.mod.task.*;
 
 public enum ModTasks {
 
@@ -42,6 +39,9 @@ public enum ModTasks {
 	),
 	SHOW_MOD_METADATA(ShowModMetadataTask.class, false,
 			"showModMetadata", "Print mod metadata information."
+	),
+	APPLY_MOD_TEMPLATE(ApplyModTemplateTask.class, true,
+			"applyModTemplate", "Apply Project Zomboid mod template."
 	);
 	public final String name, description;
 	public final boolean register;
