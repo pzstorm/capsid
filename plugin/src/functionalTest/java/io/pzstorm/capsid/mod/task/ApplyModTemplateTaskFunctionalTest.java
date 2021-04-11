@@ -19,16 +19,18 @@ package io.pzstorm.capsid.mod.task;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import com.google.common.base.Splitter;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
-import org.gradle.util.GFileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.mod.ModTasks;
 import io.pzstorm.capsid.util.Utils;
@@ -38,36 +40,15 @@ class ApplyModTemplateTaskFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldApplyModTemplateToProjectRootDirectory() throws IOException {
 
-		File templateDir = new File(getProjectDir(), "docs/template");
-		File templateResourceDir = Utils.getFileFromResources("docs/template");
-
-		File[] expectedFiles = templateResourceDir.listFiles();
-		Assertions.assertEquals(2, Objects.requireNonNull(expectedFiles).length);
-
-		// assert that no files are present in template directory
-		Assertions.assertNull(templateDir.listFiles());
-
-		// create directory structure before copying directory
-		Assertions.assertTrue(templateDir.getParentFile().mkdirs());
-
-		GFileUtils.copyDirectory(templateResourceDir, templateDir);
-		File[] actualFiles = templateDir.listFiles();
-
-		Assertions.assertEquals(expectedFiles.length, Objects.requireNonNull(actualFiles).length);
-		for (int i = 0; i < actualFiles.length; i++)
-		{
-			// compare file bytes to make sure they are identical
-			com.google.common.io.Files.asByteSource(actualFiles[i]).contentEquals(
-					com.google.common.io.Files.asByteSource(expectedFiles[i]));
-		}
-		File[] expectedAppliedFiles = new File[expectedFiles.length];
-		for (int i = 0; i < expectedFiles.length; i++)
-		{
-			File file = new File(getProjectDir(), expectedFiles[i].getName());
-			expectedAppliedFiles[i] = file;
-
-			// assert that mod template has not been applied yet
-			Assertions.assertFalse(file.exists());
+		List<File> expectedFiles = new ArrayList<>();
+		Splitter.on('\n').splitToList(
+				Utils.readResourceAsTextFromStream(CapsidPlugin.class, "template/template.txt")
+		).forEach(path -> {
+			String relPath = Paths.get("template").relativize(Paths.get(path)).toString();
+			expectedFiles.add(new File(getProjectDir(), relPath));
+		});
+		for (File expectedFile : expectedFiles) {
+			Assertions.assertFalse(expectedFile.exists());
 		}
 		GradleRunner runner = getRunner();
 		List<String> arguments = new ArrayList<>(runner.getArguments());
@@ -76,9 +57,8 @@ class ApplyModTemplateTaskFunctionalTest extends PluginFunctionalTest {
 		BuildResult result = runner.withArguments(arguments).build();
 		assertTaskOutcomeSuccess(result, ModTasks.APPLY_MOD_TEMPLATE.name);
 
-		// assert that expected files are applied
-		for (File expectedAppliedFile : expectedAppliedFiles) {
-			Assertions.assertTrue(expectedAppliedFile.exists());
+		for (File expectedFile : expectedFiles) {
+			Assertions.assertTrue(expectedFile.exists());
 		}
 	}
 }
