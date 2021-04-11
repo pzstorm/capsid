@@ -17,31 +17,48 @@
  */
 package io.pzstorm.capsid;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.UnmodifiableView;
 
+import io.pzstorm.capsid.dist.GenerateChangelogOptions;
+import io.pzstorm.capsid.dist.task.GenerateChangelogTask;
+
+/**
+ * Extension used to configure how {@link CapsidPlugin} works.
+ */
 @SuppressWarnings("WeakerAccess")
 public class CapsidPluginExtension {
 
 	private final Set<String> excludedResourceDirs = new HashSet<>();
 
+	/**
+	 * Exclude given resource directory paths for {@code media} module.
+	 * Note that this method overrides existing exclude directories.
+	 *
+	 * @param dirPaths directory paths to exclude.
+	 */
 	public void excludeResourceDirs(String...dirPaths) {
 
 		excludedResourceDirs.clear();
 		excludedResourceDirs.addAll(Arrays.asList(dirPaths));
 	}
 
+	/**
+	 * Returns a {@code Set} of excluded resource directory paths.
+	 *
+	 * @return <i>unmodifiable</i> {@code Set} of excluded directory paths.
+	 */
 	@UnmodifiableView
 	@Contract(pure = true)
 	public Set<String> getExcludedResourceDirs() {
 		return Collections.unmodifiableSet(excludedResourceDirs);
 	}
 
+	/**
+	 * Returns {@code true} if given path is an excluded resource, {@code false} otherwise.
+	 */
 	@Contract(pure = true)
 	public boolean isExcludedResource(String path) {
 		return excludedResourceDirs.contains(path);
