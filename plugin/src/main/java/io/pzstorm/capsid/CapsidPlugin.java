@@ -33,6 +33,7 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
+import io.pzstorm.capsid.dist.DistributionTasks;
 import io.pzstorm.capsid.mod.ModTasks;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.SetupTasks;
@@ -123,6 +124,10 @@ public class CapsidPlugin implements Plugin<Project> {
         // register all mod tasks
         for (ModTasks task : ModTasks.values()) {
             task.createOrRegister(project);
+        }
+        // register all distribution tasks
+        for (DistributionTasks task : DistributionTasks.values()) {
+            task.register(project);
         }
     }
 
