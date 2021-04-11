@@ -116,7 +116,7 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 			}
 		}
 		catch (IOException e) {
-			throw new GradleException("I/O error occurred while creating Gemfile in root directory");
+			throw new GradleException("I/O error occurred while creating Gemfile in root directory", e);
 		}
 	}
 }

@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 public class Utils {
@@ -68,19 +69,19 @@ public class Utils {
 	}
 
 	/**
-	 * Finds the resource {@code File} with the given name. A resource is some data (images, audio, text, etc)
+	 * Finds the resource {@code File} with the given path. A resource is some data (images, audio, text, etc)
 	 * that can be accessed by class code in a way that is independent of the location of the code.
 	 *
-	 * @param name the resource name.
+	 * @param path path to resource.
 	 *
 	 * @throws FileNotFoundException if the resource was not found.
 	 * @see ClassLoader#getResource(String)
 	 */
-	public static File getFileFromResources(String name) throws FileNotFoundException {
+	public static File getFileFromResources(String path) throws FileNotFoundException {
 
-		URL resource = Utils.class.getClassLoader().getResource(name);
+		URL resource = Utils.class.getClassLoader().getResource(path);
 		if (resource == null) {
-			throw new FileNotFoundException("Unable to find resource for path '" + name + '\'');
+			throw new FileNotFoundException("Unable to find resource for path '" + path + '\'');
 		}
 		try {
 			return new File(Objects.requireNonNull(resource).toURI());
