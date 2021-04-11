@@ -34,6 +34,13 @@ public class CapsidPluginExtension {
 	private final Set<String> excludedResourceDirs = new HashSet<>();
 
 	/**
+	 * Options used when generating project changelog.
+	 *
+	 * @see GenerateChangelogTask
+	 */
+	public Map<GenerateChangelogOptions, Object> generateChangelogOptions = new HashMap<>();
+
+	/**
 	 * Exclude given resource directory paths for {@code media} module.
 	 * Note that this method overrides existing exclude directories.
 	 *
