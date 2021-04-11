@@ -34,6 +34,26 @@ import com.google.common.io.Files;
 public class Utils {
 
 	/**
+	 * Read the resource from given path as a byte array and write to specified {@code File}.
+	 *
+	 * @param clazz {@code Class} to get the {@code ClassLoader} for.
+	 * @param path path to the resource to read.
+	 * @param file {@code File} to write the stream to.
+	 * @throws IOException if unable to find resource for given path or an I/O error
+	 *  		occurred while retrieving or writing resource as stream.
+	 */
+	public static void readResourceAsFileFromStream(Class<?> clazz, String path, File file) throws IOException {
+
+		try (InputStream inputStream = clazz.getClassLoader().getResourceAsStream(path))
+		{
+			if (inputStream == null) {
+				throw new IOException("Unable to find resource for path '" + path + '\'');
+			}
+			java.nio.file.Files.write(file.toPath(), ByteStreams.toByteArray(inputStream));
+		}
+	}
+
+	/**
 	 * Reads the resource for given path and converts it to {@code String}.
 	 *
 	 * @param clazz {@code Class} to get the {@code ClassLoader} for.
