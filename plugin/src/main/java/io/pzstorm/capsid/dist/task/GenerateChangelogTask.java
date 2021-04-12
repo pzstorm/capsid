@@ -41,8 +41,8 @@ import io.pzstorm.capsid.util.Utils;
  */
 public class GenerateChangelogTask extends Exec implements CapsidTask {
 
-	public static final String TOKEN_ENV_VAR_NAME = "CHANGELOG_GITHUB_TOKEN";
-	public static final String TOKEN_PROPERTY_NAME = "gcl.token";
+	private static final String TOKEN_ENV_VAR_NAME = "CHANGELOG_GITHUB_TOKEN";
+	private static final String TOKEN_PROPERTY_NAME = "gcl.token";
 
 	@Override
 	public void configure(String group, String description, Project project) {
