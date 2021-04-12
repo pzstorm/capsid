@@ -115,6 +115,14 @@ public class CapsidPlugin implements Plugin<Project> {
         // plugin extension will be configured in evaluation phase
         project.afterEvaluate(p ->
         {
+            // set default excluded directories if map is not user configured
+            if (capsid.getExcludedResourceDirs().isEmpty())
+            {
+                capsid.excludeResourceDirs(
+                        "media/lua", "media/luaexamples",
+                        "media/newuitests", "media/launcher"
+                );
+            }
             File mediaDir = new File(gameDir, "media");
             File[] mediaFiles = mediaDir.listFiles(pathname ->
                     pathname.isDirectory() && !capsid.isExcludedResource("media/" + pathname.getName())
