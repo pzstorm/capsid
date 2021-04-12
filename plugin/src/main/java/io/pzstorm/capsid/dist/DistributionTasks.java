@@ -18,6 +18,7 @@
 package io.pzstorm.capsid.dist;
 
 import org.gradle.api.Project;
+import org.gradle.api.tasks.TaskContainer;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.dist.task.GenerateChangelogTask;
@@ -29,11 +30,17 @@ public enum DistributionTasks {
 	);
 	public final String name, description;
 	final Class<? extends CapsidTask> type;
+	private final boolean overwrite;
 
-	DistributionTasks(Class<? extends CapsidTask> type, String name, String description) {
+	DistributionTasks(Class<? extends CapsidTask> type, String name, String description, boolean overwrite) {
 		this.type = type;
 		this.name = name;
 		this.description = description;
+		this.overwrite = overwrite;
+	}
+
+	DistributionTasks(Class<? extends CapsidTask> type, String name, String description) {
+		this(type, name, description, false);
 	}
 
 	/**
@@ -41,6 +48,11 @@ public enum DistributionTasks {
 	 * @param project {@code Project} register this task.
 	 */
 	public void register(Project project) {
-		project.getTasks().register(name, type, t -> t.configure("distribution", description, project));
+
+		TaskContainer tasks = project.getTasks();
+		if (overwrite) {
+			tasks.replace(name, type).configure("distribution", description, project);
+		}
+		else tasks.register(name, type, t -> t.configure("distribution", description, project));
 	}
 }
