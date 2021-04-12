@@ -22,11 +22,15 @@ import org.gradle.api.tasks.TaskContainer;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.dist.task.GenerateChangelogTask;
+import io.pzstorm.capsid.dist.task.MediaClassesTask;
 
 public enum DistributionTasks {
 
 	GENERATE_CHANGELOG(GenerateChangelogTask.class,
 			"generateChangelog", "Generate a project changelog."
+	),
+	MEDIA_CLASSES(MediaClassesTask.class,
+			"mediaClasses", "Assembles mod Lua classes.", true
 	);
 	public final String name, description;
 	final Class<? extends CapsidTask> type;
