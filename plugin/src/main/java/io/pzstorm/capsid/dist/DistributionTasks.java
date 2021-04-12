@@ -23,6 +23,7 @@ import org.gradle.api.tasks.TaskContainer;
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.dist.task.GenerateChangelogTask;
 import io.pzstorm.capsid.dist.task.MediaClassesTask;
+import io.pzstorm.capsid.dist.task.ProcessResourcesTask;
 
 public enum DistributionTasks {
 
@@ -31,6 +32,9 @@ public enum DistributionTasks {
 	),
 	MEDIA_CLASSES(MediaClassesTask.class,
 			"mediaClasses", "Assembles mod Lua classes.", true
+	),
+	PROCESS_RESOURCES(ProcessResourcesTask.class,
+			"processMediaResources", "Process mod resources.", true
 	);
 	public final String name, description;
 	final Class<? extends CapsidTask> type;
