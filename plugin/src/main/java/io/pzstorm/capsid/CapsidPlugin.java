@@ -115,15 +115,22 @@ public class CapsidPlugin implements Plugin<Project> {
         // plugin extension will be configured in evaluation phase
         project.afterEvaluate(p ->
         {
-            List<File> mediaFiles = Arrays.asList(new File(gameDir, "media").listFiles(pathname ->
-                    pathname.isDirectory() && !capsid.isExcludedResource("media/" + pathname.getName()))
+            File mediaDir = new File(gameDir, "media");
+            File[] mediaFiles = mediaDir.listFiles(pathname ->
+                    pathname.isDirectory() && !capsid.isExcludedResource("media/" + pathname.getName())
             );
-            Set<File> resourceSrcDirs = new HashSet<>();
-            mediaFiles.forEach(f -> resourceSrcDirs.add(
-                    Paths.get(project.getProjectDir().toPath().toString(), "media", f.getName()).toFile())
-            );
-            // set media resource source directories
-            media.getResources().setSrcDirs(resourceSrcDirs);
+            if (mediaFiles != null && mediaFiles.length > 0)
+            {
+                Set<File> resourceSrcDirs = new HashSet<>();
+                for (File file : mediaFiles)
+                {
+                    String projectDir = project.getProjectDir().toPath().toString();
+                    resourceSrcDirs.add(Paths.get(projectDir, "media", file.getName()).toFile());
+                }
+                // set media resource source directories
+                media.getResources().setSrcDirs(resourceSrcDirs);
+            }
+            else LOGGER.warn("WARN: Unable to find files in media directory: " + mediaDir.getPath());
 
             // register all distribution tasks
             for (DistributionTasks task : DistributionTasks.values()) {
