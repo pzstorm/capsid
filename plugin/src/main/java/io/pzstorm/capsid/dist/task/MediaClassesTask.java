@@ -23,7 +23,6 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import org.gradle.api.GradleException;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.Copy;
@@ -36,7 +35,6 @@ import io.pzstorm.capsid.dist.DistributionUtils;
 /**
  * This task assembles mod Lua classes with directory hierarchy ready for distribution.
  */
-@NonNullApi
 public class MediaClassesTask extends Copy implements CapsidTask {
 
 	@Override
