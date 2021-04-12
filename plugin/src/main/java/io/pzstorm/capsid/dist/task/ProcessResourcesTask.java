@@ -61,5 +61,6 @@ public class ProcessResourcesTask extends ProcessResources implements CapsidTask
 			fcd.setRelativePath(fcd.getRelativePath().prepend(path));
 		});
 		setIncludeEmptyDirs(false);
+		project.getTasks().getByName("processResources").dependsOn(this);
 	}
 }

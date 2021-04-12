@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
+import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,5 +74,17 @@ class ProcessResourcesTaskFunctionalTest extends PluginFunctionalTest {
 		for (String expectedFile : expectedFiles) {
 			Assertions.assertTrue(new File(resourcesDir, expectedFile).exists());
 		}
+	}
+
+	@Test
+	void whenRunningProcessResourcesShouldDependOnThisTask() {
+
+		GradleRunner runner = getRunner();
+		List<String> arguments = new ArrayList<>(runner.getArguments());
+		arguments.add("processResources");
+
+		BuildResult result = runner.withArguments(arguments).build();
+		assertTaskOutcome(result, "processResources", TaskOutcome.NO_SOURCE);
+		assertTaskOutcomeSuccess(result, DistributionTasks.PROCESS_RESOURCES.name);
 	}
 }
