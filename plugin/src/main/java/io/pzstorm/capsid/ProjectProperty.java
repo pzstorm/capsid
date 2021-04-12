@@ -18,9 +18,10 @@
 package io.pzstorm.capsid;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
@@ -63,29 +64,22 @@ public class ProjectProperty<T> {
 		ZOMBOID_CLASSES_DIR = new ProjectProperty<>("zomboidClassesDir", project ->
 				project.file(project.getBuildDir() + "/classes/zomboid")
 		);
-		properties.add(ZOMBOID_CLASSES_DIR);
-
 		ZOMBOID_SOURCES_DIR = new ProjectProperty<>("zomboidSourcesDir", project ->
 				project.file(project.getBuildDir() + "/generated/sources/zomboid")
 		);
-		properties.add(ZOMBOID_SOURCES_DIR);
-
 		ZDOC_LUA_DIR = new ProjectProperty<>("zDocLuaDir", project ->
 				project.file(project.getBuildDir().getPath() + "/generated/sources/zdoc")
 		);
-		properties.add(ZDOC_LUA_DIR);
-
 		ZDOC_VERSION_FILE = new ProjectProperty<>("zDocVersionFile", project ->
 				project.file("zdoc.version")
 		);
-		properties.add(ZDOC_VERSION_FILE);
-
 		MOD_INFO_FILE = new ProjectProperty<>("modInfoFile", project ->
 				project.file("mod.info")
 		);
-		properties.add(MOD_INFO_FILE);
-
-		PROPERTIES = Collections.unmodifiableSet(properties);
+		PROPERTIES = ImmutableSet.of(
+				ZOMBOID_CLASSES_DIR, ZOMBOID_SOURCES_DIR, ZDOC_LUA_DIR,
+				ZDOC_VERSION_FILE, MOD_INFO_FILE
+		);
 	}
 
 	private final String propertyName;
