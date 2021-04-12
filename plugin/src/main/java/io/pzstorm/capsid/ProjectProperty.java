@@ -62,10 +62,13 @@ public class ProjectProperty<T> {
 	 */
 	public static final ProjectProperty<File> MEDIA_CLASSES_DIR;
 
+	/**
+	 * Directory containing resources for {@code media} module.
+	 */
+	public static final ProjectProperty<File> MEDIA_RESOURCES_DIR;
+
 	static
 	{
-		Set<ProjectProperty<?>> properties = new HashSet<>();
-
 		ZOMBOID_CLASSES_DIR = new ProjectProperty<>("zomboidClassesDir", project ->
 				project.file(project.getBuildDir() + "/classes/zomboid")
 		);
@@ -84,9 +87,13 @@ public class ProjectProperty<T> {
 		MEDIA_CLASSES_DIR = new ProjectProperty<>("mediaClassesDir", project ->
 				new File(project.getBuildDir(), "classes/lua/media")
 		);
+		MEDIA_RESOURCES_DIR = new ProjectProperty<>("mediaResourcesDir", project ->
+				new File(project.getBuildDir(), "resources/media")
+		);
 		PROPERTIES = ImmutableSet.of(
 				ZOMBOID_CLASSES_DIR, ZOMBOID_SOURCES_DIR, ZDOC_LUA_DIR,
-				ZDOC_VERSION_FILE, MOD_INFO_FILE, MEDIA_CLASSES_DIR
+				ZDOC_VERSION_FILE, MOD_INFO_FILE,
+				MEDIA_CLASSES_DIR, MEDIA_RESOURCES_DIR
 		);
 	}
 

@@ -29,6 +29,7 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.language.jvm.tasks.ProcessResources;
 
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.dist.DistributionUtils;
 
 /**
@@ -50,7 +51,7 @@ public class ProcessResourcesTask extends ProcessResources implements CapsidTask
 		Map<Path, String> map = DistributionUtils.getPathsRelativeToModule(module, media.getResources());
 
 		from(media.getResources());
-		into(project.getBuildDir().toPath().resolve("resources/media"));
+		into(ProjectProperty.MEDIA_RESOURCES_DIR.get(project));
 
 		eachFile(fcd -> {
 			String path = map.get(Paths.get(fcd.getPath()));
