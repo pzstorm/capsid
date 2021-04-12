@@ -53,7 +53,6 @@ class MediaClassesTaskFunctionalTest extends PluginFunctionalTest {
 		GradleRunner runner = getRunner();
 		List<String> arguments = new ArrayList<>(runner.getArguments());
 		arguments.add(DistributionTasks.MEDIA_CLASSES.name);
-		arguments.add("--stacktrace");
 
 		BuildResult result = runner.withArguments(arguments).build();
 		assertTaskOutcomeSuccess(result, DistributionTasks.MEDIA_CLASSES.name);
