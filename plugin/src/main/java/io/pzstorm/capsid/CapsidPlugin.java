@@ -87,19 +87,6 @@ public class CapsidPlugin implements Plugin<Project> {
         // set media java source directory
         media.getJava().setSrcDirs(Collections.singletonList("media/lua"));
 
-        // plugin extension will be configured in evaluation phase
-        project.afterEvaluate(p ->
-        {
-            List<File> mediaFiles = Arrays.asList(new File(gameDir, "media").listFiles(pathname ->
-                    pathname.isDirectory() && !capsid.isExcludedResource("media/" + pathname.getName()))
-            );
-            Set<File> resourceSrcDirs = new HashSet<>();
-            mediaFiles.forEach(f -> resourceSrcDirs.add(
-                    Paths.get(project.getProjectDir().toPath().toString(), "media", f.getName()).toFile())
-            );
-            // set media resource source directories
-            media.getResources().setSrcDirs(resourceSrcDirs);
-        });
         // register all project properties
         for (ProjectProperty<?> property : ProjectProperty.PROPERTIES) {
             property.register(project);
@@ -125,10 +112,24 @@ public class CapsidPlugin implements Plugin<Project> {
         for (ModTasks task : ModTasks.values()) {
             task.createOrRegister(project);
         }
-        // register all distribution tasks
-        for (DistributionTasks task : DistributionTasks.values()) {
-            task.register(project);
-        }
+        // plugin extension will be configured in evaluation phase
+        project.afterEvaluate(p ->
+        {
+            List<File> mediaFiles = Arrays.asList(new File(gameDir, "media").listFiles(pathname ->
+                    pathname.isDirectory() && !capsid.isExcludedResource("media/" + pathname.getName()))
+            );
+            Set<File> resourceSrcDirs = new HashSet<>();
+            mediaFiles.forEach(f -> resourceSrcDirs.add(
+                    Paths.get(project.getProjectDir().toPath().toString(), "media", f.getName()).toFile())
+            );
+            // set media resource source directories
+            media.getResources().setSrcDirs(resourceSrcDirs);
+
+            // register all distribution tasks
+            for (DistributionTasks task : DistributionTasks.values()) {
+                task.register(project);
+            }
+        });
     }
 
     /**
