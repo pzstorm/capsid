@@ -45,19 +45,20 @@ public class MediaClassesTask extends Copy implements CapsidTask {
 		SourceSet media = java.getSourceSets().getByName("media");
 		File module = project.file("media");
 		if (!module.exists()) {
+			//noinspection ResultOfMethodCallIgnored
 			module.mkdirs();
 		}
+		Map<Path, String> map = DistributionUtils.getPathsRelativeToModule(module, media.getJava());
+
+		from(media.getJava().getSrcDirs());
 		into(ProjectProperty.MEDIA_CLASSES_DIR.get(project));
-		from(media.getJava().getSrcDirs(), copySpec ->
-		{
-			Map<Path, String> map = DistributionUtils.getPathsRelativeToModule(module, media.getJava());
-			copySpec.eachFile(fcd -> {
-				String path = map.get(Paths.get(fcd.getPath()));
-				if (path == null) {
-					throw new GradleException("Unable to relativize copy path '" + fcd.getPath() + '\'');
-				}
-				fcd.setRelativePath(fcd.getRelativePath().prepend(path));
-			});
+
+		eachFile(fcd -> {
+			String path = map.get(Paths.get(fcd.getPath()));
+			if (path == null) {
+				throw new GradleException("Unable to relativize copy path '" + fcd.getPath() + '\'');
+			}
+			fcd.setRelativePath(fcd.getRelativePath().prepend(path));
 		});
 		setIncludeEmptyDirs(false);
 	}
