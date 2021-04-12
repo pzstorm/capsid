@@ -46,7 +46,9 @@ public class MediaClassesTask extends Copy implements CapsidTask {
 		JavaPluginConvention java = project.getConvention().getPlugin(JavaPluginConvention.class);
 		SourceSet media = java.getSourceSets().getByName("media");
 		File module = project.file("media");
-
+		if (!module.exists()) {
+			module.mkdirs();
+		}
 		into(ProjectProperty.MEDIA_CLASSES_DIR.get(project));
 		from(media.getJava().getSrcDirs(), copySpec ->
 		{
