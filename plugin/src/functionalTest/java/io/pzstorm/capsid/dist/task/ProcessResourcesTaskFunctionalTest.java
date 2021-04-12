@@ -26,6 +26,7 @@ import java.util.List;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
@@ -33,8 +34,8 @@ import io.pzstorm.capsid.dist.DistributionTasks;
 
 class ProcessResourcesTaskFunctionalTest extends PluginFunctionalTest {
 
-	@Test
-	void shouldProcessModResourcesWithCorrectDirectoryStructure() throws IOException {
+	@BeforeEach
+	void createSourceAndResourceFiles() throws IOException {
 
 		String[] filesToCreate = new String[] {
 				"lua/client/mainClient.lua",
@@ -49,10 +50,14 @@ class ProcessResourcesTaskFunctionalTest extends PluginFunctionalTest {
 			Assertions.assertTrue(parentFile.exists() || parentFile.mkdirs());
 			Assertions.assertTrue(file.createNewFile());
 		}
+	}
+
+	@Test
+	void shouldProcessModResourcesWithCorrectDirectoryStructure() throws IOException {
+
 		GradleRunner runner = getRunner();
 		List<String> arguments = new ArrayList<>(runner.getArguments());
 		arguments.add(DistributionTasks.PROCESS_RESOURCES.name);
-		arguments.add("--stacktrace");
 
 		BuildResult result = runner.withArguments(arguments).build();
 		assertTaskOutcomeSuccess(result, DistributionTasks.PROCESS_RESOURCES.name);
