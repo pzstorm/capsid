@@ -23,11 +23,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Random;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
@@ -37,12 +34,8 @@ import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-
-import com.google.common.io.MoreFiles;
-import com.google.common.io.RecursiveDeleteOption;
 
 import io.pzstorm.capsid.util.UnixPath;
 
@@ -50,7 +43,6 @@ import io.pzstorm.capsid.util.UnixPath;
 public abstract class PluginFunctionalTest {
 
 	private static final File PARENT_TEMP_DIR = new File("build/tmp/functionalTest");
-	private static final Set<String> TEMP_DIR_NAMES = new HashSet<>();
 
 	private final String projectName;
 
@@ -66,23 +58,6 @@ public abstract class PluginFunctionalTest {
 
 	protected PluginFunctionalTest(String projectName) {
 		this.projectName = projectName;
-	}
-
-	@BeforeAll
-	static void cleanTemporaryDirectories() throws IOException {
-
-		if (PARENT_TEMP_DIR.exists())
-		{
-			Set<Path> dirsToClean = Files.list(PARENT_TEMP_DIR.toPath()).filter(p ->
-					p.toFile().isDirectory() && !TEMP_DIR_NAMES.contains(p.getFileName().toString()))
-					.collect(Collectors.toSet());
-
-			for (Path path : dirsToClean)
-			{
-				MoreFiles.deleteRecursively(path, RecursiveDeleteOption.ALLOW_INSECURE);
-				Assertions.assertFalse(path.toFile().exists());
-			}
-		}
 	}
 
 	protected static void assertTaskOutcome(BuildResult result, String taskName, TaskOutcome outcome) {
@@ -101,8 +76,6 @@ public abstract class PluginFunctionalTest {
 		if (projectDir == null) {
 			projectDir = new File(PARENT_TEMP_DIR, projectName);
 		}
-		TEMP_DIR_NAMES.add(projectName);
-
 		// Setup the test build
 		Files.createDirectories(projectDir.toPath());
 		writeToProjectFile("settings.gradle",
