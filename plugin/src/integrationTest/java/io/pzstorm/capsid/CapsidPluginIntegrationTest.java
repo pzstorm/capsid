@@ -34,7 +34,6 @@ import org.gradle.jvm.toolchain.JavaToolchainSpec;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings("UnstableApiUsage")
 class CapsidPluginIntegrationTest extends PluginIntegrationTest {
 
 	@Test

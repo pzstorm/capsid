@@ -45,7 +45,6 @@ import io.pzstorm.capsid.setup.SetupTasks;
 import io.pzstorm.capsid.util.UnixPath;
 import io.pzstorm.capsid.zomboid.ZomboidTasks;
 
-@SuppressWarnings("UnstableApiUsage")
 public class CapsidPlugin implements Plugin<Project> {
 
 	public static final Logger LOGGER = Logging.getLogger("capsid");
