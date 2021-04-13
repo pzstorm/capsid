@@ -51,8 +51,7 @@ class DependenciesIntegrationTest extends PluginIntegrationTest {
 		Map<Dependencies, Set<Dependency>> dependencyData = new HashMap<>();
 
 		// register all configurations before resolving them
-		for (Configurations value : Configurations.values())
-		{
+		for (Configurations value : Configurations.values()) {
 			value.register(configurations1);
 		}
 		for (Dependencies value : Dependencies.values())
@@ -61,8 +60,7 @@ class DependenciesIntegrationTest extends PluginIntegrationTest {
 			Set<Dependency> dependencies = value.register(project1, handler1);
 
 			DependencySet dependencySet = configuration.getDependencies();
-			for (Dependency dependency : dependencies)
-			{
+			for (Dependency dependency : dependencies) {
 				Assertions.assertTrue(dependencySet.contains(dependency));
 			}
 			dependencyData.put(value, dependencies);
@@ -76,8 +74,7 @@ class DependenciesIntegrationTest extends PluginIntegrationTest {
 		ConfigurationContainer configurations2 = project2.getConfigurations();
 
 		// register all configurations before resolving them
-		for (Configurations value : Configurations.values())
-		{
+		for (Configurations value : Configurations.values()) {
 			value.register(configurations2);
 		}
 		// confirm that dependencies are not registered in new project
@@ -85,8 +82,7 @@ class DependenciesIntegrationTest extends PluginIntegrationTest {
 		{
 			Configuration configuration = configurations2.getByName(value.configuration);
 			DependencySet dependencySet = configuration.getDependencies();
-			for (Dependency dependency : dependencyData.get(value))
-			{
+			for (Dependency dependency : dependencyData.get(value)) {
 				Assertions.assertFalse(dependencySet.contains(dependency));
 			}
 		}

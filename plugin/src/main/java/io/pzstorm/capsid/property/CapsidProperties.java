@@ -58,8 +58,7 @@ public abstract class CapsidProperties {
 	public boolean load(Project project) throws GradleException {
 
 		File propertiesFile = getFile(project);
-		if (!propertiesFile.exists())
-		{
+		if (!propertiesFile.exists()) {
 			return false;
 		}
 		try (InputStream stream = new FileInputStream(propertiesFile))
@@ -73,19 +72,16 @@ public abstract class CapsidProperties {
 			for (CapsidProperty<?> property : getProperties())
 			{
 				String foundProperty = properties.getProperty(property.name, "");
-				if (!foundProperty.isEmpty())
-				{
+				if (!foundProperty.isEmpty()) {
 					ext.set(property.name, foundProperty);
 				}
 				// if no property found from file try other locations
-				else if (!ext.has(property.name))
-				{
+				else if (!ext.has(property.name)) {
 					ext.set(property.name, property.findProperty(project));
 				}
 			}
 		}
-		catch (IOException e)
-		{
+		catch (IOException e) {
 			throw new GradleException("I/O exception occurred while loading capsid properties", e);
 		}
 		return true;
@@ -112,6 +108,7 @@ public abstract class CapsidProperties {
 	 * Write these properties to file for given {@link Project} instance.
 	 *
 	 * @param project {@link Project} instance to write properties for.
+	 *
 	 * @throws IOException when an I/O exception occurred while writing to file.
 	 */
 	public abstract void writeToFile(Project project) throws IOException;

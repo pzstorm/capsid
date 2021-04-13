@@ -45,8 +45,7 @@ class ConfigurationsIntegrationTest extends PluginIntegrationTest {
 		ConfigurationContainer configs2 = project.getConfigurations();
 
 		// confirm that configurations are not registered in new project
-		for (Configurations value : Configurations.values())
-		{
+		for (Configurations value : Configurations.values()) {
 			Assertions.assertFalse(configs2.contains(configData.get(value)));
 		}
 	}

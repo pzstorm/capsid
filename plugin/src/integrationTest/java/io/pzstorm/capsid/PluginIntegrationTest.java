@@ -27,10 +27,8 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 
-import com.google.common.io.MoreFiles;
-import com.google.common.io.RecursiveDeleteOption;
+import javax.annotation.Nullable;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -39,6 +37,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
+
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
 
 import io.pzstorm.capsid.util.UnixPath;
 
@@ -85,8 +86,7 @@ public abstract class PluginIntegrationTest {
 		File gameMediaDir = new File(gameDir.toString(), "media");
 		Files.createDirectory(gameMediaDir.toPath());
 
-		for (String dir : new String[]{ "lua", "maps", "models" })
-		{
+		for (String dir : new String[]{ "lua", "maps", "models" }) {
 			Files.createDirectories(new File(gameMediaDir, dir).toPath());
 		}
 		ideaHome = UnixPath.get(new File(projectDir, "ideaHome").getAbsoluteFile());
@@ -107,8 +107,7 @@ public abstract class PluginIntegrationTest {
 
 		// generate a directory name that doesn't exist yet
 		File result = getRandomProjectDirectory();
-		while (result.exists())
-		{
+		while (result.exists()) {
 			result = getRandomProjectDirectory();
 		}
 		return result;
@@ -120,8 +119,7 @@ public abstract class PluginIntegrationTest {
 
 	protected Project getProject(boolean applyPlugin) {
 
-		if (applyPlugin)
-		{
+		if (applyPlugin) {
 			applyCapsidPlugin();
 		}
 		return project;
@@ -145,8 +143,7 @@ public abstract class PluginIntegrationTest {
 	}
 
 	protected void writeToProjectFile(String path, String[] lines) throws IOException {
-		try (Writer writer = new FileWriter(project.getProjectDir().toPath().resolve(path).toFile()))
-		{
+		try (Writer writer = new FileWriter(project.getProjectDir().toPath().resolve(path).toFile())) {
 			writer.write(String.join("\n", lines));
 		}
 	}

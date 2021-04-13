@@ -20,6 +20,7 @@ package io.pzstorm.capsid.setup.xml;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -54,12 +55,10 @@ public abstract class XMLDocument {
 
 		this.name = name;
 		this.dirPath = dirPath;
-		try
-		{
+		try {
 			this.document = FACTORY.newDocumentBuilder().newDocument();
 		}
-		catch (ParserConfigurationException e)
-		{
+		catch (ParserConfigurationException e) {
 			throw new ExceptionInInitializerError(e);
 		}
 	}
@@ -78,8 +77,7 @@ public abstract class XMLDocument {
 	protected void appendOrReplaceRootElement(Element element) {
 
 		Node childNode = document.getFirstChild();
-		if (childNode == null)
-		{
+		if (childNode == null) {
 			document.appendChild(element);
 		}
 		else document.replaceChild(element, childNode);
@@ -111,8 +109,7 @@ public abstract class XMLDocument {
 				.replaceAll("_+", "_") + ".xml";
 
 		// parent directory
-		if (project == null)
-		{
+		if (project == null) {
 			throw new GradleException("Tried writing XMLDocument to file with null project");
 		}
 		File projectDir = project.getProjectDir();
@@ -124,12 +121,10 @@ public abstract class XMLDocument {
 		// create destination file before trying to write to it
 		if (!destination.exists())
 		{
-			if (!parentDir.exists() && !parentDir.mkdirs())
-			{
+			if (!parentDir.exists() && !parentDir.mkdirs()) {
 				throw new IOException("Unable to create directory structure for configuration file '" + filename + '\'');
 			}
-			if (!destination.createNewFile())
-			{
+			if (!destination.createNewFile()) {
 				throw new IOException("Unable to create run configuration file '" + filename + '\'');
 			}
 		}

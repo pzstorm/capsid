@@ -25,13 +25,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Strings;
-
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.Exec;
+
+import com.google.common.base.Strings;
 
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.CapsidPluginExtension;
@@ -51,25 +51,22 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 	 * Create {@code Gemfile} needed to generate changelog with Ruby if it does not exist.
 	 *
 	 * @param project {@code Project} to create the file for.
+	 *
 	 * @throws GradleException if an I/O exception occurred while creating {@code Gemfile}.
 	 */
 	private static void createGemfile(Project project) {
 
 		File gemFile = new File(project.getProjectDir(), "Gemfile");
 		if (gemFile.exists()) { return; }
-		try
-		{
-			if (!gemFile.createNewFile())
-			{
+		try {
+			if (!gemFile.createNewFile()) {
 				throw new GradleException("Unable to create Gemfile in root directory");
 			}
-			try (FileWriter writer = new FileWriter(gemFile))
-			{
+			try (FileWriter writer = new FileWriter(gemFile)) {
 				writer.write(Utils.readResourceAsTextFromStream(CapsidPlugin.class, "Gemfile"));
 			}
 		}
-		catch (IOException e)
-		{
+		catch (IOException e) {
 			throw new GradleException("I/O error occurred while creating Gemfile in root directory", e);
 		}
 	}
@@ -92,8 +89,7 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 		if (Strings.isNullOrEmpty(token))
 		{
 			// next check for token in project properties
-			if (ext.has(TOKEN_PROPERTY_NAME))
-			{
+			if (ext.has(TOKEN_PROPERTY_NAME)) {
 				token = (String) ext.get(TOKEN_PROPERTY_NAME);
 			}
 			// don't pass token as null
@@ -106,12 +102,10 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 		{
 			String[] sValue;
 			Object oValue = entry.getValue();
-			if (oValue instanceof String[])
-			{
+			if (oValue instanceof String[]) {
 				sValue = (String[]) oValue;
 			}
-			else if (oValue instanceof String)
-			{
+			else if (oValue instanceof String) {
 				sValue = new String[]{ (String) oValue };
 			}
 			else sValue = new String[]{ oValue.toString() };
@@ -120,8 +114,7 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 			command.addAll(Arrays.asList(sValue));
 		}
 		// windows platforms needs extra command tokens to work
-		if (System.getProperty("os.name").startsWith("Windows"))
-		{
+		if (System.getProperty("os.name").startsWith("Windows")) {
 			command.addAll(0, Arrays.asList("cmd", "/c"));
 		}
 		commandLine(command);

@@ -62,8 +62,7 @@ public enum ModTasks {
 	public void createOrRegister(Project project) {
 
 		TaskContainer tasks = project.getTasks();
-		if (register)
-		{
+		if (register) {
 			tasks.register(name, type, t -> t.configure("mod", description, project));
 		}
 		else tasks.create(name, type, t -> t.configure("mod", description, project));

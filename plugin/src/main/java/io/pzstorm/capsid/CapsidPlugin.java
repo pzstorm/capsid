@@ -73,8 +73,7 @@ public class CapsidPlugin implements Plugin<Project> {
 
 		// register all declared repositories
 		RepositoryHandler repositories = project.getRepositories();
-		for (Repositories repository : Repositories.values())
-		{
+		for (Repositories repository : Repositories.values()) {
 			repository.register(repositories);
 		}
 		JavaPluginExtension javaExtension = Objects.requireNonNull(
@@ -87,14 +86,12 @@ public class CapsidPlugin implements Plugin<Project> {
 		LocalProperties.get().load(project);
 
 		// register all setup tasks
-		for (SetupTasks task : SetupTasks.values())
-		{
+		for (SetupTasks task : SetupTasks.values()) {
 			task.register(project);
 		}
 		ExtraPropertiesExtension ext = extensions.getExtraProperties();
 		// if game directory property is not initialize do not continue
-		if (!ext.has(LocalProperties.GAME_DIR.name))
-		{
+		if (!ext.has(LocalProperties.GAME_DIR.name)) {
 			return;
 		}
 		// path to game installation directory
@@ -108,33 +105,28 @@ public class CapsidPlugin implements Plugin<Project> {
 		media.getJava().setSrcDirs(Collections.singletonList("media/lua"));
 
 		// register all project properties
-		for (ProjectProperty<?> property : ProjectProperty.PROPERTIES)
-		{
+		for (ProjectProperty<?> property : ProjectProperty.PROPERTIES) {
 			property.register(project);
 		}
 		// register project configurations
 		ConfigurationContainer configurations = project.getConfigurations();
-		for (Configurations configuration : Configurations.values())
-		{
+		for (Configurations configuration : Configurations.values()) {
 			configuration.register(configurations);
 		}
 		// register project dependencies
 		DependencyHandler dependencies = project.getDependencies();
-		for (Dependencies dependency : Dependencies.values())
-		{
+		for (Dependencies dependency : Dependencies.values()) {
 			dependency.register(project, dependencies);
 		}
 		// register all zomboid tasks
-		for (ZomboidTasks task : ZomboidTasks.values())
-		{
+		for (ZomboidTasks task : ZomboidTasks.values()) {
 			task.register(project);
 		}
 		TaskContainer tasks = project.getTasks();
 		tasks.getByName("classes").dependsOn(tasks.getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
 
 		// register all mod tasks
-		for (ModTasks task : ModTasks.values())
-		{
+		for (ModTasks task : ModTasks.values()) {
 			task.createOrRegister(project);
 		}
 		// plugin extension will be configured in evaluation phase
@@ -166,8 +158,7 @@ public class CapsidPlugin implements Plugin<Project> {
 			else LOGGER.warn("WARN: Unable to find files in media directory: " + mediaDir.getPath());
 
 			// register all distribution tasks
-			for (DistributionTasks task : DistributionTasks.values())
-			{
+			for (DistributionTasks task : DistributionTasks.values()) {
 				task.register(project);
 			}
 			// declare main project distribution

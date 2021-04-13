@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.io.MoreFiles;
-
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.io.MoreFiles;
 
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.PluginFunctionalTest;
@@ -54,16 +54,14 @@ class ZomboidJarTaskFunctionalTest extends PluginFunctionalTest {
 				"class1.class", "class2.class", "class3.class"
 		);
 		File dummyClass = Utils.getFileFromResources("dummy.class");
-		for (String include : filesToInclude)
-		{
+		for (String include : filesToInclude) {
 			com.google.common.io.Files.copy(dummyClass, new File(source, include));
 		}
 		Map<String, File> filesToExclude = ImmutableMap.of(
 				"textFile.txt", Utils.getFileFromResources("dummy.txt"),
 				"imageFile.png", Utils.getFileFromResources("dummy.png")
 		);
-		for (Map.Entry<String, File> entry : filesToExclude.entrySet())
-		{
+		for (Map.Entry<String, File> entry : filesToExclude.entrySet()) {
 			com.google.common.io.Files.copy(entry.getValue(), new File(source, entry.getKey()));
 		}
 		GradleRunner runner = getRunner();
@@ -79,12 +77,10 @@ class ZomboidJarTaskFunctionalTest extends PluginFunctionalTest {
 
 		Utils.unzipArchive(resultJar, destination);
 
-		for (String include : filesToInclude)
-		{
+		for (String include : filesToInclude) {
 			Assertions.assertTrue(new File(destination, include).exists());
 		}
-		for (Map.Entry<String, File> entry : filesToExclude.entrySet())
-		{
+		for (Map.Entry<String, File> entry : filesToExclude.entrySet()) {
 			Assertions.assertFalse(new File(destination, entry.getKey()).exists());
 		}
 	}

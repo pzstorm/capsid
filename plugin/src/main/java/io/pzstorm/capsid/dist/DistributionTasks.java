@@ -59,8 +59,7 @@ public enum DistributionTasks {
 	public void register(Project project) {
 
 		TaskContainer tasks = project.getTasks();
-		if (overwrite)
-		{
+		if (overwrite) {
 			tasks.replace(name, type).configure("distribution", description, project);
 		}
 		else tasks.register(name, type, t -> t.configure("distribution", description, project));

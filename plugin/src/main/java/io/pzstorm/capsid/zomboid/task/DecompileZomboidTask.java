@@ -24,14 +24,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.base.Splitter;
-
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
+
+import com.google.common.base.Splitter;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.ProjectProperty;

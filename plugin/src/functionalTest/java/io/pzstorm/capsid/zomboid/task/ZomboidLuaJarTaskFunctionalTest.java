@@ -23,14 +23,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.io.MoreFiles;
-import com.google.common.io.RecursiveDeleteOption;
-
 import org.gradle.api.Project;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.ProjectProperty;
@@ -52,8 +52,7 @@ class ZomboidLuaJarTaskFunctionalTest extends PluginFunctionalTest {
 		Assertions.assertTrue(zDocLuaDir.mkdirs());
 
 		// create expected files in lua directory
-		for (String expectedFile : expectedFiles)
-		{
+		for (String expectedFile : expectedFiles) {
 			Assertions.assertTrue(new File(zDocLuaDir, expectedFile).createNewFile());
 		}
 		// create directory structure before walking
@@ -85,8 +84,7 @@ class ZomboidLuaJarTaskFunctionalTest extends PluginFunctionalTest {
 		// assert only expected files are in directory
 		Assertions.assertEquals(expectedFiles.length, destination.listFiles().length);
 
-		for (String expectedFile : expectedFiles)
-		{
+		for (String expectedFile : expectedFiles) {
 			Assertions.assertTrue(new File(destination, expectedFile).exists());
 		}
 	}

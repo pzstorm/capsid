@@ -21,13 +21,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
-
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.mod.ModTasks;
@@ -65,13 +65,11 @@ class ShowModMetadataTaskFunctionalTest extends PluginFunctionalTest {
 				Splitter.on(System.lineSeparator()).splitToList(result.getOutput())
 		);
 		// remove lines from the ending of file
-		for (int i = 4; i > 0; i--)
-		{
+		for (int i = 4; i > 0; i--) {
 			actualOutput.remove(actualOutput.size() - 1);
 		}
 		// remove lines from the beginning of file
-		for (int i = 2; i > 0; i--)
-		{
+		for (int i = 2; i > 0; i--) {
 			actualOutput.remove(0);
 		}
 		Assertions.assertEquals(expectedOutput, actualOutput);

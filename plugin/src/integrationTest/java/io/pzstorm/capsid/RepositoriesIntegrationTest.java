@@ -45,8 +45,7 @@ class RepositoriesIntegrationTest extends PluginIntegrationTest {
 		RepositoryHandler handler2 = project.getRepositories();
 
 		// confirm that repositories are not registered in new project
-		for (Repositories value : Repositories.values())
-		{
+		for (Repositories value : Repositories.values()) {
 			Assertions.assertFalse(handler2.contains(repositoryData.get(value)));
 		}
 	}

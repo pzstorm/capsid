@@ -21,14 +21,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-
 import org.apache.tools.ant.taskdefs.Input;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.TaskAction;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.ProjectProperty;
@@ -57,8 +57,7 @@ public class InitModMetadataTask extends DefaultTask implements CapsidTask {
 
 		// make sure the properties file exists
 		File modInfoFile = ModProperties.get().getFile(gradleProject);
-		if (!modInfoFile.exists() && !modInfoFile.createNewFile())
-		{
+		if (!modInfoFile.exists() && !modInfoFile.createNewFile()) {
 			throw new IOException(String.format("Unable to create %s file", modInfoFile.getName()));
 		}
 		org.apache.tools.ant.Project antProject = gradleProject.getAnt().getAntProject();
@@ -78,8 +77,7 @@ public class InitModMetadataTask extends DefaultTask implements CapsidTask {
 
 			// transfer properties from ant to gradle
 			String antProperty = antProject.getProperty(property.name).trim();
-			if (!Strings.isNullOrEmpty(antProperty))
-			{
+			if (!Strings.isNullOrEmpty(antProperty)) {
 				ext.set(property.name, antProperty);
 			}
 		}

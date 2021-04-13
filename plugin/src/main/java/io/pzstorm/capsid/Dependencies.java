@@ -49,8 +49,7 @@ public enum Dependencies {
 	 */
 	ZOMBOID_CLASSES("zomboidRuntimeOnly", project -> {
 		String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
-		if (modPzVersion != null)
-		{
+		if (modPzVersion != null) {
 			return new Object[]{ project.files(Paths.get("lib", String.format("zomboid-%s.jar", modPzVersion))) };
 		}
 		else return new Object[0];
@@ -72,8 +71,7 @@ public enum Dependencies {
 	 */
 	LUA_LIBRARY("compileOnly", project -> {
 		String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
-		if (modPzVersion != null)
-		{
+		if (modPzVersion != null) {
 			return new Object[]{ project.files(String.format("lib/zdoc-lua-%s.jar", modPzVersion)) };
 		}
 		else return new Object[0];
@@ -98,8 +96,7 @@ public enum Dependencies {
 
 		Set<Dependency> result = new HashSet<>();
 		Object[] dependencyNotations = resolver.resolveDependencies(project);
-		for (Object notation : dependencyNotations)
-		{
+		for (Object notation : dependencyNotations) {
 			result.add(dependencies.add(configuration, notation));
 		}
 		return result;

@@ -62,12 +62,10 @@ public enum Configurations {
 	 */
 	public static Configuration resolve(String name, ConfigurationContainer configurations) {
 
-		try
-		{
+		try {
 			return configurations.getByName(name);
 		}
-		catch (GradleException e)
-		{
+		catch (GradleException e) {
 			return configurations.create(name);
 		}
 	}
@@ -83,14 +81,12 @@ public enum Configurations {
 		Configuration config = configurations.create(name);
 
 		Set<Configuration> extendsFromConfigs = new HashSet<>();
-		for (String entry : extendsFrom)
-		{
+		for (String entry : extendsFrom) {
 			extendsFromConfigs.add(resolve(entry, configurations));
 		}
 		config.extendsFrom(extendsFromConfigs.toArray(new Configuration[]{}));
 
-		for (String entry : extendedTo)
-		{
+		for (String entry : extendedTo) {
 			resolve(entry, configurations).extendsFrom(config);
 		}
 		return config;

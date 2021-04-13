@@ -71,8 +71,7 @@ class ProcessResourcesTaskFunctionalTest extends PluginFunctionalTest {
 		long filesFound = Files.walk(resourcesDir.toPath()).filter(Files::isRegularFile).count();
 		Assertions.assertEquals(expectedFiles.length, filesFound);
 
-		for (String expectedFile : expectedFiles)
-		{
+		for (String expectedFile : expectedFiles) {
 			Assertions.assertTrue(new File(resourcesDir, expectedFile).exists());
 		}
 	}

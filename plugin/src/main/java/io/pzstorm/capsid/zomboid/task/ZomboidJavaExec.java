@@ -55,8 +55,7 @@ public class ZomboidJavaExec extends JavaExec implements CapsidTask {
 		Project project = getProject();
 
 		// write semantic version to file
-		try (Writer writer = new FileWriter(ZomboidUtils.getZomboidVersionFile(project)))
-		{
+		try (Writer writer = new FileWriter(ZomboidUtils.getZomboidVersionFile(project))) {
 			writer.write(ZomboidUtils.getZomboidDocVersion(project).toString());
 		}
 	}

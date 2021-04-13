@@ -39,6 +39,7 @@ public class Utils {
 	 * @param clazz {@code Class} to get the {@code ClassLoader} for.
 	 * @param path path to the resource to read.
 	 * @param file {@code File} to write the stream to.
+	 *
 	 * @throws IOException if unable to find resource for given path or an I/O error
 	 * 		occurred while retrieving or writing resource as stream.
 	 */
@@ -46,8 +47,7 @@ public class Utils {
 
 		try (InputStream inputStream = clazz.getClassLoader().getResourceAsStream(path))
 		{
-			if (inputStream == null)
-			{
+			if (inputStream == null) {
 				throw new IOException("Unable to find resource for path '" + path + '\'');
 			}
 			java.nio.file.Files.write(file.toPath(), ByteStreams.toByteArray(inputStream));
@@ -59,6 +59,7 @@ public class Utils {
 	 *
 	 * @param clazz {@code Class} to get the {@code ClassLoader} for.
 	 * @param path path to the resource to read.
+	 *
 	 * @throws IOException if unable to find resource for given path or an I/O error
 	 * 		occurred while retrieving resource as stream for class loader.
 	 */
@@ -66,8 +67,7 @@ public class Utils {
 
 		try (InputStream inputStream = clazz.getClassLoader().getResourceAsStream(path))
 		{
-			if (inputStream == null)
-			{
+			if (inputStream == null) {
 				throw new IOException("Unable to find resource for path '" + path + '\'');
 			}
 			Stream<String> stream = new BufferedReader(new InputStreamReader(inputStream)).lines();
@@ -94,22 +94,20 @@ public class Utils {
 	 * that can be accessed by class code in a way that is independent of the location of the code.
 	 *
 	 * @param path path to resource.
+	 *
 	 * @throws FileNotFoundException if the resource was not found.
 	 * @see ClassLoader#getResource(String)
 	 */
 	public static File getFileFromResources(String path) throws FileNotFoundException {
 
 		URL resource = Utils.class.getClassLoader().getResource(path);
-		if (resource == null)
-		{
+		if (resource == null) {
 			throw new FileNotFoundException("Unable to find resource for path '" + path + '\'');
 		}
-		try
-		{
+		try {
 			return new File(Objects.requireNonNull(resource).toURI());
 		}
-		catch (URISyntaxException e)
-		{
+		catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -119,6 +117,7 @@ public class Utils {
 	 *
 	 * @param archive {@code Zip} archive to unzip.
 	 * @param destination destination directory to unzip to.
+	 *
 	 * @throws IOException if an I/O error occurred while unzipping archive.
 	 */
 	public static void unzipArchive(File archive, File destination) throws IOException {
@@ -134,8 +133,7 @@ public class Utils {
 				{
 					// fix for Windows-created archives
 					File parent = newFile.getParentFile();
-					if (!parent.isDirectory() && !parent.mkdirs())
-					{
+					if (!parent.isDirectory() && !parent.mkdirs()) {
 						throw new IOException("Failed to create directory " + parent);
 					}
 					// write file content
@@ -147,8 +145,7 @@ public class Utils {
 						} //@formatter:on
 					}
 				}
-				else if (!newFile.isDirectory() && !newFile.mkdirs())
-				{
+				else if (!newFile.isDirectory() && !newFile.mkdirs()) {
 					throw new IOException("Failed to create directory " + newFile);
 				}
 				zis.closeEntry();

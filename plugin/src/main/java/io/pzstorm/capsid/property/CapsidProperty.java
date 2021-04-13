@@ -23,12 +23,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-import com.google.common.base.Strings;
-
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+
+import com.google.common.base.Strings;
 
 import io.pzstorm.capsid.property.validator.PropertyValidator;
 import io.pzstorm.capsid.util.SemanticVersion;
@@ -81,8 +81,7 @@ public class CapsidProperty<T> {
 		if (ext.has(name))
 		{
 			Object foundProperty = Objects.requireNonNull(ext.get(name));
-			if (foundProperty instanceof String)
-			{
+			if (foundProperty instanceof String) {
 				return convertAndValidateProperty((String) foundProperty);
 			}
 			else if (type.isInstance(foundProperty))
@@ -90,8 +89,7 @@ public class CapsidProperty<T> {
 				T result = type.cast(foundProperty);
 				return validator != null ? validator.validate(result) : result;
 			}
-			else
-			{
+			else {
 				String msg = "Found capsid property is of unsupported type '%s'";
 				throw new InvalidCapsidPropertyException(String.format(msg, foundProperty.getClass().getName()));
 			}
@@ -102,12 +100,10 @@ public class CapsidProperty<T> {
 		{
 			// when env parameter is not defined search for env variable with property name
 			String envVar = System.getenv(env != null && !env.isEmpty() ? env : name);
-			if (envVar != null)
-			{
+			if (envVar != null) {
 				return convertAndValidateProperty(envVar);
 			}
-			else if (required && defaultValue == null)
-			{
+			else if (required && defaultValue == null) {
 				throw new InvalidCapsidPropertyException("Unable to find capsid property " + name);
 			}
 			else return defaultValue;
@@ -127,8 +123,7 @@ public class CapsidProperty<T> {
 	@Contract("null -> null")
 	private @Nullable T convertAndValidateProperty(String property) {
 
-		if (Strings.isNullOrEmpty(property))
-		{
+		if (Strings.isNullOrEmpty(property)) {
 			return null;
 		}
 		if (type.equals(String.class))
@@ -153,12 +148,10 @@ public class CapsidProperty<T> {
 		}
 		if (type.equals(URL.class))
 		{
-			try
-			{
+			try {
 				return (T) new URL(property);
 			}
-			catch (MalformedURLException e)
-			{
+			catch (MalformedURLException e) {
 				throw new InvalidCapsidPropertyException("Malformed URL property", e);
 			}
 		}

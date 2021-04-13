@@ -75,8 +75,7 @@ class CreateModStructureTaskFunctionalTest extends PluginFunctionalTest {
 
 		File gameDir = CapsidPlugin.getGameDirProperty(getProject());
 
-		for (String excludedSrcDirName : excludedSrcDirs)
-		{
+		for (String excludedSrcDirName : excludedSrcDirs) {
 			Files.createDirectory(new File(gameDir, excludedSrcDirName).toPath());
 		}
 		BuildResult result = getRunner().withArguments(arguments).build();

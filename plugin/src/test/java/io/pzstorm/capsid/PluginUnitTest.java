@@ -21,11 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import com.google.common.io.MoreFiles;
-import com.google.common.io.RecursiveDeleteOption;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
 
 @Tag("unit")
 public abstract class PluginUnitTest {
@@ -35,8 +35,7 @@ public abstract class PluginUnitTest {
 	@BeforeAll
 	static void createWorkspaceDirectory() throws IOException {
 
-		if (!WORKSPACE.exists())
-		{
+		if (!WORKSPACE.exists()) {
 			Files.createDirectory(WORKSPACE.toPath());
 		}
 		RecursiveDeleteOption option = RecursiveDeleteOption.ALLOW_INSECURE;

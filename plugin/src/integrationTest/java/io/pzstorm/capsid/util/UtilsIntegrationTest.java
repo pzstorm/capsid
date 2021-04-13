@@ -45,14 +45,12 @@ class UtilsIntegrationTest extends PluginIntegrationTest {
 				new File(projectDir, "dummy.txt"),
 				new File(projectDir, "dummy.png")
 		};
-		for (File expectedFile : expected)
-		{
+		for (File expectedFile : expected) {
 			Assertions.assertFalse(expectedFile.exists());
 		}
 		Utils.unzipArchive(archive, projectDir);
 
-		for (File expectedFile : expected)
-		{
+		for (File expectedFile : expected) {
 			Assertions.assertTrue(expectedFile.exists());
 		}
 	}

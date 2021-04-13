@@ -25,11 +25,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-
 import org.gradle.api.Project;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
+
+import com.google.common.collect.ImmutableSet;
 
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.property.CapsidProperties;
@@ -147,12 +147,10 @@ public class ModProperties extends CapsidProperties {
 			{
 				String value = "";
 				Object oProperty = property.findProperty(project);
-				if (oProperty != null)
-				{
+				if (oProperty != null) {
 					value = oProperty.toString();
 				}
-				else if (property.required)
-				{
+				else if (property.required) {
 					CapsidPlugin.LOGGER.warn("WARN: Missing property value " + property.name);
 				}
 				// remove 'mod.' part of the property before appending

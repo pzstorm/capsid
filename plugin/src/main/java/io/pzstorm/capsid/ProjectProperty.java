@@ -20,11 +20,11 @@ package io.pzstorm.capsid;
 import java.io.File;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.jetbrains.annotations.Unmodifiable;
+
+import com.google.common.collect.ImmutableSet;
 
 public class ProjectProperty<T> {
 

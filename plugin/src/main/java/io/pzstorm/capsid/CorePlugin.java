@@ -64,8 +64,7 @@ public enum CorePlugin {
 	public static void applyAll(Project project) {
 
 		PluginManager pluginManager = project.getPluginManager();
-		for (CorePlugin plugin : CorePlugin.values())
-		{
+		for (CorePlugin plugin : CorePlugin.values()) {
 			pluginManager.apply(plugin.id);
 		}
 	}

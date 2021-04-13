@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.io.Files;
-
 import org.gradle.api.GradleException;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
+
+import com.google.common.io.Files;
 
 import io.pzstorm.capsid.Configurations;
 import io.pzstorm.capsid.ProjectProperty;
@@ -43,13 +43,13 @@ public class ZomboidUtils {
 	 * Returns {@code File} that stores zomboid version data.
 	 *
 	 * @param project {@code Project} requesting the file instance.
+	 *
 	 * @throws IOException If an I/O error occurred while creating file.
 	 */
 	public static File getZomboidVersionFile(Project project) throws IOException {
 
 		File versionFile = ProjectProperty.ZDOC_VERSION_FILE.get(project);
-		if (!versionFile.exists() && !versionFile.createNewFile())
-		{
+		if (!versionFile.exists() && !versionFile.createNewFile()) {
 			throw new IOException("Unable to create 'zdoc.version' file");
 		}
 		return versionFile;
@@ -73,8 +73,7 @@ public class ZomboidUtils {
 
 		String pattern = "pz-zdoc-(\\d+\\.\\d+\\.\\d+(-.*)?)\\.jar";
 		Matcher matcher = Pattern.compile(pattern).matcher(dependencyName);
-		if (!matcher.find())
-		{
+		if (!matcher.find()) {
 			throw new GradleException("Unexpected ZomboidDoc dependency name: " + dependencyName);
 		}
 		return new SemanticVersion(matcher.group(1));
@@ -89,8 +88,7 @@ public class ZomboidUtils {
 
 		File versionFile = getZomboidVersionFile(project);
 		List<String> content = Files.readLines(versionFile, StandardCharsets.UTF_8);
-		if (!content.isEmpty())
-		{
+		if (!content.isEmpty()) {
 			return new SemanticVersion(content.get(0));
 		}
 		throw new InvalidUserDataException("ZomboidDoc version file is empty");

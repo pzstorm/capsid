@@ -100,8 +100,7 @@ public class LaunchRunConfig extends XMLDocument {
 		Element optionWorkDir = document.createElement("option");
 
 		UnixPath gameDir = LocalProperties.GAME_DIR.findProperty(project);
-		if (gameDir == null)
-		{
+		if (gameDir == null) {
 			throw new InvalidUserDataException("Unable to find gameDir local property");
 		}
 		optionWorkDir.setAttribute("name", "WORKING_DIRECTORY");

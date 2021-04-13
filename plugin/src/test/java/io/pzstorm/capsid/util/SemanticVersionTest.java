@@ -19,12 +19,12 @@ package io.pzstorm.capsid.util;
 
 import java.util.*;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import org.gradle.api.InvalidUserDataException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import io.pzstorm.capsid.PluginUnitTest;
 
@@ -37,8 +37,7 @@ class SemanticVersionTest extends PluginUnitTest {
 				"0", "1.0", "0.1.0.0",
 				"0-1.2", "0.1-2", "2.1.0$"
 		};
-		for (String version : malformedVersions)
-		{
+		for (String version : malformedVersions) {
 			Assertions.assertThrows(InvalidUserDataException.class, () -> new SemanticVersion(version));
 		}
 	}
@@ -71,8 +70,7 @@ class SemanticVersionTest extends PluginUnitTest {
 				"0.4.6-0rc", "0rc",
 				"1.0.0", ""
 		);
-		for (Map.Entry<String, String> entry : validVersions.entrySet())
-		{
+		for (Map.Entry<String, String> entry : validVersions.entrySet()) {
 			Assertions.assertEquals(entry.getValue(), new SemanticVersion(entry.getKey()).classifier);
 		}
 	}
@@ -91,8 +89,7 @@ class SemanticVersionTest extends PluginUnitTest {
 		semanticVersions.addAll(semanticVersionsList);
 
 		List<SemanticVersion> semVerList = new ArrayList<>(semanticVersions);
-		for (int i = 0; i < semVerList.size(); i++)
-		{
+		for (int i = 0; i < semVerList.size(); i++) {
 			Assertions.assertEquals(semVerList.get(i), semanticVersionsList.get(i));
 		}
 	}

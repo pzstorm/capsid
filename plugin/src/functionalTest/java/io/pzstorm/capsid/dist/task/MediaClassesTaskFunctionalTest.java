@@ -65,8 +65,7 @@ class MediaClassesTaskFunctionalTest extends PluginFunctionalTest {
 		long filesFound = Files.walk(mediaClassesDir.toPath()).filter(Files::isRegularFile).count();
 		Assertions.assertEquals(expectedFiles.length, filesFound);
 
-		for (String expectedFile : expectedFiles)
-		{
+		for (String expectedFile : expectedFiles) {
 			Assertions.assertTrue(new File(mediaClassesDir, expectedFile).exists());
 		}
 	}

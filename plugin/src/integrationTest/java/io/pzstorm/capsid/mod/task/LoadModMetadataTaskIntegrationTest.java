@@ -24,13 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
-
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 import io.pzstorm.capsid.PluginIntegrationTest;
 import io.pzstorm.capsid.ProjectProperty;
@@ -50,13 +50,11 @@ class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 	void writeModMetadataToFile() throws IOException {
 
 		List<String> modInfoArray = new ArrayList<>();
-		for (Map.Entry<String, String> entry : MOD_METADATA.entrySet())
-		{
+		for (Map.Entry<String, String> entry : MOD_METADATA.entrySet()) {
 			modInfoArray.add(entry.getKey() + '=' + entry.getValue());
 		}
 		project = getProject(false);
-		try (Writer writer = new FileWriter(ProjectProperty.MOD_INFO_FILE.get(project)))
-		{
+		try (Writer writer = new FileWriter(ProjectProperty.MOD_INFO_FILE.get(project))) {
 			writer.write(String.join("\n", modInfoArray));
 		}
 	}
@@ -102,8 +100,7 @@ class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 		{
 			String key = "mod." + entry.getKey();
 			// mod name and ID properties are always loaded
-			if (!key.equals(ModProperties.MOD_NAME.name) && !key.equals(ModProperties.MOD_ID.name))
-			{
+			if (!key.equals(ModProperties.MOD_NAME.name) && !key.equals(ModProperties.MOD_ID.name)) {
 				Assertions.assertFalse(ext.has(key));
 			}
 		}

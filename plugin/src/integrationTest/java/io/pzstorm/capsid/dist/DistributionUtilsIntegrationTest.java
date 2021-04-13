@@ -24,14 +24,14 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import io.pzstorm.capsid.PluginIntegrationTest;
 
@@ -56,8 +56,7 @@ class DistributionUtilsIntegrationTest extends PluginIntegrationTest {
 		{
 			File projectFile = project.file(filePath);
 			File parentFile = projectFile.getParentFile();
-			if (!parentFile.exists())
-			{
+			if (!parentFile.exists()) {
 				Assertions.assertTrue(parentFile.mkdirs());
 			}
 			Assertions.assertTrue(projectFile.createNewFile());
@@ -89,8 +88,7 @@ class DistributionUtilsIntegrationTest extends PluginIntegrationTest {
 		{
 			File projectFile = project.file(filePath);
 			File parentFile = projectFile.getParentFile();
-			if (!parentFile.exists())
-			{
+			if (!parentFile.exists()) {
 				Assertions.assertTrue(parentFile.mkdirs());
 			}
 			Assertions.assertTrue(projectFile.createNewFile());

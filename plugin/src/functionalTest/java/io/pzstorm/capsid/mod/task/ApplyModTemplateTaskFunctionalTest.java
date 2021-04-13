@@ -23,12 +23,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.Splitter;
-
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import com.google.common.base.Splitter;
 
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.PluginFunctionalTest;
@@ -47,8 +47,7 @@ class ApplyModTemplateTaskFunctionalTest extends PluginFunctionalTest {
 			String relPath = Paths.get("template").relativize(Paths.get(path)).toString();
 			expectedFiles.add(new File(getProjectDir(), relPath));
 		});
-		for (File expectedFile : expectedFiles)
-		{
+		for (File expectedFile : expectedFiles) {
 			Assertions.assertFalse(expectedFile.exists());
 		}
 		GradleRunner runner = getRunner();
@@ -58,8 +57,7 @@ class ApplyModTemplateTaskFunctionalTest extends PluginFunctionalTest {
 		BuildResult result = runner.withArguments(arguments).build();
 		assertTaskOutcomeSuccess(result, ModTasks.APPLY_MOD_TEMPLATE.name);
 
-		for (File expectedFile : expectedFiles)
-		{
+		for (File expectedFile : expectedFiles) {
 			Assertions.assertTrue(expectedFile.exists());
 		}
 	}

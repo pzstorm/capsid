@@ -21,13 +21,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
-
 import org.apache.tools.ant.taskdefs.Input;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.TaskAction;
+
+import com.google.common.collect.ImmutableMap;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.property.CapsidProperty;
@@ -47,8 +47,7 @@ public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
 
 		// make sure the properties file exists
 		File propertiesFile = LocalProperties.get().getFile(gradleProject);
-		if (!propertiesFile.exists() && !propertiesFile.createNewFile())
-		{
+		if (!propertiesFile.exists() && !propertiesFile.createNewFile()) {
 			throw new IOException(String.format("Unable to create %s file", propertiesFile.getName()));
 		}
 		Map<CapsidProperty<?>, String> PROPERTIES_INPUT_MAP = ImmutableMap.of(

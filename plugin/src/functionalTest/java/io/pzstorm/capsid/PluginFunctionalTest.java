@@ -29,9 +29,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.io.MoreFiles;
-import com.google.common.io.RecursiveDeleteOption;
-
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.testfixtures.ProjectBuilder;
@@ -43,6 +40,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
+
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
 
 import io.pzstorm.capsid.util.UnixPath;
 
@@ -98,8 +98,7 @@ public abstract class PluginFunctionalTest {
 	@BeforeEach
 	void createRunner() throws IOException {
 
-		if (projectDir == null)
-		{
+		if (projectDir == null) {
 			projectDir = new File(PARENT_TEMP_DIR, projectName);
 		}
 		TEMP_DIR_NAMES.add(projectName);
@@ -178,8 +177,7 @@ public abstract class PluginFunctionalTest {
 
 		// generate a directory name that doesn't exist yet
 		File result = getRandomProjectDirectory();
-		while (result.exists())
-		{
+		while (result.exists()) {
 			result = getRandomProjectDirectory();
 		}
 		return result;
@@ -190,8 +188,7 @@ public abstract class PluginFunctionalTest {
 	}
 
 	protected void writeToProjectFile(String path, String[] lines) throws IOException {
-		try (Writer writer = new FileWriter(projectDir.toPath().resolve(path).toFile()))
-		{
+		try (Writer writer = new FileWriter(projectDir.toPath().resolve(path).toFile())) {
 			writer.write(String.join("\n", lines));
 		}
 	}
