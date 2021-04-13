@@ -30,16 +30,6 @@ dependencies {
 	compileOnly 'org.jetbrains:annotations:20.1.0'
 }
 
-gradlePlugin {
-	//noinspection GroovyAssignabilityCheck
-	plugins {
-		capsid {
-			id = 'io.pzstorm.capsid'
-			implementationClass = 'io.pzstorm.capsid.CapsidPlugin'
-		}
-	}
-}
-
 sourceSets {
 	functionalTest {
 		compileClasspath += sourceSets.main.output
@@ -51,7 +41,17 @@ sourceSets {
 	}
 }
 
-gradlePlugin.testSourceSets(sourceSets.functionalTest, sourceSets.integrationTest)
+gradlePlugin {
+	//noinspection GroovyAssignabilityCheck
+	plugins {
+		capsid {
+			id = 'io.pzstorm.capsid'
+			implementationClass = 'io.pzstorm.capsid.CapsidPlugin'
+		}
+	}
+	testSourceSets(sourceSets.integrationTest, sourceSets.functionalTest)
+}
+
 configurations {
 	functionalTestImplementation.extendsFrom(implementation, testImplementation)
 	integrationTestImplementation.extendsFrom(implementation, testImplementation)
