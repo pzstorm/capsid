@@ -7,6 +7,8 @@ plugins {
     // https://docs.gradle.org/current/userguide/publishing_maven.html
     id 'maven-publish'
 }
+apply plugin: "com.diffplug.spotless"
+apply from: "https://gist.githubusercontent.com/yooksi/${spotlessGistID}/raw/spotless.gradle"
 
 version '0.1.0'
 
