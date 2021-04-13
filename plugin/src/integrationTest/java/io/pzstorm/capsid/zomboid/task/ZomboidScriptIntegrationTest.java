@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginIntegrationTest;
 
-class ZomboidScriptFunctionalTest extends PluginIntegrationTest {
+class ZomboidScriptIntegrationTest extends PluginIntegrationTest {
 
 	@Test
 	void shouldCreateZomboidClassesAndSourcesDirectoryProperties() {
