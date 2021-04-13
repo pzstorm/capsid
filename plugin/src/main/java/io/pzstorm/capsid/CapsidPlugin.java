@@ -26,6 +26,8 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
+import org.gradle.api.distribution.Distribution;
+import org.gradle.api.distribution.DistributionContainer;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.*;
@@ -144,6 +146,19 @@ public class CapsidPlugin implements Plugin<Project> {
             for (DistributionTasks task : DistributionTasks.values()) {
                 task.register(project);
             }
+            // declare main project distribution
+            DistributionContainer distributions = extensions.getByType(DistributionContainer.class);
+            Distribution distribution = distributions.getByName("main");
+            distribution.contents(copy ->
+            {
+                copy.from(ProjectProperty.MEDIA_CLASSES_DIR.get(project),
+                        ProjectProperty.MEDIA_RESOURCES_DIR.get(project)
+                );
+                copy.into("media");
+            });
+            project.getTasks().getByName("assembleDist").dependsOn(
+                DistributionTasks.MEDIA_CLASSES.name, DistributionTasks.PROCESS_RESOURCES.name
+            );
         });
     }
 
