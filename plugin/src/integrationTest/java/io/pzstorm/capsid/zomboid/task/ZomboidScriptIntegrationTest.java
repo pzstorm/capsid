@@ -17,15 +17,8 @@
  */
 package io.pzstorm.capsid.zomboid.task;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
-import org.gradle.initialization.GradlePropertiesController;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -49,38 +42,5 @@ class ZomboidScriptIntegrationTest extends PluginIntegrationTest {
 
 		Assertions.assertDoesNotThrow(() -> configurations.getByName("zomboidRuntimeOnly"));
 		Assertions.assertDoesNotThrow(() -> configurations.getByName("zomboidImplementation"));
-	}
-
-	@Test
-	void shouldAddZomboidAssetsAndClassesDependencies() throws IOException {
-
-		File gameDirFile = getGameDirPath().convert().toFile();
-
-		File jarFile = new File(gameDirFile, "sample.jar");
-		Assertions.assertTrue(jarFile.createNewFile());
-
-		File otherFile = new File(gameDirFile, "otherFile.txt");
-		Assertions.assertTrue(otherFile.createNewFile());
-
-		Project project = getProject(true);
-		ConfigurationContainer configurations = project.getConfigurations();
-
-		Configuration zomboidRuntimeOnly = configurations.getByName("zomboidRuntimeOnly");
-		/*
-		 * workaround for "GradleProperties has not been loaded yet" issue
-		 * https://github.com/gradle/gradle/issues/13122
-		 */
-		ProjectInternal projectInternal = (ProjectInternal) project;
-		projectInternal.getServices().get(GradlePropertiesController.class)
-				.loadGradlePropertiesFrom(project.getProjectDir());
-
-		Assertions.assertTrue(zomboidRuntimeOnly.contains(jarFile));
-		Assertions.assertFalse(zomboidRuntimeOnly.contains(otherFile));
-
-		File mediaDir = new File(gameDirFile, "media").getAbsoluteFile();
-		Assertions.assertTrue(mediaDir.exists());
-
-		Configuration zomboidImplementation = configurations.getByName("zomboidImplementation");
-		Assertions.assertTrue(zomboidImplementation.contains(mediaDir));
 	}
 }
