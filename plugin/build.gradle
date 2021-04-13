@@ -42,10 +42,11 @@ sourceSets {
 }
 
 gradlePlugin {
-	//noinspection GroovyAssignabilityCheck
 	plugins {
 		capsid {
+			//noinspection GroovyAssignabilityCheck
 			id = 'io.pzstorm.capsid'
+			//noinspection GroovyAssignabilityCheck
 			implementationClass = 'io.pzstorm.capsid.CapsidPlugin'
 		}
 	}
