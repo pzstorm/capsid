@@ -87,8 +87,8 @@ class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
 	private void writeLocalPropertiesToFile() throws IOException {
 
 		writeToProjectFile("local.properties", new String[]{
-				String.format("gameDir=%s", getGameDirPath().toString()),
-				String.format("ideaHome=%s", getIdeaHomePath().toString())
+				String.format("gameDir=%s", getGameDirPath()),
+				String.format("ideaHome=%s", getIdeaHomePath())
 		});
 	}
 }

@@ -47,8 +47,8 @@ class LocalPropertiesIntegrationTest extends PluginIntegrationTest {
 		LocalProperties localProperties = LocalProperties.get();
 
 		writeToProjectFile("local.properties", new String[]{
-				String.format("gameDir=%s", getGameDirPath().toString()),
-				String.format("ideaHome=%s", getIdeaHomePath().toString())
+				String.format("gameDir=%s", getGameDirPath()),
+				String.format("ideaHome=%s", getIdeaHomePath())
 		});
 		// load properties for project before asserting
 		localProperties.load(project);

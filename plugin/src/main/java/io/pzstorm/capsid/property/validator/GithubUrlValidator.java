@@ -46,7 +46,7 @@ public class GithubUrlValidator implements PropertyValidator<URL> {
 		if (!isValid(property))
 		{
 			String msg = "URL '%s' is not a valid Github URL";
-			throw new InvalidCapsidPropertyException(String.format(msg, property.toString()));
+			throw new InvalidCapsidPropertyException(String.format(msg, property));
 		}
 		else return property;
 	}

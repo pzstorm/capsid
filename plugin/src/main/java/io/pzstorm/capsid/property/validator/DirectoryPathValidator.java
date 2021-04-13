@@ -50,7 +50,7 @@ public class DirectoryPathValidator implements PropertyValidator<UnixPath> {
 		if (!isValid(property))
 		{
 			String message = "Invalid directory path '%s'";
-			throw new InvalidUserDataException(String.format(message, property.toString()));
+			throw new InvalidUserDataException(String.format(message, property));
 		}
 		return property;
 	}

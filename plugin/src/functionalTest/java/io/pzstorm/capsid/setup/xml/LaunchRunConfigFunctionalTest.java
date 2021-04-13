@@ -52,8 +52,8 @@ class LaunchRunConfigFunctionalTest extends PluginFunctionalTest {
 
 		@SuppressWarnings("SpellCheckingInspection")
 		List<String> arguments = ImmutableList.of(
-				String.format("-PgameDir=%s", getGameDirPath().toString()),
-				String.format("-PideaHome=%s", getIdeaHomePath().toString()),
+				String.format("-PgameDir=%s", getGameDirPath()),
+				String.format("-PideaHome=%s", getIdeaHomePath()),
 				SetupTasks.CREATE_LAUNCH_CONFIGS.name
 		);
 		BuildResult result = getRunner().withArguments(arguments).build();

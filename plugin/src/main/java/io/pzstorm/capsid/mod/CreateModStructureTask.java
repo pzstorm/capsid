@@ -50,7 +50,7 @@ public class CreateModStructureTask extends DefaultTask implements CapsidTask {
 			if (!srcDir.exists() && !srcDir.mkdirs())
 			{
 				String msg = "Unable to create mod structure for source dir '%s'";
-				throw new GradleException(String.format(msg, srcDir.toPath().toString()));
+				throw new GradleException(String.format(msg, srcDir.toPath()));
 			}
 		}
 		for (File resDir : media.getResources().getSrcDirs())
@@ -58,7 +58,7 @@ public class CreateModStructureTask extends DefaultTask implements CapsidTask {
 			if (!resDir.exists() && !resDir.mkdirs())
 			{
 				String msg = "Unable to create mod structure for resource dir '%s'";
-				throw new GradleException(String.format(msg, resDir.toPath().toString()));
+				throw new GradleException(String.format(msg, resDir.toPath()));
 			}
 		}
 	}
