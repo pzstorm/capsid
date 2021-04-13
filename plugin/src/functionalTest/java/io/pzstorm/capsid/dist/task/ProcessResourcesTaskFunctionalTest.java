@@ -38,7 +38,7 @@ class ProcessResourcesTaskFunctionalTest extends PluginFunctionalTest {
 	@BeforeEach
 	void createSourceAndResourceFiles() throws IOException {
 
-		String[] filesToCreate = new String[] {
+		String[] filesToCreate = new String[]{
 				"lua/client/mainClient.lua",
 				"lua/server/mainServer.lua",
 				"models/testModel.obj",
@@ -71,7 +71,8 @@ class ProcessResourcesTaskFunctionalTest extends PluginFunctionalTest {
 		long filesFound = Files.walk(resourcesDir.toPath()).filter(Files::isRegularFile).count();
 		Assertions.assertEquals(expectedFiles.length, filesFound);
 
-		for (String expectedFile : expectedFiles) {
+		for (String expectedFile : expectedFiles)
+		{
 			Assertions.assertTrue(new File(resourcesDir, expectedFile).exists());
 		}
 	}

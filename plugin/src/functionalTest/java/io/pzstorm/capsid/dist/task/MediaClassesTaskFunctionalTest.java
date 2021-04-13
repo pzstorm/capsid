@@ -37,7 +37,7 @@ class MediaClassesTaskFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldAssembleMediaClassesWithCorrectDirectoryStructure() throws IOException {
 
-		String[] filesToCreate = new String[] {
+		String[] filesToCreate = new String[]{
 				"lua/client/mainClient.lua",
 				"lua/server/mainServer.lua",
 				"models/testModel.obj",
@@ -65,7 +65,8 @@ class MediaClassesTaskFunctionalTest extends PluginFunctionalTest {
 		long filesFound = Files.walk(mediaClassesDir.toPath()).filter(Files::isRegularFile).count();
 		Assertions.assertEquals(expectedFiles.length, filesFound);
 
-		for (String expectedFile : expectedFiles) {
+		for (String expectedFile : expectedFiles)
+		{
 			Assertions.assertTrue(new File(mediaClassesDir, expectedFile).exists());
 		}
 	}

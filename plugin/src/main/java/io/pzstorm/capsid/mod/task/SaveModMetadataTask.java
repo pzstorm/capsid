@@ -52,7 +52,8 @@ public class SaveModMetadataTask extends DefaultTask implements CapsidTask {
 			//noinspection ResultOfMethodCallIgnored
 			metadataFile.getParentFile().mkdirs();
 
-			if (!metadataFile.createNewFile()) {
+			if (!metadataFile.createNewFile())
+			{
 				throw new IOException("Unable to create mod.info file '" + metadataFile.getPath() + '\'');
 			}
 		}

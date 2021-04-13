@@ -40,18 +40,16 @@ import io.pzstorm.capsid.util.UnixPath;
  */
 public class LocalProperties extends CapsidProperties {
 
-	private static final LocalProperties INSTANCE = new LocalProperties();
-	private static final @Unmodifiable Set<CapsidProperty<?>> PROPERTIES;
-
 	/**
 	 * {@code Path} to Project Zomboid installation directory.
 	 */
 	public static final CapsidProperty<UnixPath> GAME_DIR;
-
 	/**
 	 * {@code Path} to IntelliJ IDEA installation directory.
 	 */
 	public static final CapsidProperty<UnixPath> IDEA_HOME;
+	private static final LocalProperties INSTANCE = new LocalProperties();
+	private static final @Unmodifiable Set<CapsidProperty<?>> PROPERTIES;
 
 	static
 	{
@@ -103,7 +101,7 @@ public class LocalProperties extends CapsidProperties {
 		{
 			StringBuilder sb = new StringBuilder();
 			// file comments at the top of the file
-			for (String comment : new String[] {
+			for (String comment : new String[]{
 					"This file contains local properties used to configure project build",
 					"Note: paths need to be Unix-style where segments need to be separated with forward-slashes (/)",
 					"this is for compatibility and stability purposes as backslashes don't play well." })
@@ -118,14 +116,17 @@ public class LocalProperties extends CapsidProperties {
 			{
 				String value = "";
 				Object oProperty = property.findProperty(project);
-				if (oProperty != null) {
+				if (oProperty != null)
+				{
 					value = oProperty.toString();
 				}
-				else if (property.required) {
+				else if (property.required)
+				{
 					CapsidPlugin.LOGGER.warn("WARN: Missing property value " + property.name);
 				}
 				String comment = property.comment;
-				if (comment != null && !comment.isEmpty()) {
+				if (comment != null && !comment.isEmpty())
+				{
 					sb.append("\n\n").append('#').append(comment).append('\n');
 				}
 				sb.append(property.name).append('=').append(value);

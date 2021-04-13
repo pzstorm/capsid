@@ -32,6 +32,7 @@ public class GithubUrlValidator implements PropertyValidator<URL> {
 
 	/**
 	 * Returns {@code true} if given {@code URL} is a valid link to a Github page.
+	 *
 	 * @param property property to validate.
 	 */
 	@Override

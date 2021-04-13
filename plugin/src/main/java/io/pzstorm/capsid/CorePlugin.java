@@ -25,7 +25,7 @@ import org.gradle.api.plugins.PluginManager;
  * They are automatically resolved and do not need to be fully qualified.
  *
  * @see <a href="https://docs.gradle.org/current/userguide/plugin_reference.html">
- *      Gradle ProjectPlugin Reference</a>
+ * 		Gradle ProjectPlugin Reference</a>
  */
 public enum CorePlugin {
 
@@ -36,7 +36,7 @@ public enum CorePlugin {
 	 * and overview to the Java ProjectPlugin in the Building Java Projects chapter.
 	 *
 	 * @see <a href="https://docs.gradle.org/current/userguide/java_plugin.html#java_plugin">
-	 *      The Java Plugin Documentation</a>
+	 * 		The Java Plugin Documentation</a>
 	 */
 	JAVA("java"),
 
@@ -46,23 +46,26 @@ public enum CorePlugin {
 	 * the executable application and other supporting files, such as documentation.
 	 *
 	 * @see <a href="https://docs.gradle.org/current/userguide/distribution_plugin.html">
-	 *     The Distribution Plugin Documentation</a>
+	 * 		The Distribution Plugin Documentation</a>
 	 */
 	DISTRIBUTION("distribution");
 
 	private final String id;
+
 	CorePlugin(String id) {
 		this.id = id;
 	}
 
 	/**
 	 * Apply all core plugins to the given {@code Project}.
+	 *
 	 * @param project {@code Project} to apply the plugins to.
 	 */
 	public static void applyAll(Project project) {
 
 		PluginManager pluginManager = project.getPluginManager();
-		for (CorePlugin plugin : CorePlugin.values()) {
+		for (CorePlugin plugin : CorePlugin.values())
+		{
 			pluginManager.apply(plugin.id);
 		}
 	}

@@ -85,10 +85,21 @@ public abstract class PluginFunctionalTest {
 		}
 	}
 
+	protected static void assertTaskOutcome(BuildResult result, String taskName, TaskOutcome outcome) {
+
+		BuildTask task = Objects.requireNonNull(result.task(':' + taskName));
+		Assertions.assertEquals(outcome, task.getOutcome());
+	}
+
+	protected static void assertTaskOutcomeSuccess(BuildResult result, String taskName) {
+		assertTaskOutcome(result, taskName, TaskOutcome.SUCCESS);
+	}
+
 	@BeforeEach
 	void createRunner() throws IOException {
 
-		if (projectDir == null) {
+		if (projectDir == null)
+		{
 			projectDir = new File(PARENT_TEMP_DIR, projectName);
 		}
 		TEMP_DIR_NAMES.add(projectName);
@@ -96,9 +107,9 @@ public abstract class PluginFunctionalTest {
 		// Setup the test build
 		Files.createDirectories(projectDir.toPath());
 		writeToProjectFile("settings.gradle",
-				new String[] { String.format("rootProject.name = '%s'", projectName) }
+				new String[]{ String.format("rootProject.name = '%s'", projectName) }
 		);
-		writeToProjectFile("build.gradle", new String[] {
+		writeToProjectFile("build.gradle", new String[]{
 				"plugins {",
 				"	id('io.pzstorm.capsid')",
 				"}"
@@ -117,7 +128,7 @@ public abstract class PluginFunctionalTest {
 		File gameMediaDir = new File(gameDir.convert().toFile(), "media");
 		Files.createDirectory(gameMediaDir.toPath());
 
-		for (String dir : new String[] {"lua", "maps", "models"})
+		for (String dir : new String[]{ "lua", "maps", "models" })
 		{
 			Path createDir = new File(gameMediaDir, dir).toPath().toAbsolutePath();
 			Files.createDirectory(createDir);
@@ -167,7 +178,8 @@ public abstract class PluginFunctionalTest {
 
 		// generate a directory name that doesn't exist yet
 		File result = getRandomProjectDirectory();
-		while (result.exists()) {
+		while (result.exists())
+		{
 			result = getRandomProjectDirectory();
 		}
 		return result;
@@ -178,18 +190,9 @@ public abstract class PluginFunctionalTest {
 	}
 
 	protected void writeToProjectFile(String path, String[] lines) throws IOException {
-		try (Writer writer = new FileWriter(projectDir.toPath().resolve(path).toFile())) {
+		try (Writer writer = new FileWriter(projectDir.toPath().resolve(path).toFile()))
+		{
 			writer.write(String.join("\n", lines));
 		}
-	}
-
-	protected static void assertTaskOutcome(BuildResult result, String taskName, TaskOutcome outcome) {
-
-		BuildTask task = Objects.requireNonNull(result.task(':' + taskName));
-		Assertions.assertEquals(outcome, task.getOutcome());
-	}
-
-	protected static void assertTaskOutcomeSuccess(BuildResult result, String taskName) {
-		assertTaskOutcome(result, taskName, TaskOutcome.SUCCESS);
 	}
 }

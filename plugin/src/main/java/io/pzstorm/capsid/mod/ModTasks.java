@@ -56,12 +56,14 @@ public enum ModTasks {
 
 	/**
 	 * Configure and create or register this task for the given {@code Project}.
+	 *
 	 * @param project {@code Project} register this task.
 	 */
 	public void createOrRegister(Project project) {
 
 		TaskContainer tasks = project.getTasks();
-		if (register) {
+		if (register)
+		{
 			tasks.register(name, type, t -> t.configure("mod", description, project));
 		}
 		else tasks.create(name, type, t -> t.configure("mod", description, project));

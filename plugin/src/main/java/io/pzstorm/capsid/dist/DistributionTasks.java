@@ -53,12 +53,14 @@ public enum DistributionTasks {
 
 	/**
 	 * Configure and register this task for the given {@code Project}.
+	 *
 	 * @param project {@code Project} register this task.
 	 */
 	public void register(Project project) {
 
 		TaskContainer tasks = project.getTasks();
-		if (overwrite) {
+		if (overwrite)
+		{
 			tasks.replace(name, type).configure("distribution", description, project);
 		}
 		else tasks.register(name, type, t -> t.configure("distribution", description, project));

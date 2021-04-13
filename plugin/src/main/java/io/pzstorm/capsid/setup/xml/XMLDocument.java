@@ -54,10 +54,12 @@ public abstract class XMLDocument {
 
 		this.name = name;
 		this.dirPath = dirPath;
-		try {
+		try
+		{
 			this.document = FACTORY.newDocumentBuilder().newDocument();
 		}
-		catch (ParserConfigurationException e) {
+		catch (ParserConfigurationException e)
+		{
 			throw new ExceptionInInitializerError(e);
 		}
 	}
@@ -76,7 +78,8 @@ public abstract class XMLDocument {
 	protected void appendOrReplaceRootElement(Element element) {
 
 		Node childNode = document.getFirstChild();
-		if (childNode == null) {
+		if (childNode == null)
+		{
 			document.appendChild(element);
 		}
 		else document.replaceChild(element, childNode);
@@ -108,7 +111,8 @@ public abstract class XMLDocument {
 				.replaceAll("_+", "_") + ".xml";
 
 		// parent directory
-		if (project == null) {
+		if (project == null)
+		{
 			throw new GradleException("Tried writing XMLDocument to file with null project");
 		}
 		File projectDir = project.getProjectDir();
@@ -120,10 +124,12 @@ public abstract class XMLDocument {
 		// create destination file before trying to write to it
 		if (!destination.exists())
 		{
-			if (!parentDir.exists() && !parentDir.mkdirs()) {
+			if (!parentDir.exists() && !parentDir.mkdirs())
+			{
 				throw new IOException("Unable to create directory structure for configuration file '" + filename + '\'');
 			}
-			if (!destination.createNewFile()) {
+			if (!destination.createNewFile())
+			{
 				throw new IOException("Unable to create run configuration file '" + filename + '\'');
 			}
 		}
@@ -140,6 +146,7 @@ public abstract class XMLDocument {
 
 	/**
 	 * <p>Returns project associated with this {@code XMLDocument}.</p>
+	 *
 	 * @return {@code Project} instance or {@code null} if document was not configured.
 	 */
 	protected @Nullable Project getProject() {

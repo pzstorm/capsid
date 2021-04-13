@@ -33,11 +33,12 @@ class SemanticVersionTest extends PluginUnitTest {
 	@Test
 	void whenConstructingMalformedSemanticVersionShouldThrowException() {
 
-		String[] malformedVersions = new String[] {
+		String[] malformedVersions = new String[]{
 				"0", "1.0", "0.1.0.0",
 				"0-1.2", "0.1-2", "2.1.0$"
 		};
-		for (String version : malformedVersions) {
+		for (String version : malformedVersions)
+		{
 			Assertions.assertThrows(InvalidUserDataException.class, () -> new SemanticVersion(version));
 		}
 	}
@@ -46,10 +47,10 @@ class SemanticVersionTest extends PluginUnitTest {
 	void shouldConstructSemanticVersionsWithValidNumbers() {
 
 		Map<String, Integer[]> validVersions = ImmutableMap.of(
-				"1.4.2", new Integer[] { 1, 4, 2 },
-				"0.1.3", new Integer[] { 0, 1, 3 },
-				"3.5.1-beta", new Integer[] { 3, 5, 1 },
-				"0.1.0-alpha$", new Integer[] { 0, 1, 0 }
+				"1.4.2", new Integer[]{ 1, 4, 2 },
+				"0.1.3", new Integer[]{ 0, 1, 3 },
+				"3.5.1-beta", new Integer[]{ 3, 5, 1 },
+				"0.1.0-alpha$", new Integer[]{ 0, 1, 0 }
 		);
 		for (Map.Entry<String, Integer[]> entry : validVersions.entrySet())
 		{
@@ -70,7 +71,8 @@ class SemanticVersionTest extends PluginUnitTest {
 				"0.4.6-0rc", "0rc",
 				"1.0.0", ""
 		);
-		for (Map.Entry<String, String> entry : validVersions.entrySet()) {
+		for (Map.Entry<String, String> entry : validVersions.entrySet())
+		{
 			Assertions.assertEquals(entry.getValue(), new SemanticVersion(entry.getKey()).classifier);
 		}
 	}
@@ -89,7 +91,8 @@ class SemanticVersionTest extends PluginUnitTest {
 		semanticVersions.addAll(semanticVersionsList);
 
 		List<SemanticVersion> semVerList = new ArrayList<>(semanticVersions);
-		for (int i = 0; i < semVerList.size(); i++) {
+		for (int i = 0; i < semVerList.size(); i++)
+		{
 			Assertions.assertEquals(semVerList.get(i), semanticVersionsList.get(i));
 		}
 	}

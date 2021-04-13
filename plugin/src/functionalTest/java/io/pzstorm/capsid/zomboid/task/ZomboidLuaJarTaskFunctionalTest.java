@@ -45,14 +45,15 @@ class ZomboidLuaJarTaskFunctionalTest extends PluginFunctionalTest {
 		File zDocLuaDir = ProjectProperty.ZDOC_LUA_DIR.get(project);
 		File destination = project.file("lib");
 
-		String[] expectedFiles = new String[] {
+		String[] expectedFiles = new String[]{
 				"luaFile1.lua", "luaFile2.lua", "luaFile3.lua"
 		};
 		// create directory structure before creating files
 		Assertions.assertTrue(zDocLuaDir.mkdirs());
 
 		// create expected files in lua directory
-		for (String expectedFile : expectedFiles) {
+		for (String expectedFile : expectedFiles)
+		{
 			Assertions.assertTrue(new File(zDocLuaDir, expectedFile).createNewFile());
 		}
 		// create directory structure before walking
@@ -84,7 +85,8 @@ class ZomboidLuaJarTaskFunctionalTest extends PluginFunctionalTest {
 		// assert only expected files are in directory
 		Assertions.assertEquals(expectedFiles.length, destination.listFiles().length);
 
-		for (String expectedFile : expectedFiles) {
+		for (String expectedFile : expectedFiles)
+		{
 			Assertions.assertTrue(new File(destination, expectedFile).exists());
 		}
 	}

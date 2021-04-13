@@ -32,17 +32,17 @@ public enum Configurations {
 	/**
 	 * Project Zomboid dependencies only available during runtime.
 	 */
-	ZOMBOID_RUNTIME_ONLY("zomboidRuntimeOnly", new String[] { "runtimeOnly" }, null),
+	ZOMBOID_RUNTIME_ONLY("zomboidRuntimeOnly", new String[]{ "runtimeOnly" }, null),
 
 	/**
 	 * Project Zomboid dependencies available during compile and runtime.
 	 */
-	ZOMBOID_IMPLEMENTATION("zomboidImplementation", new String[] { "implementation"}, null),
+	ZOMBOID_IMPLEMENTATION("zomboidImplementation", new String[]{ "implementation" }, null),
 
 	/**
 	 * Zomboid Doc dependencies only available during runtime.
 	 */
-	ZOMBOID_DOC("zomboidDoc", null, new String[] { "zomboidRuntimeOnly" });
+	ZOMBOID_DOC("zomboidDoc", null, new String[]{ "zomboidRuntimeOnly" });
 
 	private final String name;
 	private final String[] extendedTo, extendsFrom;
@@ -51,6 +51,25 @@ public enum Configurations {
 		this.name = name;
 		this.extendedTo = extendedTo != null ? extendedTo : new String[]{};
 		this.extendsFrom = extendsFrom != null ? extendsFrom : new String[]{};
+	}
+
+	/**
+	 * Resolve a {@link Configuration} of a given name from {@code ConfigurationContainer}.
+	 *
+	 * @param name name of the configuration to resolve.
+	 * @param configurations where to resolve the configuration from.
+	 * @return configuration with the given name. Never returns {@code null}.
+	 */
+	public static Configuration resolve(String name, ConfigurationContainer configurations) {
+
+		try
+		{
+			return configurations.getByName(name);
+		}
+		catch (GradleException e)
+		{
+			return configurations.create(name);
+		}
 	}
 
 	/**
@@ -64,12 +83,14 @@ public enum Configurations {
 		Configuration config = configurations.create(name);
 
 		Set<Configuration> extendsFromConfigs = new HashSet<>();
-		for (String entry : extendsFrom) {
+		for (String entry : extendsFrom)
+		{
 			extendsFromConfigs.add(resolve(entry, configurations));
 		}
 		config.extendsFrom(extendsFromConfigs.toArray(new Configuration[]{}));
 
-		for (String entry : extendedTo) {
+		for (String entry : extendedTo)
+		{
 			resolve(entry, configurations).extendsFrom(config);
 		}
 		return config;
@@ -83,22 +104,5 @@ public enum Configurations {
 	 */
 	public Configuration resolve(Project project) {
 		return resolve(name, project.getConfigurations());
-	}
-
-	/**
-	 * Resolve a {@link Configuration} of a given name from {@code ConfigurationContainer}.
-	 *
-	 * @param name name of the configuration to resolve.
-	 * @param configurations where to resolve the configuration from.
-	 * @return configuration with the given name. Never returns {@code null}.
-	 */
-	public static Configuration resolve(String name, ConfigurationContainer configurations) {
-
-		try {
-			return configurations.getByName(name);
-		}
-		catch (GradleException e) {
-			return configurations.create(name);
-		}
 	}
 }

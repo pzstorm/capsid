@@ -26,7 +26,7 @@ public class VmParameter {
 	/** Launch the game with Steam support to have access to workshop. */
 	public final boolean steamIntegration;
 
-    /** Zomboid network logging level. */
+	/** Zomboid network logging level. */
 	public final int zNetLog;
 
 	/** Enables invoking of concurrent GC by using the {@code System.gc()} request. */
@@ -58,18 +58,19 @@ public class VmParameter {
 	/**
 	 * Format an advanced JVM runtime option with the given name and flag.
 	 * <p>
-	 *     Boolean options are used to either enable a feature that is disabled by default
-	 *     or disable a feature that is enabled by default. Such options do not require a parameter.
+	 * Boolean options are used to either enable a feature that is disabled by default
+	 * or disable a feature that is enabled by default. Such options do not require a parameter.
 	 * </p><p>
-	 *     Boolean -XX options are enabled using the plus sign {@code (-XX:+OptionName)}
-	 *     and disabled using the minus sign {@code (-XX:-OptionName)}.
+	 * Boolean -XX options are enabled using the plus sign {@code (-XX:+OptionName)}
+	 * and disabled using the minus sign {@code (-XX:-OptionName)}.
 	 * </p>
+	 *
 	 * @param name name of the option to format.
 	 * @param flag whether to enable or disable the option.
 	 * @return formatted advanced JVM runtime option string.
 	 *
 	 * @see <a href=https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html">
-	 *     Java Platform, Standard Edition Tools Reference</a>
+	 * 		Java Platform, Standard Edition Tools Reference</a>
 	 */
 	public static String formatAdvancedRuntimeOption(String name, boolean flag) {
 		return String.format("-XX:%c%s", flag ? '+' : '-', name);
@@ -78,7 +79,7 @@ public class VmParameter {
 	@Override
 	public String toString() {
 
-		String[] expOptions = new String[] {
+		String[] expOptions = new String[]{
 				formatAdvancedRuntimeOption("UseConcMarkSweepGC", useConcMarkSweepGC),
 				formatAdvancedRuntimeOption("CreateMinidumpOnCrash", createMinidumpOnCrash),
 				formatAdvancedRuntimeOption("OmitStackTraceInFastThrow", omitStackTraceInFastThrow)

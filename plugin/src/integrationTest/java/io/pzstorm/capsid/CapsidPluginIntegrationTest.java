@@ -41,7 +41,8 @@ class CapsidPluginIntegrationTest extends PluginIntegrationTest {
 	void shouldApplyAllCorePlugins() {
 
 		PluginContainer plugins = getProject(true).getPlugins();
-		for (CorePlugin plugin : CorePlugin.values()) {
+		for (CorePlugin plugin : CorePlugin.values())
+		{
 			Assertions.assertTrue(plugins.hasPlugin(plugin.getID()));
 		}
 	}

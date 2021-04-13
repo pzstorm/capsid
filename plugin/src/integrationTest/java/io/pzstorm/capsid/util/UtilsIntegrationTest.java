@@ -41,16 +41,18 @@ class UtilsIntegrationTest extends PluginIntegrationTest {
 		File projectDir = getProject(false).getProjectDir();
 		File archive = Utils.getFileFromResources("dummy.zip");
 
-		File[] expected = new File[] {
+		File[] expected = new File[]{
 				new File(projectDir, "dummy.txt"),
 				new File(projectDir, "dummy.png")
 		};
-		for (File expectedFile : expected) {
+		for (File expectedFile : expected)
+		{
 			Assertions.assertFalse(expectedFile.exists());
 		}
 		Utils.unzipArchive(archive, projectDir);
 
-		for (File expectedFile : expected) {
+		for (File expectedFile : expected)
+		{
 			Assertions.assertTrue(expectedFile.exists());
 		}
 	}

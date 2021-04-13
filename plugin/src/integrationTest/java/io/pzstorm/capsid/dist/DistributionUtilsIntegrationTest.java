@@ -48,7 +48,7 @@ class DistributionUtilsIntegrationTest extends PluginIntegrationTest {
 		media.getJava().setSrcDirs(Collections.singletonList("media/lua"));
 		File module = project.file("media");
 
-		String[] filesToCreate = new String[] {
+		String[] filesToCreate = new String[]{
 				"media/lua/client/mainClient.lua",
 				"media/lua/server/mainServer.lua",
 		};
@@ -56,7 +56,8 @@ class DistributionUtilsIntegrationTest extends PluginIntegrationTest {
 		{
 			File projectFile = project.file(filePath);
 			File parentFile = projectFile.getParentFile();
-			if (!parentFile.exists()) {
+			if (!parentFile.exists())
+			{
 				Assertions.assertTrue(parentFile.mkdirs());
 			}
 			Assertions.assertTrue(projectFile.createNewFile());
@@ -80,7 +81,7 @@ class DistributionUtilsIntegrationTest extends PluginIntegrationTest {
 		media.getResources().setSrcDirs(ImmutableList.of("media/models", "media/maps"));
 		File module = project.file("media");
 
-		String[] filesToCreate = new String[] {
+		String[] filesToCreate = new String[]{
 				"media/models/testModel.obj",
 				"media/maps/testMap.map"
 		};
@@ -88,7 +89,8 @@ class DistributionUtilsIntegrationTest extends PluginIntegrationTest {
 		{
 			File projectFile = project.file(filePath);
 			File parentFile = projectFile.getParentFile();
-			if (!parentFile.exists()) {
+			if (!parentFile.exists())
+			{
 				Assertions.assertTrue(parentFile.mkdirs());
 			}
 			Assertions.assertTrue(projectFile.createNewFile());

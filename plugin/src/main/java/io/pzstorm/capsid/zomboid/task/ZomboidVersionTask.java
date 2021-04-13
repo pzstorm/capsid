@@ -31,7 +31,6 @@ import org.gradle.api.tasks.TaskAction;
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.Configurations;
-import io.pzstorm.capsid.mod.ModTasks;
 import io.pzstorm.capsid.zomboid.ZomboidTasks;
 
 /**

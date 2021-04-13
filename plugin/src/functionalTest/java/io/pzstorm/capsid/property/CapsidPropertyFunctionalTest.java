@@ -72,21 +72,23 @@ class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
 
 	private void assertLocalPropertiesNotNull(boolean writeBeforeAssert) throws IOException {
 
-		if (writeBeforeAssert) {
+		if (writeBeforeAssert)
+		{
 			writeLocalPropertiesToFile();
 		}
 		// load properties for project before asserting
 		LocalProperties localProperties = LocalProperties.get();
 		localProperties.load(getProject());
 
-		for (CapsidProperty<?> capsidPropertyEnum : localProperties.getProperties()) {
+		for (CapsidProperty<?> capsidPropertyEnum : localProperties.getProperties())
+		{
 			Assertions.assertNotNull(capsidPropertyEnum.findProperty(getProject()));
 		}
 	}
 
 	private void writeLocalPropertiesToFile() throws IOException {
 
-		writeToProjectFile("local.properties", new String[] {
+		writeToProjectFile("local.properties", new String[]{
 				String.format("gameDir=%s", getGameDirPath().toString()),
 				String.format("ideaHome=%s", getIdeaHomePath().toString())
 		});

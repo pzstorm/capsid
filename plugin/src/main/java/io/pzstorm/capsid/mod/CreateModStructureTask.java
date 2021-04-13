@@ -26,8 +26,8 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 
-import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.CapsidPluginExtension;
+import io.pzstorm.capsid.CapsidTask;
 
 /**
  * This task creates source and resource directories for {@code media} module.

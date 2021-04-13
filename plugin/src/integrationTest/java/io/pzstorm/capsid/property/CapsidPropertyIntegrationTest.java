@@ -42,7 +42,7 @@ class CapsidPropertyIntegrationTest extends PluginIntegrationTest {
 		Assertions.assertTrue(targetDir.exists());
 		CapsidProperty<UnixPath> testProperty = new CapsidProperty.Builder<>("testProperty", UnixPath.class)
 				.withValidator(PropertyValidators.DIRECTORY_PATH_VALIDATOR).build();
-		
+
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 		UnixPath expectedPath = UnixPath.get(targetDir);
 

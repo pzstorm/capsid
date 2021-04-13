@@ -19,7 +19,10 @@ package io.pzstorm.capsid.zomboid.task;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -51,14 +54,16 @@ class ZomboidJarTaskFunctionalTest extends PluginFunctionalTest {
 				"class1.class", "class2.class", "class3.class"
 		);
 		File dummyClass = Utils.getFileFromResources("dummy.class");
-		for (String include : filesToInclude) {
+		for (String include : filesToInclude)
+		{
 			com.google.common.io.Files.copy(dummyClass, new File(source, include));
 		}
 		Map<String, File> filesToExclude = ImmutableMap.of(
 				"textFile.txt", Utils.getFileFromResources("dummy.txt"),
 				"imageFile.png", Utils.getFileFromResources("dummy.png")
 		);
-		for (Map.Entry<String, File> entry : filesToExclude.entrySet()) {
+		for (Map.Entry<String, File> entry : filesToExclude.entrySet())
+		{
 			com.google.common.io.Files.copy(entry.getValue(), new File(source, entry.getKey()));
 		}
 		GradleRunner runner = getRunner();
@@ -74,10 +79,12 @@ class ZomboidJarTaskFunctionalTest extends PluginFunctionalTest {
 
 		Utils.unzipArchive(resultJar, destination);
 
-		for (String include : filesToInclude) {
+		for (String include : filesToInclude)
+		{
 			Assertions.assertTrue(new File(destination, include).exists());
 		}
-		for (Map.Entry<String, File> entry : filesToExclude.entrySet()) {
+		for (Map.Entry<String, File> entry : filesToExclude.entrySet())
+		{
 			Assertions.assertFalse(new File(destination, entry.getKey()).exists());
 		}
 	}

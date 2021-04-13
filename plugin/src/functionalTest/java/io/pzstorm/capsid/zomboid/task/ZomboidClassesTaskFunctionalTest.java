@@ -40,20 +40,22 @@ class ZomboidClassesTaskFunctionalTest extends PluginFunctionalTest {
 		Assertions.assertFalse(zomboidClassesDir.exists());
 
 		File gameDir = getGameDirPath().convert().toAbsolutePath().toFile();
-		File[] includedFiles = new File[] {
+		File[] includedFiles = new File[]{
 				new File(gameDir, "incFile1.class"),
 				new File(gameDir, "incFile2.class"),
 				new File(gameDir, "incFile3.class"),
 				new File(gameDir, "stdlib.lbc")
 		};
-		for (File file : includedFiles) {
+		for (File file : includedFiles)
+		{
 			Assertions.assertTrue(file.createNewFile());
 		}
-		File[] excludedFiles = new File[] {
+		File[] excludedFiles = new File[]{
 				new File(gameDir, "excFile1.txt"),
 				new File(gameDir, "excFile2.png")
 		};
-		for (File file : excludedFiles) {
+		for (File file : excludedFiles)
+		{
 			Assertions.assertTrue(file.createNewFile());
 		}
 		File excludedDir = new File(gameDir, "excludedDir");

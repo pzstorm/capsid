@@ -33,14 +33,14 @@ public enum Dependencies {
 	/**
 	 * Libraries used by Project Zomboid during runtime.
 	 */
-	ZOMBOID_LIBRARIES("zomboidRuntimeOnly", project -> new Object[] {
+	ZOMBOID_LIBRARIES("zomboidRuntimeOnly", project -> new Object[]{
 			project.fileTree(CapsidPlugin.getGameDirProperty(project), t -> t.include("*.jar"))
 	}),
 
 	/**
 	 * Project Zomboid assets in {@code media} directory.
 	 */
-	ZOMBOID_ASSETS("zomboidImplementation", project -> new Object[] {
+	ZOMBOID_ASSETS("zomboidImplementation", project -> new Object[]{
 			project.files(new File(CapsidPlugin.getGameDirProperty(project), "media"))
 	}),
 
@@ -49,7 +49,8 @@ public enum Dependencies {
 	 */
 	ZOMBOID_CLASSES("zomboidRuntimeOnly", project -> {
 		String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
-		if (modPzVersion != null) {
+		if (modPzVersion != null)
+		{
 			return new Object[]{ project.files(Paths.get("lib", String.format("zomboid-%s.jar", modPzVersion))) };
 		}
 		else return new Object[0];
@@ -59,7 +60,7 @@ public enum Dependencies {
 	 * Lua library compiler for Project Zomboid.
 	 *
 	 * @see <a href="https://search.maven.org/artifact/io.github.cocolabs/pz-zdoc">
-	 *     Artifact on Central Maven</a>
+	 * 		Artifact on Central Maven</a>
 	 */
 	ZOMBOID_DOC("zomboidDoc", project -> new Object[]{
 			"io.github.cocolabs:pz-zdoc:3.+",
@@ -71,7 +72,8 @@ public enum Dependencies {
 	 */
 	LUA_LIBRARY("compileOnly", project -> {
 		String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
-		if (modPzVersion != null) {
+		if (modPzVersion != null)
+		{
 			return new Object[]{ project.files(String.format("lib/zdoc-lua-%s.jar", modPzVersion)) };
 		}
 		else return new Object[0];
@@ -96,7 +98,8 @@ public enum Dependencies {
 
 		Set<Dependency> result = new HashSet<>();
 		Object[] dependencyNotations = resolver.resolveDependencies(project);
-		for (Object notation : dependencyNotations) {
+		for (Object notation : dependencyNotations)
+		{
 			result.add(dependencies.add(configuration, notation));
 		}
 		return result;

@@ -20,7 +20,10 @@ package io.pzstorm.capsid.dist.task;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Strings;
 
@@ -44,6 +47,33 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 	private static final String TOKEN_ENV_VAR_NAME = "CHANGELOG_GITHUB_TOKEN";
 	private static final String TOKEN_PROPERTY_NAME = "gcl.token";
 
+	/**
+	 * Create {@code Gemfile} needed to generate changelog with Ruby if it does not exist.
+	 *
+	 * @param project {@code Project} to create the file for.
+	 * @throws GradleException if an I/O exception occurred while creating {@code Gemfile}.
+	 */
+	private static void createGemfile(Project project) {
+
+		File gemFile = new File(project.getProjectDir(), "Gemfile");
+		if (gemFile.exists()) { return; }
+		try
+		{
+			if (!gemFile.createNewFile())
+			{
+				throw new GradleException("Unable to create Gemfile in root directory");
+			}
+			try (FileWriter writer = new FileWriter(gemFile))
+			{
+				writer.write(Utils.readResourceAsTextFromStream(CapsidPlugin.class, "Gemfile"));
+			}
+		}
+		catch (IOException e)
+		{
+			throw new GradleException("I/O error occurred while creating Gemfile in root directory", e);
+		}
+	}
+
 	@Override
 	public void configure(String group, String description, Project project) {
 		CapsidTask.super.configure(group, description, project);
@@ -62,7 +92,8 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 		if (Strings.isNullOrEmpty(token))
 		{
 			// next check for token in project properties
-			if (ext.has(TOKEN_PROPERTY_NAME)) {
+			if (ext.has(TOKEN_PROPERTY_NAME))
+			{
 				token = (String) ext.get(TOKEN_PROPERTY_NAME);
 			}
 			// don't pass token as null
@@ -73,48 +104,29 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 		List<String> command = new ArrayList<>(Arrays.asList("bundle", "exec", "github_changelog_generator"));
 		for (Map.Entry<GenerateChangelogOptions, Object> entry : optionsMap.entrySet())
 		{
-			String[] sValue; Object oValue = entry.getValue();
-			if (oValue instanceof String[]) {
+			String[] sValue;
+			Object oValue = entry.getValue();
+			if (oValue instanceof String[])
+			{
 				sValue = (String[]) oValue;
 			}
-			else if (oValue instanceof String) {
-				sValue = new String[] { (String) oValue };
+			else if (oValue instanceof String)
+			{
+				sValue = new String[]{ (String) oValue };
 			}
-			else sValue = new String[] { oValue.toString() };
+			else sValue = new String[]{ oValue.toString() };
 
 			command.add(entry.getKey().formatOption(sValue));
 			command.addAll(Arrays.asList(sValue));
 		}
 		// windows platforms needs extra command tokens to work
-		if (System.getProperty("os.name").startsWith("Windows")) {
+		if (System.getProperty("os.name").startsWith("Windows"))
+		{
 			command.addAll(0, Arrays.asList("cmd", "/c"));
 		}
 		commandLine(command);
 
 		// create Gemfile in root directory if one doesn't exist
 		createGemfile(project);
-	}
-
-	/**
-	 * Create {@code Gemfile} needed to generate changelog with Ruby if it does not exist.
-	 *
-	 * @param project {@code Project} to create the file for.
-	 * @throws GradleException if an I/O exception occurred while creating {@code Gemfile}.
-	 */
-	private static void createGemfile(Project project) {
-
-		File gemFile = new File(project.getProjectDir(), "Gemfile");
-		if (gemFile.exists()) { return; }
-		try {
-			if (!gemFile.createNewFile()) {
-				throw new GradleException("Unable to create Gemfile in root directory");
-			}
-			try (FileWriter writer = new FileWriter(gemFile)) {
-				writer.write(Utils.readResourceAsTextFromStream(CapsidPlugin.class, "Gemfile"));
-			}
-		}
-		catch (IOException e) {
-			throw new GradleException("I/O error occurred while creating Gemfile in root directory", e);
-		}
 	}
 }

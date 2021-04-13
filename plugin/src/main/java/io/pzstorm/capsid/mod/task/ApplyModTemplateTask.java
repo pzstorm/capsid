@@ -44,7 +44,8 @@ public class ApplyModTemplateTask extends Copy implements CapsidTask {
 
 		// template files will be copied to this directory
 		File templateTempDir;
-		try {
+		try
+		{
 			/* extract the files from jar to a temporary directory,
 			 * then copy from there to project root directory
 			 */
@@ -57,13 +58,15 @@ public class ApplyModTemplateTask extends Copy implements CapsidTask {
 				// make sure directory structure exists before we write file from stream
 				File targetFile = new File(templateTempDir, templateFilePath);
 				File parentFile = targetFile.getParentFile();
-				if (!parentFile.exists() && !parentFile.mkdirs()) {
+				if (!parentFile.exists() && !parentFile.mkdirs())
+				{
 					throw new IOException("Unable to create directory structure for path '" + parentFile.getPath() + '\'');
 				}
 				Utils.readResourceAsFileFromStream(CapsidPlugin.class, templateFilePath, targetFile);
 			}
 		}
-		catch(IOException e) {
+		catch (IOException e)
+		{
 			throw new GradleException("I/O exception occurred while applying mod template", e);
 		}
 		from(new File(templateTempDir, "template"));

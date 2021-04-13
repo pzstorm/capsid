@@ -41,7 +41,7 @@ class ShowModMetadataTaskFunctionalTest extends PluginFunctionalTest {
 		List<String> arguments = new ArrayList<>(runner.getArguments());
 		arguments.add(ModTasks.SHOW_MOD_METADATA.name);
 
-		writeToProjectFile("mod.info", new String[] {
+		writeToProjectFile("mod.info", new String[]{
 				"name=TestMod",
 				"description=",
 				"url=https://github.com/test/mod",
@@ -65,11 +65,13 @@ class ShowModMetadataTaskFunctionalTest extends PluginFunctionalTest {
 				Splitter.on(System.lineSeparator()).splitToList(result.getOutput())
 		);
 		// remove lines from the ending of file
-		for (int i = 4; i > 0; i--) {
+		for (int i = 4; i > 0; i--)
+		{
 			actualOutput.remove(actualOutput.size() - 1);
 		}
 		// remove lines from the beginning of file
-		for (int i = 2; i > 0; i--) {
+		for (int i = 2; i > 0; i--)
+		{
 			actualOutput.remove(0);
 		}
 		Assertions.assertEquals(expectedOutput, actualOutput);

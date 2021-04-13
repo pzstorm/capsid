@@ -51,14 +51,15 @@ public abstract class CapsidProperties {
 	 * Load properties from file to given {@link Project} instance.
 	 *
 	 * @param project {@code Project} to load properties to.
-	 *
 	 * @return {@code true} if properties were successfully loaded, {@code false} otherwise.
+	 *
 	 * @throws GradleException when an I/O error occurred while loading file.
 	 */
 	public boolean load(Project project) throws GradleException {
 
 		File propertiesFile = getFile(project);
-		if (!propertiesFile.exists()) {
+		if (!propertiesFile.exists())
+		{
 			return false;
 		}
 		try (InputStream stream = new FileInputStream(propertiesFile))
@@ -72,16 +73,19 @@ public abstract class CapsidProperties {
 			for (CapsidProperty<?> property : getProperties())
 			{
 				String foundProperty = properties.getProperty(property.name, "");
-				if (!foundProperty.isEmpty()) {
+				if (!foundProperty.isEmpty())
+				{
 					ext.set(property.name, foundProperty);
 				}
 				// if no property found from file try other locations
-				else if (!ext.has(property.name)) {
+				else if (!ext.has(property.name))
+				{
 					ext.set(property.name, property.findProperty(project));
 				}
 			}
 		}
-		catch (IOException e) {
+		catch (IOException e)
+		{
 			throw new GradleException("I/O exception occurred while loading capsid properties", e);
 		}
 		return true;
@@ -89,6 +93,7 @@ public abstract class CapsidProperties {
 
 	/**
 	 * Find property that matches the given name.
+	 *
 	 * @param name property name to match.
 	 */
 	public @Nullable CapsidProperty<?> getProperty(String name) {

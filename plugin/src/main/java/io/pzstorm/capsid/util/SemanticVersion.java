@@ -42,7 +42,8 @@ public class SemanticVersion {
 	public SemanticVersion(String version) {
 
 		Matcher matcher = SEM_VER.matcher(version);
-		if (!matcher.find()) {
+		if (!matcher.find())
+		{
 			throw new InvalidUserDataException("Malformed semantic version '" + version + '\'');
 		}
 		this.major = Integer.valueOf(matcher.group(1));
@@ -63,10 +64,12 @@ public class SemanticVersion {
 		@Override
 		public int compare(SemanticVersion o1, SemanticVersion o2) {
 
-			if (!o1.major.equals(o2.major)) {
+			if (!o1.major.equals(o2.major))
+			{
 				return o1.major.compareTo(o2.major);
 			}
-			if (!o1.minor.equals(o2.minor)) {
+			if (!o1.minor.equals(o2.minor))
+			{
 				return o1.minor.compareTo(o2.minor);
 			}
 			return o1.patch.compareTo(o2.patch);

@@ -44,7 +44,8 @@ public class ProcessResourcesTask extends ProcessResources implements CapsidTask
 		JavaPluginConvention java = project.getConvention().getPlugin(JavaPluginConvention.class);
 		SourceSet media = java.getSourceSets().getByName("media");
 		File module = project.file("media");
-		if (!module.exists()) {
+		if (!module.exists())
+		{
 			//noinspection ResultOfMethodCallIgnored
 			module.mkdirs();
 		}
@@ -55,7 +56,8 @@ public class ProcessResourcesTask extends ProcessResources implements CapsidTask
 
 		eachFile(fcd -> {
 			String path = map.get(Paths.get(fcd.getPath()));
-			if (path == null) {
+			if (path == null)
+			{
 				throw new GradleException("Unable to relativize copy path '" + fcd.getPath() + '\'');
 			}
 			fcd.setRelativePath(fcd.getRelativePath().prepend(path));

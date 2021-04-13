@@ -18,15 +18,15 @@
 package io.pzstorm.capsid.setup;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Objects;
 
 import org.gradle.api.Project;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginIntegrationTest;
-import io.pzstorm.capsid.util.Utils;
 import io.pzstorm.capsid.property.CapsidProperty;
+import io.pzstorm.capsid.util.Utils;
 
 class LocalPropertiesIntegrationTest extends PluginIntegrationTest {
 
@@ -40,14 +40,13 @@ class LocalPropertiesIntegrationTest extends PluginIntegrationTest {
 		Assertions.assertFalse(localProperties.load(project));
 	}
 
-
 	@Test
 	void shouldWriteLocalPropertiesToFile() throws IOException {
 
 		Project project = getProject(false);
 		LocalProperties localProperties = LocalProperties.get();
 
-		writeToProjectFile("local.properties", new String[] {
+		writeToProjectFile("local.properties", new String[]{
 				String.format("gameDir=%s", getGameDirPath().toString()),
 				String.format("ideaHome=%s", getIdeaHomePath().toString())
 		});
@@ -58,7 +57,7 @@ class LocalPropertiesIntegrationTest extends PluginIntegrationTest {
 		localProperties.writeToFile(project);
 
 		StringBuilder sb = new StringBuilder();
-		String[] expectedFileComments = new String[] {
+		String[] expectedFileComments = new String[]{
 				"#This file contains local properties used to configure project build",
 				"#Note: paths need to be Unix-style where segments need to be separated with forward-slashes (/)",
 				"#this is for compatibility and stability purposes as backslashes don't play well."

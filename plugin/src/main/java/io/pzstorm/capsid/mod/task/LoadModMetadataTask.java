@@ -80,13 +80,15 @@ public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 					int endIndex = charArray[beforeLastIndex] != '/' ? charArray.length : beforeLastIndex;
 
 					// remove slashes from first and last string index
-					for (int i = startIndex; i < endIndex; i++) {
+					for (int i = startIndex; i < endIndex; i++)
+					{
 						sb.append(charArray[i]);
 					}
 					String urlPath = sb.toString();
 
 					List<String> pathElements = Splitter.on("/").splitToList(urlPath);
-					if (pathElements.size() != 2) {
+					if (pathElements.size() != 2)
+					{
 						throw new InvalidUserDataException("Unexpected mod url format " + urlPath);
 					}
 					// these properties are used to generate changelog
@@ -94,17 +96,20 @@ public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 					ext.set("repo.name", pathElements.get(1));
 				}
 			}
-			catch (IOException e) {
+			catch (IOException e)
+			{
 				throw new GradleException("I/O exception occurred while loading mod info.", e);
 			}
 		}
 		else CapsidPlugin.LOGGER.warn("WARN: Unable to find mod.info file");
 
 		// these properties can be loaded without file
-		if (!ext.has(ModProperties.MOD_NAME.name)) {
+		if (!ext.has(ModProperties.MOD_NAME.name))
+		{
 			ext.set(ModProperties.MOD_NAME.name, project.getName());
 		}
-		if (!ext.has(ModProperties.MOD_ID.name)) {
+		if (!ext.has(ModProperties.MOD_ID.name))
+		{
 			ext.set(ModProperties.MOD_ID.name, project.getRootProject().getName());
 		}
 	}

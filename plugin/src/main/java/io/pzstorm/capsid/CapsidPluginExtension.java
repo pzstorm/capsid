@@ -46,7 +46,7 @@ public class CapsidPluginExtension {
 	 *
 	 * @param dirPaths directory paths to exclude.
 	 */
-	public void excludeResourceDirs(String...dirPaths) {
+	public void excludeResourceDirs(String... dirPaths) {
 
 		excludedResourceDirs.clear();
 		excludedResourceDirs.addAll(Arrays.asList(dirPaths));

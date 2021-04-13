@@ -18,7 +18,6 @@
 package io.pzstorm.capsid;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -29,43 +28,36 @@ import org.jetbrains.annotations.Unmodifiable;
 
 public class ProjectProperty<T> {
 
-	@Unmodifiable
-	static final Set<ProjectProperty<?>> PROPERTIES;
-
 	/**
 	 * Directory containing Project Zomboid classes.
 	 */
 	public static final ProjectProperty<File> ZOMBOID_CLASSES_DIR;
-
 	/**
 	 * Directory containing Project Zomboid sources.
 	 */
 	public static final ProjectProperty<File> ZOMBOID_SOURCES_DIR;
-
 	/**
 	 * Directory containing Lua library compiled with ZomboidDoc.
 	 */
 	public static final ProjectProperty<File> ZDOC_LUA_DIR;
-
 	/**
 	 * File containing last ZomboidDoc version text.
 	 */
 	public static final ProjectProperty<File> ZDOC_VERSION_FILE;
-
 	/**
 	 * File where mod properties are stored.
 	 */
 	public static final ProjectProperty<File> MOD_INFO_FILE;
-
 	/**
 	 * Directory containing built classes for {@code media} module.
 	 */
 	public static final ProjectProperty<File> MEDIA_CLASSES_DIR;
-
 	/**
 	 * Directory containing resources for {@code media} module.
 	 */
 	public static final ProjectProperty<File> MEDIA_RESOURCES_DIR;
+	@Unmodifiable
+	static final Set<ProjectProperty<?>> PROPERTIES;
 
 	static
 	{

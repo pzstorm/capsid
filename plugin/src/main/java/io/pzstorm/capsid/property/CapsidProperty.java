@@ -69,7 +69,9 @@ public class CapsidProperty<T> {
 	 *     <li>System properties.</li>
 	 *     <li>Environment variables.</li>
 	 * </ul>
+	 *
 	 * @return value matching this property or default value.
+	 *
 	 * @throws InvalidCapsidPropertyException when a property was not
 	 * 		found or was found but is of unsupported type.
 	 */
@@ -79,7 +81,8 @@ public class CapsidProperty<T> {
 		if (ext.has(name))
 		{
 			Object foundProperty = Objects.requireNonNull(ext.get(name));
-			if (foundProperty instanceof String) {
+			if (foundProperty instanceof String)
+			{
 				return convertAndValidateProperty((String) foundProperty);
 			}
 			else if (type.isInstance(foundProperty))
@@ -87,7 +90,8 @@ public class CapsidProperty<T> {
 				T result = type.cast(foundProperty);
 				return validator != null ? validator.validate(result) : result;
 			}
-			else {
+			else
+			{
 				String msg = "Found capsid property is of unsupported type '%s'";
 				throw new InvalidCapsidPropertyException(String.format(msg, foundProperty.getClass().getName()));
 			}
@@ -98,10 +102,12 @@ public class CapsidProperty<T> {
 		{
 			// when env parameter is not defined search for env variable with property name
 			String envVar = System.getenv(env != null && !env.isEmpty() ? env : name);
-			if (envVar != null) {
+			if (envVar != null)
+			{
 				return convertAndValidateProperty(envVar);
 			}
-			else if (required && defaultValue == null) {
+			else if (required && defaultValue == null)
+			{
 				throw new InvalidCapsidPropertyException("Unable to find capsid property " + name);
 			}
 			else return defaultValue;
@@ -121,7 +127,8 @@ public class CapsidProperty<T> {
 	@Contract("null -> null")
 	private @Nullable T convertAndValidateProperty(String property) {
 
-		if (Strings.isNullOrEmpty(property)) {
+		if (Strings.isNullOrEmpty(property))
+		{
 			return null;
 		}
 		if (type.equals(String.class))
@@ -146,10 +153,12 @@ public class CapsidProperty<T> {
 		}
 		if (type.equals(URL.class))
 		{
-			try {
+			try
+			{
 				return (T) new URL(property);
 			}
-			catch (MalformedURLException e) {
+			catch (MalformedURLException e)
+			{
 				throw new InvalidCapsidPropertyException("Malformed URL property", e);
 			}
 		}

@@ -35,7 +35,8 @@ public abstract class PluginUnitTest {
 	@BeforeAll
 	static void createWorkspaceDirectory() throws IOException {
 
-		if (!WORKSPACE.exists()) {
+		if (!WORKSPACE.exists())
+		{
 			Files.createDirectory(WORKSPACE.toPath());
 		}
 		RecursiveDeleteOption option = RecursiveDeleteOption.ALLOW_INSECURE;

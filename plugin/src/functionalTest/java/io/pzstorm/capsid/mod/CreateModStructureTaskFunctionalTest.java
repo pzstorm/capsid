@@ -61,13 +61,13 @@ class CreateModStructureTaskFunctionalTest extends PluginFunctionalTest {
 		Set<String> excludedSrcDirs = new HashSet<>(Arrays.asList(
 				"media/luaexamples", "media/newuitests", "media/launcher"
 		));
-		writeToProjectFile("build.gradle", new String[] {
+		writeToProjectFile("build.gradle", new String[]{
 				"plugins {",
 				"	id('io.pzstorm.capsid')",
 				"}",
 				"",
 				"capsid.excludeResourceDirs " +
-				String.format("\t'%s'", String.join("', '", excludedSrcDirs)),
+						String.format("\t'%s'", String.join("', '", excludedSrcDirs)),
 		});
 		GradleRunner runner = getRunner();
 		List<String> arguments = new ArrayList<>(runner.getArguments());
@@ -75,7 +75,8 @@ class CreateModStructureTaskFunctionalTest extends PluginFunctionalTest {
 
 		File gameDir = CapsidPlugin.getGameDirProperty(getProject());
 
-		for (String excludedSrcDirName : excludedSrcDirs) {
+		for (String excludedSrcDirName : excludedSrcDirs)
+		{
 			Files.createDirectory(new File(gameDir, excludedSrcDirName).toPath());
 		}
 		BuildResult result = getRunner().withArguments(arguments).build();

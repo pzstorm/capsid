@@ -44,7 +44,8 @@ public class DistributionUtils {
 
 		Map<Path, String> result = new HashMap<>();
 		File moduleDir = module.getAbsoluteFile();
-		if (!moduleDir.exists()) {
+		if (!moduleDir.exists())
+		{
 			throw new GradleException("Unable to find module directory for path '" + moduleDir.getPath() + '\'');
 		}
 		// collect all existing source directories for given directory set
@@ -55,11 +56,13 @@ public class DistributionUtils {
 		{
 			// existing file paths found in source directory
 			Set<Path> paths;
-			try {
+			try
+			{
 				// recursively collect all file paths in source directory
 				paths = Files.walk(srcDir.toPath()).filter(Files::isRegularFile).collect(Collectors.toSet());
 			}
-			catch(IOException e) {
+			catch (IOException e)
+			{
 				throw new GradleException("I/O error occurred while walking file tree", e);
 			}
 			Path srcDirPath = srcDir.toPath();

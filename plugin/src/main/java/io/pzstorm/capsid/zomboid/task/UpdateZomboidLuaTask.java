@@ -21,7 +21,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.gradle.api.*;
+import org.gradle.api.DefaultTask;
+import org.gradle.api.GradleException;
+import org.gradle.api.InvalidUserDataException;
+import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
@@ -35,7 +38,8 @@ public class UpdateZomboidLuaTask extends DefaultTask implements CapsidTask {
 	public void configure(String group, String description, Project project) {
 		CapsidTask.super.configure(group, description, project);
 
-		try {
+		try
+		{
 			int compareResult = new SemanticVersion.Comparator().compare(
 					ZomboidUtils.getZomboidDocVersion(project),
 					ZomboidUtils.getLastZomboidDocVersion(project)
@@ -44,12 +48,14 @@ public class UpdateZomboidLuaTask extends DefaultTask implements CapsidTask {
 			onlyIf(t -> compareResult < 0);
 
 			// current version is higher then last version
-			if (compareResult < 0) {
+			if (compareResult < 0)
+			{
 				dependsOn(project.getTasks().getByName(ZomboidTasks.ANNOTATE_ZOMBOID_LUA.name),
 						project.getTasks().getByName(ZomboidTasks.COMPILE_ZOMBOID_LUA.name));
 			}
 		}
-		catch (IOException e) {
+		catch (IOException e)
+		{
 			throw new GradleException("I/O exception occurred when updating Lua", e);
 		}
 	}
@@ -65,7 +71,8 @@ public class UpdateZomboidLuaTask extends DefaultTask implements CapsidTask {
 		Project project = getProject();
 
 		// write semantic version to file
-		try (Writer writer = new FileWriter(ZomboidUtils.getZomboidVersionFile(project))) {
+		try (Writer writer = new FileWriter(ZomboidUtils.getZomboidVersionFile(project)))
+		{
 			writer.write(ZomboidUtils.getZomboidDocVersion(project).toString());
 		}
 	}

@@ -62,6 +62,7 @@ public enum ZomboidTasks {
 
 	/**
 	 * Configure and register this task for the given {@code Project}.
+	 *
 	 * @param project {@code Project} register this task.
 	 */
 	public void register(Project project) {

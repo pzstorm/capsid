@@ -29,10 +29,12 @@ import io.pzstorm.capsid.util.UnixPath;
 public class DirectoryPathValidator implements PropertyValidator<UnixPath> {
 
 	// make constructor available only from package
-	DirectoryPathValidator() {}
+	DirectoryPathValidator() {
+	}
 
 	/**
 	 * Returns {@code true} if given path represents an existing directory.
+	 *
 	 * @param property property to validate.
 	 */
 	@Override

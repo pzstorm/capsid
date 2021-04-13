@@ -21,9 +21,9 @@ import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.w3c.dom.Element;
 
-import io.pzstorm.capsid.util.UnixPath;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.VmParameter;
+import io.pzstorm.capsid.util.UnixPath;
 
 public class LaunchRunConfig extends XMLDocument {
 
@@ -45,6 +45,7 @@ public class LaunchRunConfig extends XMLDocument {
 	);
 
 	private final VmParameter vmParameters;
+
 	public LaunchRunConfig(String name, VmParameter vmParameters) {
 		super(name, ".idea/runConfigurations/");
 		this.vmParameters = vmParameters;
@@ -54,6 +55,7 @@ public class LaunchRunConfig extends XMLDocument {
 	 * Configure this instance of {@code ZomboidLaunchRunConfig} for given {@code Project}.
 	 *
 	 * @return an instance of this {@code ZomboidLaunchRunConfig}.
+	 *
 	 * @throws InvalidUserDataException if {@code gameDir} local property is not initialized.
 	 */
 	@Override
@@ -98,7 +100,8 @@ public class LaunchRunConfig extends XMLDocument {
 		Element optionWorkDir = document.createElement("option");
 
 		UnixPath gameDir = LocalProperties.GAME_DIR.findProperty(project);
-		if (gameDir == null) {
+		if (gameDir == null)
+		{
 			throw new InvalidUserDataException("Unable to find gameDir local property");
 		}
 		optionWorkDir.setAttribute("name", "WORKING_DIRECTORY");

@@ -30,8 +30,8 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
-import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.property.CapsidProperty;
+import io.pzstorm.capsid.setup.LocalProperties;
 
 /**
  * This task will initialize local properties by asking for user input.
@@ -47,12 +47,13 @@ public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
 
 		// make sure the properties file exists
 		File propertiesFile = LocalProperties.get().getFile(gradleProject);
-		if (!propertiesFile.exists() && !propertiesFile.createNewFile()) {
+		if (!propertiesFile.exists() && !propertiesFile.createNewFile())
+		{
 			throw new IOException(String.format("Unable to create %s file", propertiesFile.getName()));
 		}
 		Map<CapsidProperty<?>, String> PROPERTIES_INPUT_MAP = ImmutableMap.of(
 				LocalProperties.GAME_DIR, "Enter path to game installation directory:",
-				LocalProperties.IDEA_HOME,  "\nEnter path to IntelliJ IDEA installation directory:"
+				LocalProperties.IDEA_HOME, "\nEnter path to IntelliJ IDEA installation directory:"
 		);
 		org.apache.tools.ant.Project antProject = gradleProject.getAnt().getAntProject();
 		Input inputTask = (Input) antProject.createTask("input");

@@ -41,43 +41,36 @@ import io.pzstorm.capsid.util.SemanticVersion;
  */
 public class ModProperties extends CapsidProperties {
 
-	private static final ModProperties INSTANCE = new ModProperties();
-	private static final @Unmodifiable Set<CapsidProperty<?>> PROPERTIES;
-
 	/**
 	 * Display name of the mod visible in game main menu.
 	 */
 	public static final CapsidProperty<String> MOD_NAME;
-
 	/**
 	 * Path to image that represents this mod.
 	 */
 	public static final CapsidProperty<Path> MOD_POSTER;
-
 	/**
 	 * Mod description visible in game main menu.
 	 */
 	public static final CapsidProperty<String> MOD_DESCRIPTION;
-
 	/**
 	 * Unique string that identifies this mod.
 	 */
 	public static final CapsidProperty<String> MOD_ID;
-
 	/**
 	 * Hyperlink pointing to a project repository or workshop page.
 	 */
 	public static final CapsidProperty<URL> MOD_URL;
-
 	/**
 	 * Current mod project semantic version.
 	 */
 	public static final CapsidProperty<SemanticVersion> MOD_VERSION;
-
 	/**
 	 * Latest version of Project Zomboid compatible with this mod.
 	 */
 	public static final CapsidProperty<String> MOD_PZ_VERSION;
+	private static final ModProperties INSTANCE = new ModProperties();
+	private static final @Unmodifiable Set<CapsidProperty<?>> PROPERTIES;
 
 	static
 	{
@@ -154,10 +147,12 @@ public class ModProperties extends CapsidProperties {
 			{
 				String value = "";
 				Object oProperty = property.findProperty(project);
-				if (oProperty != null) {
+				if (oProperty != null)
+				{
 					value = oProperty.toString();
 				}
-				else if (property.required) {
+				else if (property.required)
+				{
 					CapsidPlugin.LOGGER.warn("WARN: Missing property value " + property.name);
 				}
 				// remove 'mod.' part of the property before appending
