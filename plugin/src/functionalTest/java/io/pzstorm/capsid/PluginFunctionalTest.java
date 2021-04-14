@@ -50,7 +50,7 @@ public abstract class PluginFunctionalTest {
 	private Project project;
 	private File projectDir;
 	private UnixPath gameDir, ideaHome;
-	private GradleRunner runner;
+	private CapsidGradleRunner runner;
 
 	public PluginFunctionalTest() {
 		this.projectDir = generateProjectDirectory();
@@ -91,7 +91,7 @@ public abstract class PluginFunctionalTest {
 				"	id('io.pzstorm.capsid')",
 				"}"
 		});
-		runner = GradleRunner.create();
+		runner = CapsidGradleRunner.create();
 
 		// configure gradle runner
 		runner.forwardOutput();
@@ -139,7 +139,7 @@ public abstract class PluginFunctionalTest {
 		return getProject().getProjectDir();
 	}
 
-	protected GradleRunner getRunner() {
+	protected CapsidGradleRunner getRunner() {
 		return runner;
 	}
 
