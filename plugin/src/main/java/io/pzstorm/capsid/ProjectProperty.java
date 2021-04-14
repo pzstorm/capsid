@@ -100,18 +100,12 @@ public class ProjectProperty<T> {
 	/**
 	 * Register this property with the given {@link Project}.
 	 *
-	 * @return instance of the registered property.
-	 *
 	 * @throws ClassCastException if property is not assignable to {@code T}.
 	 */
-	T register(Project project) {
-
-		T property = propertySupplier.getProjectProperty(project);
+	void register(Project project) {
 
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-		ext.set(propertyName, property);
-
-		return property;
+		ext.set(propertyName, propertySupplier.getProjectProperty(project));
 	}
 
 	/**

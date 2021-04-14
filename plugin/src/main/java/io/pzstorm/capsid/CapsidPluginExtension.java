@@ -28,7 +28,7 @@ import io.pzstorm.capsid.dist.task.GenerateChangelogTask;
 /**
  * Extension used to configure how {@link CapsidPlugin} works.
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "CanBeFinal" })
 public class CapsidPluginExtension {
 
 	private final Set<String> excludedResourceDirs = new HashSet<>();
