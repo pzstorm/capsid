@@ -22,13 +22,13 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.io.MoreFiles;
-
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.io.MoreFiles;
 
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.PluginFunctionalTest;

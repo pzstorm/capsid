@@ -105,6 +105,7 @@ public abstract class XMLDocument {
 	 * Returns {@code File} representing this document.
 	 *
 	 * @param create whether to create the resulting file if it doesn't exist already.
+	 *
 	 * @throws IOException if unable to create directory structure or resulting file.
 	 */
 	private File getAsFile(boolean create) throws IOException {
@@ -166,7 +167,7 @@ public abstract class XMLDocument {
 	public void writeToFile() throws IOException, TransformerException {
 
 		StreamResult streamResult = new StreamResult(new FileWriter(getAsFile(true)));
-		createAndConfigureTransformer().transform(new DOMSource(document),streamResult);
+		createAndConfigureTransformer().transform(new DOMSource(document), streamResult);
 	}
 
 	/**
