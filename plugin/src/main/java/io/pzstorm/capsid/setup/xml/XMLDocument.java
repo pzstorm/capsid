@@ -23,10 +23,7 @@ import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -84,6 +81,71 @@ public abstract class XMLDocument {
 	}
 
 	/**
+	 * Returns translated config name to filename. The translation process is similar to
+	 * what IDEA is doing when it is naming {@code XML} configuration files.
+	 */
+	protected String translateConfigNameToFilename() {
+
+		// replace dashed with underscores and whitespaces with underscores
+		return name.replace('-', '_').replaceAll("\\s", "_")
+				// remove all non-word characters and consecutive with single underscores
+				.replaceAll("[^\\w_]", "").replaceAll("_+", "_") + ".xml";
+	}
+
+	/**
+	 * Returns {@code File} representing this document.
+	 *
+	 * @param create whether to create the resulting file if it doesn't exist already.
+	 * @throws IOException if unable to create directory structure or resulting file.
+	 */
+	protected File getAsFile(boolean create) throws IOException {
+
+		// translate config name to filename (similar to what IDEA is doing)
+		String filename = translateConfigNameToFilename();
+
+		// resolve parent directory of this document
+		File parentDir = project.getProjectDir().toPath().resolve(dirPath).toFile();
+
+		// file representing this document
+		File xmlFile = new File(parentDir, filename);
+		if (create && !xmlFile.exists())
+		{
+			if (!parentDir.exists() && !parentDir.mkdirs()) {
+				throw new IOException("Unable to create directory structure for configuration file '" + filename + '\'');
+			}
+			if (!xmlFile.createNewFile()) {
+				throw new IOException("Unable to create run configuration file '" + filename + '\'');
+			}
+		}
+		return xmlFile;
+	}
+
+	/**
+	 * Create and configure {@link Transformer} instance to be used for writing document to file.
+	 * Note that the returned instance can be further configured as desired.
+	 *
+	 * @throws TransformerConfigurationException when it is not possible to create a {@code Transformer} instance.
+	 */
+	protected Transformer createAndConfigureTransformer() throws TransformerConfigurationException {
+
+		// create a new transformer instance
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+
+		// parent directory
+		if (project == null) {
+			throw new GradleException("Tried writing XMLDocument to file with null project");
+		}
+		// enable xml line indenting
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+		// omit xml declaration at top of the file
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+
+		return transformer;
+	}
+
+	/**
 	 * Write contents of this document to {@code XML} file.
 	 *
 	 * @throws TransformerException if an unrecoverable error occurred while creating an
@@ -94,49 +156,8 @@ public abstract class XMLDocument {
 	 */
 	public void writeToFile() throws IOException, TransformerException {
 
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-
-		// translate config name to filename (similar to what IDEA is doing)
-		String filename = name
-				// replace dashed with underscores
-				.replace('-', '_')
-				// replace whitespaces with underscores
-				.replaceAll("\\s", "_")
-				// remove all non-word characters
-				.replaceAll("[^\\w_]", "")
-				// replace consecutive with single underscores
-				.replaceAll("_+", "_") + ".xml";
-
-		// parent directory
-		if (project == null) {
-			throw new GradleException("Tried writing XMLDocument to file with null project");
-		}
-		File projectDir = project.getProjectDir();
-		File parentDir = projectDir.toPath().resolve(dirPath).toFile();
-
-		// file to print the contents of this document
-		File destination = new File(parentDir, filename);
-
-		// create destination file before trying to write to it
-		if (!destination.exists())
-		{
-			if (!parentDir.exists() && !parentDir.mkdirs()) {
-				throw new IOException("Unable to create directory structure for configuration file '" + filename + '\'');
-			}
-			if (!destination.createNewFile()) {
-				throw new IOException("Unable to create run configuration file '" + filename + '\'');
-			}
-		}
-		// enable xml line indenting
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-
-		// omit xml declaration at top of the file
-		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-
-		// write to file and return destination file
-		transformer.transform(new DOMSource(document), new StreamResult(new FileWriter(destination)));
+		StreamResult streamResult = new StreamResult(new FileWriter(getAsFile(true)));
+		createAndConfigureTransformer().transform(new DOMSource(document),streamResult);
 	}
 
 	/**
