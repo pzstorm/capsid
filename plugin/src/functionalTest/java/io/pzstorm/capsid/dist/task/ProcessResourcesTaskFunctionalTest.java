@@ -20,8 +20,6 @@ package io.pzstorm.capsid.dist.task;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -57,10 +55,7 @@ class ProcessResourcesTaskFunctionalTest extends PluginFunctionalTest {
 	void shouldProcessModResourcesWithCorrectDirectoryStructure() throws IOException {
 
 		GradleRunner runner = getRunner();
-		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add(DistributionTasks.PROCESS_RESOURCES.name);
-
-		BuildResult result = runner.withArguments(arguments).build();
+		BuildResult result = runner.withArguments(DistributionTasks.PROCESS_RESOURCES.name).build();
 		assertTaskOutcomeSuccess(result, DistributionTasks.PROCESS_RESOURCES.name);
 
 		File resourcesDir = new File(runner.getProjectDir(), "build/resources/media");
@@ -79,11 +74,7 @@ class ProcessResourcesTaskFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void whenRunningProcessResourcesShouldDependOnThisTask() {
 
-		GradleRunner runner = getRunner();
-		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add("processResources");
-
-		BuildResult result = runner.withArguments(arguments).build();
+		BuildResult result = getRunner().withArguments("processResources").build();
 		assertTaskOutcome(result, "processResources", TaskOutcome.NO_SOURCE);
 		assertTaskOutcomeSuccess(result, DistributionTasks.PROCESS_RESOURCES.name);
 	}

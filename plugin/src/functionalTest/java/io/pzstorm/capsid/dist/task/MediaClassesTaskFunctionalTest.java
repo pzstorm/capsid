@@ -20,11 +20,8 @@ package io.pzstorm.capsid.dist.task;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -50,11 +47,7 @@ class MediaClassesTaskFunctionalTest extends PluginFunctionalTest {
 			Assertions.assertTrue(parentFile.exists() || parentFile.mkdirs());
 			Assertions.assertTrue(file.createNewFile());
 		}
-		GradleRunner runner = getRunner();
-		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add(DistributionTasks.MEDIA_CLASSES.name);
-
-		BuildResult result = runner.withArguments(arguments).build();
+		BuildResult result = getRunner().withArguments(DistributionTasks.MEDIA_CLASSES.name).build();
 		assertTaskOutcomeSuccess(result, DistributionTasks.MEDIA_CLASSES.name);
 
 		File mediaClassesDir = ProjectProperty.MEDIA_CLASSES_DIR.get(getProject());

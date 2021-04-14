@@ -19,19 +19,16 @@ package io.pzstorm.capsid.zomboid.task;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.GradleRunner;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.MoreFiles;
+
+import org.gradle.testkit.runner.BuildResult;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.PluginFunctionalTest;
@@ -64,11 +61,7 @@ class ZomboidJarTaskFunctionalTest extends PluginFunctionalTest {
 		for (Map.Entry<String, File> entry : filesToExclude.entrySet()) {
 			com.google.common.io.Files.copy(entry.getValue(), new File(source, entry.getKey()));
 		}
-		GradleRunner runner = getRunner();
-		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add(ZomboidTasks.ZOMBOID_JAR.name);
-
-		BuildResult result = getRunner().withArguments(arguments).build();
+		BuildResult result = getRunner().withArguments(ZomboidTasks.ZOMBOID_JAR.name).build();
 		assertTaskOutcomeSuccess(result, ZomboidTasks.ZOMBOID_JAR.name);
 
 		File resultJar = java.nio.file.Files.walk(destination.toPath())

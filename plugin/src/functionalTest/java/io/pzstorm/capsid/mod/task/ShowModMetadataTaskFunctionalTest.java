@@ -38,9 +38,6 @@ class ShowModMetadataTaskFunctionalTest extends PluginFunctionalTest {
 	void shouldPrintMetadataInformationToStreamOutput() throws IOException {
 
 		GradleRunner runner = getRunner();
-		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add(ModTasks.SHOW_MOD_METADATA.name);
-
 		writeToProjectFile("mod.info", new String[]{
 				"name=TestMod",
 				"description=",
@@ -49,7 +46,7 @@ class ShowModMetadataTaskFunctionalTest extends PluginFunctionalTest {
 				"modversion=1.0.5",
 				"pzversion=41.50-IWBUMS"
 		});
-		BuildResult result = runner.withArguments(arguments).build();
+		BuildResult result = runner.withArguments(ModTasks.SHOW_MOD_METADATA.name).build();
 		assertTaskOutcomeSuccess(result, ModTasks.SHOW_MOD_METADATA.name);
 
 		List<String> expectedOutput = ImmutableList.of(

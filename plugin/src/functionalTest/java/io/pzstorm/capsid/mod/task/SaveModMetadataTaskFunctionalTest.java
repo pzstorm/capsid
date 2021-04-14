@@ -17,11 +17,7 @@
  */
 package io.pzstorm.capsid.mod.task;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Test;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
@@ -33,12 +29,10 @@ class SaveModMetadataTaskFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldSuccessfullyExecuteSaveModInfoTask() {
 
-		GradleRunner runner = getRunner();
-		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add(ModTasks.SAVE_MOD_METADATA.name);
-		arguments.add("-x" + ZomboidTasks.ZOMBOID_VERSION.name);
-
-		BuildResult result = runner.withArguments(arguments).build();
+		BuildResult result = getRunner().withArguments(
+				ModTasks.SAVE_MOD_METADATA.name,
+				"-x" + ZomboidTasks.ZOMBOID_VERSION.name
+		).build();
 		assertTaskOutcomeSuccess(result, ModTasks.SAVE_MOD_METADATA.name);
 	}
 }

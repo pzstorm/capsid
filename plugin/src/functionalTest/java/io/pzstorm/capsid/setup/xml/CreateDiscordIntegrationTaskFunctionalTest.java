@@ -19,15 +19,13 @@ package io.pzstorm.capsid.setup.xml;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import io.pzstorm.capsid.CapsidGradleRunner;
 import io.pzstorm.capsid.PluginFunctionalTest;
+import io.pzstorm.capsid.mod.ModProperties;
 import io.pzstorm.capsid.setup.SetupTasks;
 import io.pzstorm.capsid.util.Utils;
 
@@ -40,13 +38,11 @@ class CreateDiscordIntegrationTaskFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldCreateDiscordIntegrationConfigurationFile() throws IOException {
 
-		GradleRunner runner = getRunner();
-		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add(SetupTasks.CREATE_DISCORD_INTEGRATION.name);
-		arguments.add("-Pmod.description=Testing Discord integration.");
-
-		BuildResult result = getRunner().withArguments(arguments).build();
-		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_DISCORD_INTEGRATION.name);
+		CapsidGradleRunner runner = getRunner().withArguments(
+				String.format("-P%s=%s", ModProperties.MOD_DESCRIPTION.name, "Testing Discord integration."),
+				SetupTasks.CREATE_DISCORD_INTEGRATION.name
+		);
+		assertTaskOutcomeSuccess(runner.build(), SetupTasks.CREATE_DISCORD_INTEGRATION.name);
 
 		String expected = Utils.readResourceAsTextFromStream(getClass(), "discord.xml");
 		String actual = Utils.readTextFromFile(new File(getProjectDir(), ".idea/discord.xml"));

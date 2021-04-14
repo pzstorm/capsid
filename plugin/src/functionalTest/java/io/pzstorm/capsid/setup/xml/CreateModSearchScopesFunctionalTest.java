@@ -20,15 +20,13 @@ package io.pzstorm.capsid.setup.xml;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.ImmutableMap;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.setup.SetupTasks;
@@ -48,10 +46,7 @@ class CreateModSearchScopesFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldWriteToFileModSearchScopes() throws IOException {
 
-		List<String> arguments = new ArrayList<>(getRunner().getArguments());
-		arguments.add(SetupTasks.CREATE_MOD_SEARCH_SCOPES.name);
-
-		BuildResult result = getRunner().withArguments(arguments).build();
+		BuildResult result = getRunner().withArguments(SetupTasks.CREATE_MOD_SEARCH_SCOPES.name).build();
 		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_MOD_SEARCH_SCOPES.name);
 
 		Path searchScopes = getProjectDir().toPath().resolve(".idea/scopes/");

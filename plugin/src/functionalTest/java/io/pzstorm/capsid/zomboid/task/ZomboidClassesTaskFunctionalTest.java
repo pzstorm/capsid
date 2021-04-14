@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.util.*;
 
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -59,11 +58,7 @@ class ZomboidClassesTaskFunctionalTest extends PluginFunctionalTest {
 		File excludedDir = new File(gameDir, "excludedDir");
 		Files.createDirectory(excludedDir.toPath());
 
-		GradleRunner runner = getRunner();
-		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add(ZomboidTasks.ZOMBOID_CLASSES.name);
-
-		BuildResult result = getRunner().withArguments(arguments).build();
+		BuildResult result = getRunner().withArguments(ZomboidTasks.ZOMBOID_CLASSES.name).build();
 		assertTaskOutcomeSuccess(result, ZomboidTasks.ZOMBOID_CLASSES.name);
 
 		// class files that were synced from install directory

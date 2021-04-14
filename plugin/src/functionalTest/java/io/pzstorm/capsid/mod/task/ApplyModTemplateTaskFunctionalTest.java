@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -50,11 +49,7 @@ class ApplyModTemplateTaskFunctionalTest extends PluginFunctionalTest {
 		for (File expectedFile : expectedFiles) {
 			Assertions.assertFalse(expectedFile.exists());
 		}
-		GradleRunner runner = getRunner();
-		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add(ModTasks.APPLY_MOD_TEMPLATE.name);
-
-		BuildResult result = runner.withArguments(arguments).build();
+		BuildResult result = getRunner().withArguments(ModTasks.APPLY_MOD_TEMPLATE.name).build();
 		assertTaskOutcomeSuccess(result, ModTasks.APPLY_MOD_TEMPLATE.name);
 
 		for (File expectedFile : expectedFiles) {

@@ -20,12 +20,9 @@ package io.pzstorm.capsid.zomboid.task;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.gradle.api.Project;
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -58,11 +55,7 @@ class ZomboidLuaJarTaskFunctionalTest extends PluginFunctionalTest {
 		// assert no files present in destination
 		Assertions.assertEquals(0, destination.listFiles().length);
 
-		GradleRunner runner = getRunner();
-		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add("zomboidLuaJar");
-
-		BuildResult result = runner.withArguments(arguments).build();
+		BuildResult result = getRunner().withArguments("zomboidLuaJar").build();
 		assertTaskOutcomeSuccess(result, "zomboidLuaJar");
 
 		// confirm archive was created

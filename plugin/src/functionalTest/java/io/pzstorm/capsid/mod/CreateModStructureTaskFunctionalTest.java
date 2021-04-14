@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.util.*;
 
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -35,11 +34,7 @@ class CreateModStructureTaskFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldCreateCorrectModStructureFromSourceSet() {
 
-		GradleRunner runner = getRunner();
-		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add(ModTasks.CREATE_MOD_STRUCTURE.name);
-
-		BuildResult result = getRunner().withArguments(arguments).build();
+		BuildResult result = getRunner().withArguments(ModTasks.CREATE_MOD_STRUCTURE.name).build();
 		assertTaskOutcomeSuccess(result, ModTasks.CREATE_MOD_STRUCTURE.name);
 
 		Set<String> expectedDirNames = new HashSet<>();
@@ -69,16 +64,12 @@ class CreateModStructureTaskFunctionalTest extends PluginFunctionalTest {
 				"capsid.excludeResourceDirs " +
 						String.format("\t'%s'", String.join("', '", excludedSrcDirs)),
 		});
-		GradleRunner runner = getRunner();
-		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add(ModTasks.CREATE_MOD_STRUCTURE.name);
-
 		File gameDir = CapsidPlugin.getGameDirProperty(getProject());
 
 		for (String excludedSrcDirName : excludedSrcDirs) {
 			Files.createDirectory(new File(gameDir, excludedSrcDirName).toPath());
 		}
-		BuildResult result = getRunner().withArguments(arguments).build();
+		BuildResult result = getRunner().withArguments(ModTasks.CREATE_MOD_STRUCTURE.name).build();
 		assertTaskOutcomeSuccess(result, ModTasks.CREATE_MOD_STRUCTURE.name);
 
 		Set<String> expectedDirNames = new HashSet<>();

@@ -19,16 +19,13 @@ package io.pzstorm.capsid.setup.xml;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
+
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.ImmutableMap;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.setup.SetupTasks;
@@ -50,11 +47,7 @@ class CreateLaunchConfigsTaskFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldWriteToFileLaunchRunConfigurationsFromTask() throws IOException {
 
-		GradleRunner runner = getRunner();
-		List<String> arguments = new ArrayList<>(runner.getArguments());
-		arguments.add(SetupTasks.CREATE_LAUNCH_CONFIGS.name);
-
-		BuildResult result = getRunner().withArguments(arguments).build();
+		BuildResult result = getRunner().withArguments(SetupTasks.CREATE_LAUNCH_CONFIGS.name).build();
 		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_LAUNCH_CONFIGS.name);
 
 		File runConfigurations = new File(getProjectDir(), ".idea/runConfigurations");
