@@ -20,6 +20,7 @@ package io.pzstorm.capsid.setup;
 import org.gradle.api.Project;
 
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.setup.task.CreateDiscordIntegrationTask;
 import io.pzstorm.capsid.setup.task.CreateLaunchConfigsTask;
 import io.pzstorm.capsid.setup.task.CreateModSearchScopesTask;
 import io.pzstorm.capsid.setup.task.InitLocalPropertiesTask;
@@ -37,6 +38,9 @@ public enum SetupTasks {
 	),
 	CREATE_MOD_SEARCH_SCOPES(CreateModSearchScopesTask.class, "createModSearchScopes",
 			"Create IDEA search scopes for mod files."
+	),
+	CREATE_DISCORD_INTEGRATION(CreateDiscordIntegrationTask.class, "createDiscordIntegration",
+			"Show IDEA project in Discord via rich presence."
 	);
 	public final String name, description;
 	final Class<? extends CapsidTask> type;
