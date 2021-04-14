@@ -29,9 +29,6 @@ import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.io.MoreFiles;
-import com.google.common.io.RecursiveDeleteOption;
-
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.util.Utils;
@@ -78,7 +75,7 @@ class ZomboidLuaJarTaskFunctionalTest extends PluginFunctionalTest {
 		Utils.unzipArchive(archive, destination);
 
 		Path manifest = new File(destination, "META-INF").toPath();
-		MoreFiles.deleteRecursively(manifest, RecursiveDeleteOption.ALLOW_INSECURE);
+		Utils.deleteDirectory(manifest.toFile());
 		Assertions.assertTrue(archive.delete());
 
 		// assert only expected files are in directory

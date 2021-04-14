@@ -30,8 +30,20 @@ import java.util.zip.ZipInputStream;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
 
 public class Utils {
+
+	/**
+	 * Deletes the given directory and all files contained within it recursively.
+	 *
+	 * @param directory {@code File} directory to delete.
+	 * @throws IOException if path or any file in the subtree rooted at it can't be deleted for any reason.
+	 */
+	public static void deleteDirectory(File directory) throws IOException {
+		MoreFiles.deleteRecursively(directory.toPath(), RecursiveDeleteOption.ALLOW_INSECURE);
+	}
 
 	/**
 	 * Read the resource from given path as a byte array and write to specified {@code File}.

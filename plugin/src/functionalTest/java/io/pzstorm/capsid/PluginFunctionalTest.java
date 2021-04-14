@@ -26,9 +26,6 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Random;
 
-import com.google.common.io.MoreFiles;
-import com.google.common.io.RecursiveDeleteOption;
-
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.testfixtures.ProjectBuilder;
@@ -41,6 +38,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 
 import io.pzstorm.capsid.util.UnixPath;
+import io.pzstorm.capsid.util.Utils;
 
 @Tag("functional")
 public abstract class PluginFunctionalTest {
@@ -81,7 +79,7 @@ public abstract class PluginFunctionalTest {
 		}
 		// make sure the project directory doesn't exist
 		if (projectDir.exists()) {
-			MoreFiles.deleteRecursively(projectDir.toPath(), RecursiveDeleteOption.ALLOW_INSECURE);
+			Utils.deleteDirectory(projectDir);
 		}
 		// Setup the test build
 		Files.createDirectories(projectDir.toPath());
