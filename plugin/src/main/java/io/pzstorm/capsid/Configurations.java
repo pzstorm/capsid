@@ -20,37 +20,38 @@ package io.pzstorm.capsid;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
+
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("ConstantConditions")
 public enum Configurations {
 
 	/**
 	 * Project Zomboid dependencies only available during runtime.
 	 */
-	ZOMBOID_RUNTIME_ONLY("zomboidRuntimeOnly", new String[]{ "runtimeOnly" }, null),
+	ZOMBOID_RUNTIME_ONLY("zomboidRuntimeOnly", ImmutableSet.of("runtimeOnly"), null),
 
 	/**
 	 * Project Zomboid dependencies available during compile and runtime.
 	 */
-	ZOMBOID_IMPLEMENTATION("zomboidImplementation", new String[]{ "implementation" }, null),
+	ZOMBOID_IMPLEMENTATION("zomboidImplementation", ImmutableSet.of("implementation" ), null),
 
 	/**
 	 * Zomboid Doc dependencies only available during runtime.
 	 */
-	ZOMBOID_DOC("zomboidDoc", null, new String[]{ "zomboidRuntimeOnly" });
+	ZOMBOID_DOC("zomboidDoc", null, ImmutableSet.of("zomboidRuntimeOnly"));
 
 	private final String name;
-	private final String[] extendedTo, extendsFrom;
+	private final ImmutableSet<String> extendedTo, extendsFrom;
 
-	Configurations(String name, @Nullable String[] extendedTo, @Nullable String[] extendsFrom) {
+	Configurations(String name, @Nullable ImmutableSet<String> extendedTo, @Nullable ImmutableSet<String> extendsFrom) {
 		this.name = name;
-		this.extendedTo = extendedTo != null ? extendedTo : new String[]{};
-		this.extendsFrom = extendsFrom != null ? extendsFrom : new String[]{};
+		this.extendedTo = extendedTo != null ? extendedTo : ImmutableSet.of();
+		this.extendsFrom = extendsFrom != null ? extendsFrom : ImmutableSet.of();
 	}
 
 	/**

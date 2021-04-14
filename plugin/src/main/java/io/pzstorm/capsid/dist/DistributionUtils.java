@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.gradle.api.GradleException;
 import org.gradle.api.file.SourceDirectorySet;
@@ -55,9 +56,10 @@ public class DistributionUtils {
 		{
 			// existing file paths found in source directory
 			Set<Path> paths;
-			try {
-				// recursively collect all file paths in source directory
-				paths = Files.walk(srcDir.toPath()).filter(Files::isRegularFile).collect(Collectors.toSet());
+
+			// recursively collect all file paths in source directory
+			try (Stream<Path> stream = Files.walk(srcDir.toPath())) {
+				paths = stream.filter(Files::isRegularFile).collect(Collectors.toSet());
 			}
 			catch (IOException e) {
 				throw new GradleException("I/O error occurred while walking file tree", e);

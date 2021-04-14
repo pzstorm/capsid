@@ -22,6 +22,8 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
@@ -33,26 +35,28 @@ public enum Dependencies {
 	/**
 	 * Libraries used by Project Zomboid during runtime.
 	 */
-	ZOMBOID_LIBRARIES("zomboidRuntimeOnly", project -> new Object[]{
+	ZOMBOID_LIBRARIES("zomboidRuntimeOnly", project -> ImmutableSet.of(
 			project.fileTree(CapsidPlugin.getGameDirProperty(project), t -> t.include("*.jar"))
-	}),
+	)),
 
 	/**
 	 * Project Zomboid assets in {@code media} directory.
 	 */
-	ZOMBOID_ASSETS("zomboidImplementation", project -> new Object[]{
+	ZOMBOID_ASSETS("zomboidImplementation", project -> ImmutableSet.of(
 			project.files(new File(CapsidPlugin.getGameDirProperty(project), "media"))
-	}),
+	)),
 
 	/**
 	 * Project Zomboid Java classes used during runtime.
 	 */
 	ZOMBOID_CLASSES("zomboidRuntimeOnly", project -> {
 		String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
-		if (modPzVersion != null) {
-			return new Object[]{ project.files(Paths.get("lib", String.format("zomboid-%s.jar", modPzVersion))) };
+		if (modPzVersion != null)
+		{
+			String jarName =  String.format("zomboid-%s.jar", modPzVersion);
+			return ImmutableSet.of(project.files(Paths.get("lib", jarName)));
 		}
-		else return new Object[0];
+		else return ImmutableSet.of();
 	}),
 
 	/**
@@ -61,10 +65,10 @@ public enum Dependencies {
 	 * @see <a href="https://search.maven.org/artifact/io.github.cocolabs/pz-zdoc">
 	 * 		Artifact on Central Maven</a>
 	 */
-	ZOMBOID_DOC("zomboidDoc", project -> new Object[]{
+	ZOMBOID_DOC("zomboidDoc", project -> ImmutableSet.of(
 			"io.github.cocolabs:pz-zdoc:3.+",
 			project.files(ProjectProperty.ZOMBOID_CLASSES_DIR.get(project))
-	}),
+	)),
 
 	/**
 	 * Lua library compiled with ZomboidDoc.
@@ -72,9 +76,9 @@ public enum Dependencies {
 	LUA_LIBRARY("compileOnly", project -> {
 		String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
 		if (modPzVersion != null) {
-			return new Object[]{ project.files(String.format("lib/zdoc-lua-%s.jar", modPzVersion)) };
+			return ImmutableSet.of(project.files(String.format("lib/zdoc-lua-%s.jar", modPzVersion)));
 		}
-		else return new Object[0];
+		else return ImmutableSet.of();
 	});
 
 	final String configuration;
@@ -95,7 +99,7 @@ public enum Dependencies {
 	Set<Dependency> register(Project project, DependencyHandler dependencies) {
 
 		Set<Dependency> result = new HashSet<>();
-		Object[] dependencyNotations = resolver.resolveDependencies(project);
+		Set<Object> dependencyNotations = resolver.resolveDependencies(project);
 		for (Object notation : dependencyNotations) {
 			result.add(dependencies.add(configuration, notation));
 		}

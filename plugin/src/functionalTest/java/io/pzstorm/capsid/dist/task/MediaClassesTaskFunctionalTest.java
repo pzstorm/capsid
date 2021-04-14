@@ -20,6 +20,8 @@ package io.pzstorm.capsid.dist.task;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Assertions;
@@ -55,9 +57,9 @@ class MediaClassesTaskFunctionalTest extends PluginFunctionalTest {
 				"lua/client/mainClient.lua",
 				"lua/server/mainServer.lua"
 		};
-		long filesFound = Files.walk(mediaClassesDir.toPath()).filter(Files::isRegularFile).count();
-		Assertions.assertEquals(expectedFiles.length, filesFound);
-
+		try (Stream<Path> stream = Files.walk(mediaClassesDir.toPath()).filter(Files::isRegularFile)) {
+			Assertions.assertEquals(expectedFiles.length, stream.count());
+		}
 		for (String expectedFile : expectedFiles) {
 			Assertions.assertTrue(new File(mediaClassesDir, expectedFile).exists());
 		}

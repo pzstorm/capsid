@@ -20,12 +20,14 @@ package io.pzstorm.capsid.zomboid.task;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.TaskAction;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
 import io.pzstorm.capsid.CapsidPlugin;
@@ -55,14 +57,15 @@ public class ZomboidVersionTask extends JavaExec implements CapsidTask {
 
 		// get command output from stream
 		ByteArrayOutputStream stream = (ByteArrayOutputStream) getStandardOutput();
-		String[] versionText = stream.toString(StandardCharsets.UTF_8.name()).split("\r\n|\r|\n");
+		String streamText = stream.toString(StandardCharsets.UTF_8.name());
+		List<String> versionText = Splitter.on("\r\n|\r|\n").splitToList(streamText);
 
 		// ZomboidDoc version
-		CapsidPlugin.LOGGER.lifecycle(versionText[0]);
+		CapsidPlugin.LOGGER.lifecycle(versionText.get(0));
 
 		// get version number and classifier (ex. 41.50-IWBUMS)
 		ExtraPropertiesExtension ext = getProject().getExtensions().getExtraProperties();
-		String gameVersion = versionText[1].substring(12).replaceAll(" ", "").trim();
+		String gameVersion = versionText.get(1).substring(12).replaceAll(" ", "").trim();
 		ext.set("mod.pzversion", gameVersion);
 
 		CapsidPlugin.LOGGER.lifecycle("game version " + gameVersion);

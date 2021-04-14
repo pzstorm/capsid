@@ -17,9 +17,11 @@
  */
 package io.pzstorm.capsid.mod.task;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +40,12 @@ import io.pzstorm.capsid.mod.ModProperties;
 
 class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 
-	private static final Map<String, String> MOD_METADATA = new ImmutableMap.Builder<String, String>()
-			.put("name", "TestMod").put("description", "None")
-			.put("url", "https://github.com/pzstorm/capsid/")
-			.put("modversion", "0.1.0").put("pzverison", "41.50-IWBUMS")
-			.build();
+	private static final ImmutableMap<String, String> MOD_METADATA =
+			new ImmutableMap.Builder<String, String>()
+					.put("name", "TestMod").put("description", "None")
+					.put("url", "https://github.com/pzstorm/capsid/")
+					.put("modversion", "0.1.0").put("pzverison", "41.50-IWBUMS")
+					.build();
 
 	private Project project;
 
@@ -54,7 +57,8 @@ class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 			modInfoArray.add(entry.getKey() + '=' + entry.getValue());
 		}
 		project = getProject(false);
-		try (Writer writer = new FileWriter(ProjectProperty.MOD_INFO_FILE.get(project))) {
+		Path modMetadataFile = ProjectProperty.MOD_INFO_FILE.get(project).toPath();
+		try (Writer writer = Files.newBufferedWriter(modMetadataFile, StandardCharsets.UTF_8)) {
 			writer.write(String.join("\n", modInfoArray));
 		}
 	}

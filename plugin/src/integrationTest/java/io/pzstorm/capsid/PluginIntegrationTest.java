@@ -18,10 +18,11 @@
 package io.pzstorm.capsid;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Random;
 
 import javax.annotation.Nullable;
@@ -65,7 +66,8 @@ public abstract class PluginIntegrationTest {
 		ideaHome = UnixPath.get(new File(projectDir, "ideaHome").getAbsoluteFile());
 		Files.createDirectory(ideaHome.convert());
 
-		try (Writer writer = new FileWriter(localProperties))
+		Path localPropertiesPath = localProperties.toPath();
+		try (Writer writer = Files.newBufferedWriter(localPropertiesPath, StandardCharsets.UTF_8))
 		{
 			writer.write(String.join("\n",
 					// property values with backslashes are considered malformed
@@ -116,7 +118,9 @@ public abstract class PluginIntegrationTest {
 	}
 
 	protected void writeToProjectFile(String path, String[] lines) throws IOException {
-		try (Writer writer = new FileWriter(project.getProjectDir().toPath().resolve(path).toFile())) {
+
+		File projectFile = new File(project.getProjectDir(), path);
+		try (Writer writer = Files.newBufferedWriter(projectFile.toPath(), StandardCharsets.UTF_8)) {
 			writer.write(String.join("\n", lines));
 		}
 	}

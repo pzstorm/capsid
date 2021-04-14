@@ -61,6 +61,7 @@ public class CapsidPlugin implements Plugin<Project> {
 		return property.convert().toAbsolutePath().toFile();
 	}
 
+	@Override
 	public void apply(Project project) {
 
 		// add the plugin extension object

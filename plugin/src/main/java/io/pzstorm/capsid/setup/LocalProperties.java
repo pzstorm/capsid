@@ -17,9 +17,10 @@
  */
 package io.pzstorm.capsid.setup;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Set;
 
@@ -98,7 +99,7 @@ public class LocalProperties extends CapsidProperties {
 	@Override
 	public void writeToFile(Project project) throws IOException {
 
-		try (Writer writer = new FileWriter(getFile(project)))
+		try (Writer writer = Files.newBufferedWriter(getFile(project).toPath(), StandardCharsets.UTF_8))
 		{
 			StringBuilder sb = new StringBuilder();
 			// file comments at the top of the file

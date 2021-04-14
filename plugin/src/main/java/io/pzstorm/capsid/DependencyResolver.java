@@ -17,8 +17,13 @@
  */
 package io.pzstorm.capsid;
 
+import java.util.Set;
+
+import com.google.errorprone.annotations.Immutable;
+
 import org.gradle.api.Project;
 
+@Immutable
 interface DependencyResolver {
 
 	/**
@@ -27,5 +32,5 @@ interface DependencyResolver {
 	 * @param project {@code Project} resolving dependencies.
 	 * @return resolved dependency notations.
 	 */
-	Object[] resolveDependencies(Project project);
+	Set<Object> resolveDependencies(Project project);
 }

@@ -19,8 +19,10 @@ package io.pzstorm.capsid.zomboid.task;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Assertions;
@@ -64,12 +66,11 @@ class ZomboidJarTaskFunctionalTest extends PluginFunctionalTest {
 		BuildResult result = getRunner().withArguments(ZomboidTasks.ZOMBOID_JAR.name).build();
 		assertTaskOutcomeSuccess(result, ZomboidTasks.ZOMBOID_JAR.name);
 
-		File resultJar = java.nio.file.Files.walk(destination.toPath())
-				.filter(f -> MoreFiles.getFileExtension(f).equals("jar"))
-				.findAny().orElseThrow(RuntimeException::new).toFile();
-
-		Utils.unzipArchive(resultJar, destination);
-
+		try (Stream<Path> stream = java.nio.file.Files.walk(destination.toPath()))
+		{
+			Utils.unzipArchive(stream.filter(f -> MoreFiles.getFileExtension(f).equals("jar"))
+					.findAny().orElseThrow(RuntimeException::new).toFile(), destination);
+		}
 		for (String include : filesToInclude) {
 			Assertions.assertTrue(new File(destination, include).exists());
 		}

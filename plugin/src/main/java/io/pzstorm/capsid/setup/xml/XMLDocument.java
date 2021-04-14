@@ -18,10 +18,11 @@
 package io.pzstorm.capsid.setup.xml;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
@@ -166,8 +167,8 @@ public abstract class XMLDocument {
 	 */
 	public void writeToFile() throws IOException, TransformerException {
 
-		StreamResult streamResult = new StreamResult(new FileWriter(getAsFile(true)));
-		createAndConfigureTransformer().transform(new DOMSource(document), streamResult);
+		Writer writer = Files.newBufferedWriter(getAsFile(true).toPath(), StandardCharsets.UTF_8);
+		createAndConfigureTransformer().transform(new DOMSource(document), new StreamResult(writer));
 	}
 
 	/**

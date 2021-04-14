@@ -33,7 +33,7 @@ import io.pzstorm.capsid.util.Utils;
 
 class CreateLaunchConfigsTaskFunctionalTest extends PluginFunctionalTest {
 
-	private static final Map<LaunchRunConfig, String> RUN_CONFIGS = ImmutableMap.of(
+	private static final ImmutableMap<LaunchRunConfig, String> RUN_CONFIGS = ImmutableMap.of(
 			LaunchRunConfig.RUN_ZOMBOID, "Run_Zomboid.xml",
 			LaunchRunConfig.RUN_ZOMBOID_LOCAL, "Run_Zomboid_local.xml",
 			LaunchRunConfig.DEBUG_ZOMBOID, "Debug_Zomboid.xml",

@@ -96,7 +96,7 @@ public class UnixPath {
 		if (this == o) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (!(o instanceof UnixPath)) {
 			return false;
 		}
 		return path.equals(((UnixPath) o).path);

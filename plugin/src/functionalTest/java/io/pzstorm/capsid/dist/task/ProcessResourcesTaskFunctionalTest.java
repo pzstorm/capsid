@@ -20,6 +20,8 @@ package io.pzstorm.capsid.dist.task;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -63,9 +65,9 @@ class ProcessResourcesTaskFunctionalTest extends PluginFunctionalTest {
 				"models/testModel.obj",
 				"maps/testMap.map"
 		};
-		long filesFound = Files.walk(resourcesDir.toPath()).filter(Files::isRegularFile).count();
-		Assertions.assertEquals(expectedFiles.length, filesFound);
-
+		try (Stream<Path> stream = Files.walk(resourcesDir.toPath()).filter(Files::isRegularFile)) {
+			Assertions.assertEquals(expectedFiles.length, stream.count());
+		}
 		for (String expectedFile : expectedFiles) {
 			Assertions.assertTrue(new File(resourcesDir, expectedFile).exists());
 		}

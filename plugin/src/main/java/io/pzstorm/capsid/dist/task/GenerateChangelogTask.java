@@ -18,8 +18,10 @@
 package io.pzstorm.capsid.dist.task;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,7 +64,7 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 			if (!gemFile.createNewFile()) {
 				throw new GradleException("Unable to create Gemfile in root directory");
 			}
-			try (FileWriter writer = new FileWriter(gemFile)) {
+			try (Writer writer = Files.newBufferedWriter(gemFile.toPath(), StandardCharsets.UTF_8)) {
 				writer.write(Utils.readResourceAsTextFromStream(CapsidPlugin.class, "Gemfile"));
 			}
 		}

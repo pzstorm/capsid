@@ -18,9 +18,9 @@
 package io.pzstorm.capsid;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -165,7 +165,9 @@ public abstract class PluginFunctionalTest {
 	}
 
 	protected void writeToProjectFile(String path, String[] lines) throws IOException {
-		try (Writer writer = new FileWriter(projectDir.toPath().resolve(path).toFile())) {
+
+		Path projectFilePath = new File(projectDir, path).toPath();
+		try (Writer writer = Files.newBufferedWriter(projectFilePath, StandardCharsets.UTF_8)) {
 			writer.write(String.join("\n", lines));
 		}
 	}

@@ -24,7 +24,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -83,8 +82,8 @@ public class Utils {
 			if (inputStream == null) {
 				throw new IOException("Unable to find resource for path '" + path + '\'');
 			}
-			Stream<String> stream = new BufferedReader(new InputStreamReader(inputStream)).lines();
-			return stream.collect(Collectors.joining("\n"));
+			InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+			return new BufferedReader(streamReader).lines().collect(Collectors.joining("\n"));
 		}
 	}
 

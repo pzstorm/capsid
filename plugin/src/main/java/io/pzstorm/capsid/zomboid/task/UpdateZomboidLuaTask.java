@@ -17,9 +17,11 @@
  */
 package io.pzstorm.capsid.zomboid.task;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
@@ -68,7 +70,8 @@ public class UpdateZomboidLuaTask extends DefaultTask implements CapsidTask {
 		Project project = getProject();
 
 		// write semantic version to file
-		try (Writer writer = new FileWriter(ZomboidUtils.getZomboidVersionFile(project))) {
+		Path zomboidVersionFile = ZomboidUtils.getZomboidVersionFile(project).toPath();
+		try (Writer writer = Files.newBufferedWriter(zomboidVersionFile, StandardCharsets.UTF_8)) {
 			writer.write(ZomboidUtils.getZomboidDocVersion(project).toString());
 		}
 	}
