@@ -82,3 +82,12 @@ tasks.named('check') {
 	// Run functional and integration tests as part of `check`
 	it.dependsOn(tasks.functionalTest, tasks.integrationTest)
 }
+
+task runTests {
+	description 'Run all test categories in order.'
+	group 'verification'
+
+	tasks.withType(Test.class).each {
+		dependsOn(it)
+	}
+}
