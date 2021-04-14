@@ -19,15 +19,15 @@ package io.pzstorm.capsid.setup.xml;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.gradle.testkit.runner.BuildResult;
+import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
@@ -50,26 +50,22 @@ class CreateLaunchConfigsTaskFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldWriteToFileLaunchRunConfigurationsFromTask() throws IOException {
 
-		@SuppressWarnings("SpellCheckingInspection")
-		List<String> arguments = ImmutableList.of(
-				String.format("-PgameDir=%s", getGameDirPath()),
-				String.format("-PideaHome=%s", getIdeaHomePath()),
-				SetupTasks.CREATE_LAUNCH_CONFIGS.name
-		);
+		GradleRunner runner = getRunner();
+		List<String> arguments = new ArrayList<>(runner.getArguments());
+		arguments.add(SetupTasks.CREATE_LAUNCH_CONFIGS.name);
+
 		BuildResult result = getRunner().withArguments(arguments).build();
 		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_LAUNCH_CONFIGS.name);
 
-		Path runConfigurations = getProjectDir().toPath().resolve(".idea/runConfigurations");
+		File runConfigurations = new File(getProjectDir(), ".idea/runConfigurations");
 		for (Map.Entry<LaunchRunConfig, String> entry : RUN_CONFIGS.entrySet())
 		{
 			String filename = entry.getValue();
-			File runConfig = runConfigurations.resolve(filename).toFile();
+			File runConfig = new File(runConfigurations, filename);
 			Assertions.assertTrue(runConfig.exists());
 
 			String expected = Utils.readResourceAsTextFromStream(getClass(), filename);
-			String actual = Utils.readTextFromFile(runConfig);
-
-			Assertions.assertEquals(expected, actual);
+			Assertions.assertEquals(expected, Utils.readTextFromFile(runConfig));
 		}
 	}
 }
