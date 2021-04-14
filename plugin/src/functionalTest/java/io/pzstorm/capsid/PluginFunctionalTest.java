@@ -26,6 +26,9 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Random;
 
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
+
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.testfixtures.ProjectBuilder;
@@ -75,6 +78,10 @@ public abstract class PluginFunctionalTest {
 
 		if (projectDir == null) {
 			projectDir = new File(PARENT_TEMP_DIR, projectName);
+		}
+		// make sure the project directory doesn't exist
+		if (projectDir.exists()) {
+			MoreFiles.deleteRecursively(projectDir.toPath(), RecursiveDeleteOption.ALLOW_INSECURE);
 		}
 		// Setup the test build
 		Files.createDirectories(projectDir.toPath());
