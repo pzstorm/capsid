@@ -36,16 +36,17 @@ public class ZomboidJarTask extends ZomboidJar implements CapsidTask {
 	public void configure(String group, String description, Project project) {
 		CapsidTask.super.configure(group, description, project);
 
+		File zomboidClassesDir = ProjectProperty.ZOMBOID_CLASSES_DIR.get(project);
+		onlyIf(t -> {
+			@Nullable File[] zomboidClasses = zomboidClassesDir.listFiles();
+			return zomboidClassesDir.exists() && zomboidClasses != null && zomboidClasses.length > 0;
+		});
+		getDestinationDirectory().set(new File(project.getProjectDir(), "lib"));
+		from(zomboidClassesDir);
+
 		setIncludeEmptyDirs(false);
 		getArchiveBaseName().set("zomboid");
 
-		File zomboidClassesDir = ProjectProperty.ZOMBOID_CLASSES_DIR.get(project);
-		@Nullable File[] zomboidClasses = zomboidClassesDir.listFiles();
-
-		from(zomboidClassesDir);
-		getDestinationDirectory().set(new File(project.getProjectDir(), "lib"));
-
-		onlyIf(t -> zomboidClassesDir.exists() && zomboidClasses != null && zomboidClasses.length > 0);
 		dependsOn(project.getTasks().getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
 	}
 }

@@ -64,9 +64,10 @@ public class DecompileZomboidTask extends JavaExec implements CapsidTask {
 		if (property != null)
 		{
 			File zomboidClassesDir = ProjectProperty.ZOMBOID_CLASSES_DIR.get(project);
-			@Nullable File[] zomboidClasses = zomboidClassesDir.listFiles();
-			onlyIf(t -> zomboidClassesDir.exists() && zomboidClasses != null && zomboidClasses.length > 0);
-
+			onlyIf(t -> {
+				@Nullable File[] zomboidClasses = zomboidClassesDir.listFiles();
+				return zomboidClassesDir.exists() && zomboidClasses != null && zomboidClasses.length > 0;
+			});
 			ExtensionContainer extensions = project.getExtensions();
 			ExtraPropertiesExtension ext = extensions.getExtraProperties();
 
