@@ -22,7 +22,7 @@ public class DiscordIntegration extends XMLDocument {
 	public static final DiscordIntegration INTEGRATION = new DiscordIntegration();
 
 	private DiscordIntegration() {
-		super("discord", ".idea/");
+		super("discord", Paths.get(".idea"));
 	}
 
 	// TODO: finish writing this after implementing mod.gradle

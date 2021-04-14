@@ -17,6 +17,8 @@
  */
 package io.pzstorm.capsid.setup.xml;
 
+import java.nio.file.Paths;
+
 import org.gradle.api.Project;
 import org.w3c.dom.Element;
 
@@ -31,7 +33,7 @@ public class ModSearchScope extends XMLDocument {
 	private final String pattern;
 
 	public ModSearchScope(String name, String pattern) {
-		super(name, ".idea/scopes/");
+		super(name, Paths.get(".idea/scopes/"));
 		this.pattern = pattern;
 	}
 

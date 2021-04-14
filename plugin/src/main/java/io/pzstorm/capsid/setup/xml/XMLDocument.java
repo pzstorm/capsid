@@ -20,6 +20,7 @@ package io.pzstorm.capsid.setup.xml;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -42,13 +43,17 @@ public abstract class XMLDocument {
 	private static final DocumentBuilderFactory FACTORY = DocumentBuilderFactory.newInstance();
 
 	final String name;
-	final String dirPath;
+	final Path dirPath;
 	final Document document;
 
 	/** Instance of {@code Project} that owns this document. */
 	private Project project;
 
-	public XMLDocument(String name, String dirPath) {
+	/**
+	 * @param name name of the document
+	 * @param dirPath path to parent directory relative to project root directory.
+	 */
+	public XMLDocument(String name, Path dirPath) {
 
 		this.name = name;
 		this.dirPath = dirPath;
@@ -108,7 +113,7 @@ public abstract class XMLDocument {
 		String filename = translateConfigNameToFilename();
 
 		// resolve parent directory of this document
-		File parentDir = project.getProjectDir().toPath().resolve(dirPath).toFile();
+		File parentDir = new File(project.getProjectDir(), dirPath.toString());
 
 		// file representing this document
 		File xmlFile = new File(parentDir, filename);
