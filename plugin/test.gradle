@@ -44,5 +44,5 @@ task runTests {
 	}
 }
 tasks.named('check') {
-	it.dependsOn(tasks.functionalTest, tasks.integrationTest, tasks.jacocoTestReport)
+	it.dependsOn(tasks.functionalTest, tasks.integrationTest)
 }
