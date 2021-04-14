@@ -19,7 +19,7 @@ package io.pzstorm.capsid;
 
 import org.gradle.api.Project;
 
-public interface DependencyResolver {
+interface DependencyResolver {
 
 	/**
 	 * Resolve dependency notations for given project.

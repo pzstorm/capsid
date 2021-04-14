@@ -60,7 +60,7 @@ public enum Configurations {
 	 * @param configurations where to resolve the configuration from.
 	 * @return configuration with the given name. Never returns {@code null}.
 	 */
-	public static Configuration resolve(String name, ConfigurationContainer configurations) {
+	private static Configuration resolve(String name, ConfigurationContainer configurations) {
 
 		try {
 			return configurations.getByName(name);

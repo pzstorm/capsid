@@ -52,7 +52,7 @@ public enum ZomboidTasks {
 			"Run ZomboidDoc to update compiled Lua library."
 	);
 	public final String name, description;
-	final Class<? extends CapsidTask> type;
+	private final Class<? extends CapsidTask> type;
 
 	ZomboidTasks(Class<? extends CapsidTask> type, String name, String description) {
 		this.type = type;

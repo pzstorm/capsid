@@ -48,7 +48,7 @@ public class LaunchRunConfig extends XMLDocument {
 
 	private final VmParameter vmParameters;
 
-	public LaunchRunConfig(String name, VmParameter vmParameters) {
+	private LaunchRunConfig(String name, VmParameter vmParameters) {
 		super(name, Paths.get(".idea/runConfigurations"));
 		this.vmParameters = vmParameters;
 	}

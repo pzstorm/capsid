@@ -43,7 +43,7 @@ public enum SetupTasks {
 			"Show IDEA project in Discord via rich presence."
 	);
 	public final String name, description;
-	final Class<? extends CapsidTask> type;
+	private final Class<? extends CapsidTask> type;
 
 	SetupTasks(Class<? extends CapsidTask> type, String name, String description) {
 		this.type = type;

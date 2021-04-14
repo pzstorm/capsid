@@ -33,6 +33,7 @@ import java.nio.file.Paths;
  *
  * @see <a href=http://www.linfo.org/forward_slash.html>Forward Slash Definition</a>
  */
+@SuppressWarnings("WeakerAccess")
 public class UnixPath {
 
 	private final String path;

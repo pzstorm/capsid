@@ -44,8 +44,8 @@ public enum ModTasks {
 			"applyModTemplate", "Apply Project Zomboid mod template."
 	);
 	public final String name, description;
-	public final boolean register;
-	final Class<? extends CapsidTask> type;
+	private final boolean register;
+	private final Class<? extends CapsidTask> type;
 
 	ModTasks(Class<? extends CapsidTask> type, boolean register, String name, String description) {
 		this.type = type;

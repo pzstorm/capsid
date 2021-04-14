@@ -43,8 +43,8 @@ public abstract class XMLDocument {
 	private static final DocumentBuilderFactory FACTORY = DocumentBuilderFactory.newInstance();
 
 	final String name;
-	final Path dirPath;
 	final Document document;
+	private final Path dirPath;
 
 	/** Instance of {@code Project} that owns this document. */
 	private Project project;
@@ -53,7 +53,7 @@ public abstract class XMLDocument {
 	 * @param name name of the document
 	 * @param dirPath path to parent directory relative to project root directory.
 	 */
-	public XMLDocument(String name, Path dirPath) {
+	XMLDocument(String name, Path dirPath) {
 
 		this.name = name;
 		this.dirPath = dirPath;
@@ -69,7 +69,7 @@ public abstract class XMLDocument {
 		}
 	}
 
-	public XMLDocument configure(Project project) {
+	XMLDocument configure(Project project) {
 		this.project = project;
 		return this;
 	}
@@ -80,7 +80,7 @@ public abstract class XMLDocument {
 	 *
 	 * @param element element to append or replace child with.
 	 */
-	protected void appendOrReplaceRootElement(Element element) {
+	void appendOrReplaceRootElement(Element element) {
 
 		Node childNode = document.getFirstChild();
 		if (childNode == null) {
@@ -93,7 +93,7 @@ public abstract class XMLDocument {
 	 * Returns translated config name to filename. The translation process is similar to
 	 * what IDEA is doing when it is naming {@code XML} configuration files.
 	 */
-	protected String translateConfigNameToFilename() {
+	private String translateConfigNameToFilename() {
 
 		// replace dashed with underscores and whitespaces with underscores
 		return name.replace('-', '_').replaceAll("\\s", "_")
@@ -107,7 +107,7 @@ public abstract class XMLDocument {
 	 * @param create whether to create the resulting file if it doesn't exist already.
 	 * @throws IOException if unable to create directory structure or resulting file.
 	 */
-	protected File getAsFile(boolean create) throws IOException {
+	private File getAsFile(boolean create) throws IOException {
 
 		// translate config name to filename (similar to what IDEA is doing)
 		String filename = translateConfigNameToFilename();
@@ -135,7 +135,7 @@ public abstract class XMLDocument {
 	 *
 	 * @throws TransformerConfigurationException when it is not possible to create a {@code Transformer} instance.
 	 */
-	protected Transformer createAndConfigureTransformer() throws TransformerConfigurationException {
+	Transformer createAndConfigureTransformer() throws TransformerConfigurationException {
 
 		// create a new transformer instance
 		Transformer transformer = TransformerFactory.newInstance().newTransformer();

@@ -37,7 +37,7 @@ public enum DistributionTasks {
 			"processMediaResources", "Process mod resources.", true
 	);
 	public final String name, description;
-	final Class<? extends CapsidTask> type;
+	private final Class<? extends CapsidTask> type;
 	private final boolean overwrite;
 
 	DistributionTasks(Class<? extends CapsidTask> type, String name, String description, boolean overwrite) {

@@ -39,6 +39,7 @@ import io.pzstorm.capsid.util.SemanticVersion;
 /**
  * This class represents properties from {@code mod.info} file.
  */
+@SuppressWarnings("WeakerAccess")
 public class ModProperties extends CapsidProperties {
 
 	/**

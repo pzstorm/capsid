@@ -45,7 +45,7 @@ public abstract class CapsidProperties {
 	 */
 	@Unmodifiable
 	@Contract(pure = true)
-	public abstract Set<CapsidProperty<?>> getProperties();
+	protected abstract Set<CapsidProperty<?>> getProperties();
 
 	/**
 	 * Load properties from file to given {@link Project} instance.

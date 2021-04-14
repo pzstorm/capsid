@@ -51,7 +51,7 @@ public abstract class PluginFunctionalTest {
 	private UnixPath gameDir, ideaHome;
 	private CapsidGradleRunner runner;
 
-	public PluginFunctionalTest() {
+	protected PluginFunctionalTest() {
 		this.projectDir = generateProjectDirectory();
 		this.projectName = projectDir.getName();
 	}

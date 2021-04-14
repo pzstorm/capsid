@@ -32,7 +32,7 @@ public class ModSearchScope extends XMLDocument {
 	);
 	private final String pattern;
 
-	public ModSearchScope(String name, String pattern) {
+	private ModSearchScope(String name, String pattern) {
 		super(name, Paths.get(".idea/scopes/"));
 		this.pattern = pattern;
 	}

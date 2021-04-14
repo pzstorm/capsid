@@ -35,7 +35,7 @@ public class ZomboidJar extends Jar {
 
 	private static final String GAME_VERSION_PROPERTY = "mod.pzversion";
 
-	public ZomboidJar() {
+	protected ZomboidJar() {
 
 		Project project = getProject();
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
