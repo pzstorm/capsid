@@ -54,6 +54,10 @@ public abstract class XMLDocument {
 		this.dirPath = dirPath;
 		try {
 			this.document = FACTORY.newDocumentBuilder().newDocument();
+
+			// configure document like this to omit "standalone" attribute in XML element
+			// https://community.oracle.com/tech/developers/discussion/comment/6845084
+			this.document.setXmlStandalone(true);
 		}
 		catch (ParserConfigurationException e) {
 			throw new ExceptionInInitializerError(e);
