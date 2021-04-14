@@ -7,8 +7,9 @@ plugins {
 	// https://docs.gradle.org/current/userguide/publishing_maven.html
 	id 'maven-publish'
 }
-apply plugin: "com.diffplug.spotless"
+apply plugin: 'com.diffplug.spotless'
 apply from: "https://gist.githubusercontent.com/yooksi/${spotlessGistID}/raw/spotless.gradle"
+apply from: 'test.gradle'
 
 version '0.1.0'
 
@@ -30,16 +31,6 @@ dependencies {
 	compileOnly 'org.jetbrains:annotations:20.1.0'
 }
 
-sourceSets {
-	functionalTest {
-		compileClasspath += sourceSets.main.output
-		runtimeClasspath += sourceSets.main.output
-	}
-	integrationTest {
-		compileClasspath += sourceSets.main.output
-		runtimeClasspath += sourceSets.main.output
-	}
-}
 
 gradlePlugin {
 	//noinspection GroovyAssignabilityCheck
@@ -50,44 +41,4 @@ gradlePlugin {
 		}
 	}
 	testSourceSets(sourceSets.integrationTest, sourceSets.functionalTest)
-}
-
-configurations {
-	functionalTestImplementation.extendsFrom(implementation, testImplementation)
-	integrationTestImplementation.extendsFrom(implementation, testImplementation)
-}
-
-test {
-	useJUnitPlatform()
-	testLogging.events "passed", "skipped", "failed"
-}
-
-def integrationTest = tasks.register('integrationTest', Test) {
-	it.useJUnitPlatform()
-	it.testLogging.events "passed", "skipped", "failed"
-	it.testClassesDirs = sourceSets.integrationTest.output.classesDirs
-	it.classpath = sourceSets.integrationTest.runtimeClasspath
-	it.shouldRunAfter("test")
-}
-
-tasks.register('functionalTest', Test) {
-	it.useJUnitPlatform()
-	it.testLogging.events "passed", "skipped", "failed"
-	it.testClassesDirs = sourceSets.functionalTest.output.classesDirs
-	it.classpath = sourceSets.functionalTest.runtimeClasspath
-	it.shouldRunAfter(integrationTest, "test")
-}
-
-tasks.named('check') {
-	// Run functional and integration tests as part of `check`
-	it.dependsOn(tasks.functionalTest, tasks.integrationTest)
-}
-
-task runTests {
-	description 'Run all test categories in order.'
-	group 'verification'
-
-	tasks.withType(Test.class).each {
-		dependsOn(it)
-	}
 }
