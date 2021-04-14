@@ -30,6 +30,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Splitter;
 
@@ -63,7 +64,8 @@ public class DecompileZomboidTask extends JavaExec implements CapsidTask {
 		if (property != null)
 		{
 			File zomboidClassesDir = ProjectProperty.ZOMBOID_CLASSES_DIR.get(project);
-			onlyIf(t -> zomboidClassesDir.exists() && zomboidClassesDir.listFiles().length > 0);
+			@Nullable File[] zomboidClasses = zomboidClassesDir.listFiles();
+			onlyIf(t -> zomboidClassesDir.exists() && zomboidClasses != null && zomboidClasses.length > 0);
 
 			ExtensionContainer extensions = project.getExtensions();
 			ExtraPropertiesExtension ext = extensions.getExtraProperties();

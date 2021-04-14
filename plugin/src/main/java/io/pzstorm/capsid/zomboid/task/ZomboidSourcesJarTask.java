@@ -20,6 +20,7 @@ package io.pzstorm.capsid.zomboid.task;
 import java.io.File;
 
 import org.gradle.api.Project;
+import org.jetbrains.annotations.Nullable;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.ProjectProperty;
@@ -39,11 +40,12 @@ public class ZomboidSourcesJarTask extends ZomboidJar implements CapsidTask {
 		getArchiveClassifier().set("sources");
 
 		File zomboidSourcesDir = ProjectProperty.ZOMBOID_SOURCES_DIR.get(project);
+		@Nullable File[] zomboidSources = zomboidSourcesDir.listFiles();
 
 		from(zomboidSourcesDir);
 		getDestinationDirectory().set(new File(project.getProjectDir(), "lib"));
 
-		onlyIf(t -> zomboidSourcesDir.exists() && zomboidSourcesDir.listFiles().length > 0);
+		onlyIf(t -> zomboidSourcesDir.exists() && zomboidSources != null && zomboidSources.length > 0);
 		dependsOn(project.getTasks().getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
 	}
 }

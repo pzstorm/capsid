@@ -38,12 +38,13 @@ class CreateModStructureTaskFunctionalTest extends PluginFunctionalTest {
 		assertTaskOutcomeSuccess(result, ModTasks.CREATE_MOD_STRUCTURE.name);
 
 		Set<String> expectedDirNames = new HashSet<>();
-		File gameDir = CapsidPlugin.getGameDirProperty(getProject());
-		Arrays.stream(new File(gameDir, "media").listFiles(File::isDirectory))
+		File gameDir = new File(CapsidPlugin.getGameDirProperty(getProject()), "media");
+		Arrays.stream(Objects.requireNonNull(gameDir.listFiles(File::isDirectory)))
 				.forEach(f -> expectedDirNames.add(f.getName()));
 
 		Set<String> actualDirNames = new HashSet<>();
-		Arrays.stream(getProjectDir().toPath().resolve("media").toFile().listFiles(File::isDirectory))
+		File projectGameDir = new File(getProjectDir(), "media");
+		Arrays.stream(Objects.requireNonNull(projectGameDir.listFiles(File::isDirectory)))
 				.forEach(f -> actualDirNames.add(f.getName()));
 
 		Assertions.assertEquals(expectedDirNames, actualDirNames);
@@ -73,12 +74,13 @@ class CreateModStructureTaskFunctionalTest extends PluginFunctionalTest {
 		assertTaskOutcomeSuccess(result, ModTasks.CREATE_MOD_STRUCTURE.name);
 
 		Set<String> expectedDirNames = new HashSet<>();
-		Arrays.stream(gameDir.toPath().resolve("media").toFile().listFiles(File::isDirectory))
+		Arrays.stream(Objects.requireNonNull(new File(gameDir, "media").listFiles(File::isDirectory)))
 				.filter(f -> !excludedSrcDirs.contains("media/" + f.getName()))
 				.forEach(f -> expectedDirNames.add(f.getName()));
 
 		Set<String> actualDirNames = new HashSet<>();
-		Arrays.stream(getProjectDir().toPath().resolve("media").toFile().listFiles(File::isDirectory))
+		File projectGameDir = new File(getProjectDir(), "media");
+		Arrays.stream(Objects.requireNonNull(projectGameDir.listFiles(File::isDirectory)))
 				.forEach(f -> actualDirNames.add(f.getName()));
 
 		Assertions.assertEquals(expectedDirNames, actualDirNames);

@@ -62,7 +62,7 @@ class ZomboidClassesTaskFunctionalTest extends PluginFunctionalTest {
 		assertTaskOutcomeSuccess(result, ZomboidTasks.ZOMBOID_CLASSES.name);
 
 		// class files that were synced from install directory
-		Set<File> zomboidClasses = new HashSet<>(Arrays.asList(zomboidClassesDir.listFiles()));
+		Set<File> zomboidClasses = new HashSet<>(Arrays.asList(Objects.requireNonNull(zomboidClassesDir.listFiles())));
 		Assertions.assertEquals(includedFiles.length, zomboidClasses.size());
 
 		// expect finding all included files

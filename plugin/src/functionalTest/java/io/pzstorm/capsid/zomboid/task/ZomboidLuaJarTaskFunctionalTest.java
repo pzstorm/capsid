@@ -20,6 +20,7 @@ package io.pzstorm.capsid.zomboid.task;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import org.gradle.api.Project;
 import org.gradle.testkit.runner.BuildResult;
@@ -53,7 +54,7 @@ class ZomboidLuaJarTaskFunctionalTest extends PluginFunctionalTest {
 		Assertions.assertTrue(destination.mkdir());
 
 		// assert no files present in destination
-		Assertions.assertEquals(0, destination.listFiles().length);
+		Assertions.assertEquals(0, Objects.requireNonNull(destination.listFiles()).length);
 
 		BuildResult result = getRunner().withArguments("zomboidLuaJar").build();
 		assertTaskOutcomeSuccess(result, "zomboidLuaJar");
@@ -63,7 +64,7 @@ class ZomboidLuaJarTaskFunctionalTest extends PluginFunctionalTest {
 		Assertions.assertTrue(archive.exists());
 
 		// assert only jar file present in destination directory
-		Assertions.assertEquals(1, destination.listFiles().length);
+		Assertions.assertEquals(1, Objects.requireNonNull(destination.listFiles()).length);
 
 		Utils.unzipArchive(archive, destination);
 
@@ -72,7 +73,7 @@ class ZomboidLuaJarTaskFunctionalTest extends PluginFunctionalTest {
 		Assertions.assertTrue(archive.delete());
 
 		// assert only expected files are in directory
-		Assertions.assertEquals(expectedFiles.length, destination.listFiles().length);
+		Assertions.assertEquals(expectedFiles.length, Objects.requireNonNull(destination.listFiles()).length);
 
 		for (String expectedFile : expectedFiles) {
 			Assertions.assertTrue(new File(destination, expectedFile).exists());
