@@ -127,13 +127,13 @@ public class CapsidPlugin implements Plugin<Project> {
 		TaskContainer tasks = project.getTasks();
 		tasks.getByName("classes").dependsOn(tasks.getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
 
-		// register all mod tasks
-		for (ModTasks task : ModTasks.values()) {
-			task.createOrRegister(project);
-		}
 		// plugin extension will be configured in evaluation phase
 		project.afterEvaluate(p ->
 		{
+			// register all mod tasks
+			for (ModTasks task : ModTasks.values()) {
+				task.createOrRegister(project);
+			}
 			// set default excluded directories if map is not user configured
 			if (capsidExt.getExcludedResourceDirs().isEmpty())
 			{
