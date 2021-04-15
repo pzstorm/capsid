@@ -37,6 +37,7 @@ import org.gradle.api.plugins.*;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
+import org.jetbrains.annotations.Nullable;
 
 import io.pzstorm.capsid.dist.DistributionTasks;
 import io.pzstorm.capsid.mod.ModTasks;
@@ -48,6 +49,7 @@ import io.pzstorm.capsid.zomboid.ZomboidTasks;
 public class CapsidPlugin implements Plugin<Project> {
 
 	public static final Logger LOGGER = Logging.getLogger("capsid");
+	private static @Nullable CapsidPluginExtension capsidExt;
 
 	/**
 	 * Returns {@code Path} to Project Zomboid installation directory.
@@ -66,7 +68,7 @@ public class CapsidPlugin implements Plugin<Project> {
 
 		// add the plugin extension object
 		ExtensionContainer extensions = project.getExtensions();
-		CapsidPluginExtension capsid = extensions.create("capsid", CapsidPluginExtension.class);
+		capsidExt = extensions.create("capsid", CapsidPluginExtension.class);
 
 		// apply all core plugins to this project
 		CorePlugin.applyAll(project);
@@ -133,16 +135,16 @@ public class CapsidPlugin implements Plugin<Project> {
 		project.afterEvaluate(p ->
 		{
 			// set default excluded directories if map is not user configured
-			if (capsid.getExcludedResourceDirs().isEmpty())
+			if (capsidExt.getExcludedResourceDirs().isEmpty())
 			{
-				capsid.excludeResourceDirs(
+				capsidExt.excludeResourceDirs(
 						"media/lua", "media/luaexamples",
 						"media/newuitests", "media/launcher"
 				);
 			}
 			File mediaDir = new File(gameDir, "media");
 			File[] mediaFiles = mediaDir.listFiles(pathname ->
-					pathname.isDirectory() && !capsid.isExcludedResource("media/" + pathname.getName())
+					pathname.isDirectory() && !capsidExt.isExcludedResource("media/" + pathname.getName())
 			);
 			if (mediaFiles != null && mediaFiles.length > 0)
 			{
@@ -175,5 +177,9 @@ public class CapsidPlugin implements Plugin<Project> {
 					DistributionTasks.MEDIA_CLASSES.name, DistributionTasks.PROCESS_RESOURCES.name
 			);
 		});
+	}
+
+	public static CapsidPluginExtension getCapsidPluginExtension() {
+		return Objects.requireNonNull(capsidExt);
 	}
 }
