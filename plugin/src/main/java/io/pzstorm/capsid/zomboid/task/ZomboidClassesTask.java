@@ -37,5 +37,8 @@ public class ZomboidClassesTask extends Sync implements CapsidTask {
 		from(CapsidPlugin.getGameDirProperty(project));
 		into(ProjectProperty.ZOMBOID_CLASSES_DIR.get(project));
 		include("**/*.class", "stdlib.lbc");
+
+		eachFile(copy -> CapsidPlugin.LOGGER.info("Checking file " + copy.getPath()));
+		doFirst(task -> CapsidPlugin.LOGGER.lifecycle("Copying Zomboid classes..."));
 	}
 }

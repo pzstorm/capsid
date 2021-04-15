@@ -131,5 +131,8 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 
 		// create Gemfile in root directory if one doesn't exist
 		createGemfile(project);
+
+		doFirst(task -> CapsidPlugin.LOGGER.lifecycle(String.format(
+				"Generating changelog for %s/%s", ext.get("repo.owner"), ext.get("repo.name"))));
 	}
 }
