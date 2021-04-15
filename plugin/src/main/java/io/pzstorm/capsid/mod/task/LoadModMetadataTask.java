@@ -36,6 +36,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 import io.pzstorm.capsid.CapsidPlugin;
+import io.pzstorm.capsid.CapsidPluginExtension;
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.mod.ModProperties;
@@ -51,6 +52,18 @@ public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 		CapsidTask.super.configure(group, description, project);
 
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
+		CapsidPluginExtension capsidExt = CapsidPlugin.getCapsidPluginExtension();
+
+		String repoOwner = capsidExt.getRepositoryOwner();
+		String repoName = capsidExt.getRepositoryName();
+
+		// first check if repository data has been defined by user
+		if (!Strings.isNullOrEmpty(repoOwner)) {
+			ext.set("repo.owner", repoOwner);
+		}
+		if (!Strings.isNullOrEmpty(repoName)) {
+			ext.set("repo.name", repoName);
+		}
 		File modInfoFile = ProjectProperty.MOD_INFO_FILE.get(project);
 		if (modInfoFile.exists())
 		{
