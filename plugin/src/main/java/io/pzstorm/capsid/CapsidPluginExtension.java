@@ -31,6 +31,9 @@ import io.pzstorm.capsid.dist.task.GenerateChangelogTask;
 @SuppressWarnings({ "WeakerAccess", "CanBeFinal" })
 public class CapsidPluginExtension {
 
+	/**
+	 * {@code Set} of resource directories to exclude from source set.
+	 */
 	private final Set<String> excludedResourceDirs = new HashSet<>();
 
 	/**
