@@ -39,6 +39,7 @@ import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.mod.ModProperties;
+import io.pzstorm.capsid.property.validator.PropertyValidators;
 
 /**
  * This task loads mod metadata information from {@code mod.info} file.
@@ -72,26 +73,34 @@ public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 				String sUrl = properties.getProperty("url");
 				if (!Strings.isNullOrEmpty(sUrl))
 				{
-					StringBuilder sb = new StringBuilder();
-					char[] charArray = new URL(sUrl).getPath().toCharArray();
+					// only read if link is a valid github url
+					if (PropertyValidators.GITHUB_URL_VALIDATOR.isValid(new URL(sUrl)))
+					{
+						StringBuilder sb = new StringBuilder();
+						char[] charArray = new URL(sUrl).getPath().toCharArray();
 
-					int beforeLastIndex = charArray.length - 1;
-					int startIndex = charArray[0] != '/' ? 0 : 1;
-					int endIndex = charArray[beforeLastIndex] != '/' ? charArray.length : beforeLastIndex;
+						int beforeLastIndex = charArray.length - 1;
+						int startIndex = charArray[0] != '/' ? 0 : 1;
+						int endIndex = charArray[beforeLastIndex] != '/' ? charArray.length : beforeLastIndex;
 
-					// remove slashes from first and last string index
-					for (int i = startIndex; i < endIndex; i++) {
-						sb.append(charArray[i]);
+						// remove slashes from first and last string index
+						for (int i = startIndex; i < endIndex; i++) {
+							sb.append(charArray[i]);
+						}
+						String urlPath = sb.toString();
+
+						List<String> pathElements = Splitter.on("/").splitToList(urlPath);
+						if (pathElements.size() != 2) {
+							throw new InvalidUserDataException("Unexpected mod url format " + urlPath);
+						}
+						// these properties are used to generate changelog
+						if (!ext.has("repo.owner")) {
+							ext.set("repo.owner", pathElements.get(0));
+						}
+						if (!ext.has("repo.name")) {
+							ext.set("repo.name", pathElements.get(1));
+						}
 					}
-					String urlPath = sb.toString();
-
-					List<String> pathElements = Splitter.on("/").splitToList(urlPath);
-					if (pathElements.size() != 2) {
-						throw new InvalidUserDataException("Unexpected mod url format " + urlPath);
-					}
-					// these properties are used to generate changelog
-					ext.set("repo.owner", pathElements.get(0));
-					ext.set("repo.name", pathElements.get(1));
 				}
 			}
 			catch (IOException e) {

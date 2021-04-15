@@ -65,7 +65,7 @@ public class InitModMetadataTask extends DefaultTask implements CapsidTask {
 		Map<CapsidProperty<?>, String> PROPERTIES_INPUT_MAP = ImmutableMap.of(
 				ModProperties.MOD_NAME, "Enter mod name:",
 				ModProperties.MOD_DESCRIPTION, "\nEnter mod description:",
-				ModProperties.MOD_URL, "\nEnter github repository URL:"
+				ModProperties.MOD_URL, "\nEnter workshop or repository URL:"
 		);
 		for (Map.Entry<CapsidProperty<?>, String> entry : PROPERTIES_INPUT_MAP.entrySet())
 		{
