@@ -33,57 +33,44 @@ import io.pzstorm.capsid.dist.task.GenerateChangelogTask;
 public class CapsidPluginExtension {
 
 	/**
+	 * {@code Set} of resource directories to exclude from source set.
+	 */
+	private final Set<String> excludedResourceDirs = new HashSet<>();
+	/**
+	 * Options used when generating project changelog.
+	 *
+	 * @see GenerateChangelogTask
+	 */
+	public Map<GenerateChangelogOptions, Object> generateChangelogOptions = new HashMap<>();
+	/**
 	 * <p>
-	 *     Name of the Github repository owner that hosts the project.
-	 *     This property is used to generate project changelog and is
-	 *     normally extracted from {@code url} mod property.
+	 * Name of the Github repository owner that hosts the project.
+	 * This property is used to generate project changelog and is
+	 * normally extracted from {@code url} mod property.
 	 * </p>
 	 * For example if the {@link URL} to repository was:
 	 * <blockquote>
-	 *     <code>https://github.com/pzmodder/pz-mod</code>
+	 * <code>https://github.com/pzmodder/pz-mod</code>
 	 * </blockquote>
 	 * Then the name of the owner would be {@code pzmodder}.
 	 *
 	 * @see GenerateChangelogTask
 	 */
 	private String repositoryOwner = "";
-
 	/**
 	 * <p>
-	 *     Name of the Github repository that hosts the project.
-	 *     This property is used to generate project changelog and is
-	 *     normally extracted from {@code url} mod property.
+	 * Name of the Github repository that hosts the project.
+	 * This property is used to generate project changelog and is
+	 * normally extracted from {@code url} mod property.
 	 * </p>
 	 * For example if the {@link URL} to repository was:
 	 * <blockquote>
-	 *     <code>https://github.com/pzmodder/pz-mod</code>
+	 * <code>https://github.com/pzmodder/pz-mod</code>
 	 * </blockquote>
 	 * Then the name of the repository would be {@code pz-mod}.
-	 *
-	 * 	 * @see GenerateChangelogTask
+	 * * @see GenerateChangelogTask
 	 */
 	private String repositoryName = "";
-
-	/**
-	 * {@code Set} of resource directories to exclude from source set.
-	 */
-	private final Set<String> excludedResourceDirs = new HashSet<>();
-
-	/**
-	 * Set the owner of Github repository where the project is hosted.
-	 * @see GenerateChangelogTask
-	 */
-	public void setRepositoryOwner(String owner) {
-		repositoryOwner = owner;
-	}
-
-	/**
-	 * Set the name of the Github repository where the project is hosted.
-	 * @see GenerateChangelogTask
-	 */
-	public void setRepositoryName(String name) {
-		repositoryName = name;
-	}
 
 	/**
 	 * Returns the owner of the Github repository where the project is hosted.
@@ -93,6 +80,15 @@ public class CapsidPluginExtension {
 	 */
 	public String getRepositoryOwner() {
 		return repositoryOwner;
+	}
+
+	/**
+	 * Set the owner of Github repository where the project is hosted.
+	 *
+	 * @see GenerateChangelogTask
+	 */
+	public void setRepositoryOwner(String owner) {
+		repositoryOwner = owner;
 	}
 
 	/**
@@ -106,11 +102,13 @@ public class CapsidPluginExtension {
 	}
 
 	/**
-	 * Options used when generating project changelog.
+	 * Set the name of the Github repository where the project is hosted.
 	 *
 	 * @see GenerateChangelogTask
 	 */
-	public Map<GenerateChangelogOptions, Object> generateChangelogOptions = new HashMap<>();
+	public void setRepositoryName(String name) {
+		repositoryName = name;
+	}
 
 	/**
 	 * Exclude given resource directory paths for {@code media} module.

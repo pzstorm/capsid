@@ -63,6 +63,15 @@ public class CapsidPlugin implements Plugin<Project> {
 		return property.convert().toAbsolutePath().toFile();
 	}
 
+	/**
+	 * Returns an instance of {@link CapsidPluginExtension} for this plugin.
+	 *
+	 * @throws NullPointerException if called before the plugin has been applied.
+	 */
+	public static CapsidPluginExtension getCapsidPluginExtension() {
+		return Objects.requireNonNull(capsidExt);
+	}
+
 	@Override
 	public void apply(Project project) {
 
@@ -177,9 +186,5 @@ public class CapsidPlugin implements Plugin<Project> {
 					DistributionTasks.MEDIA_CLASSES.name, DistributionTasks.PROCESS_RESOURCES.name
 			);
 		});
-	}
-
-	public static CapsidPluginExtension getCapsidPluginExtension() {
-		return Objects.requireNonNull(capsidExt);
 	}
 }
