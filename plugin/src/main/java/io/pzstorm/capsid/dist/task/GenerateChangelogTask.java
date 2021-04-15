@@ -81,10 +81,18 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 		ExtraPropertiesExtension ext = extensions.getExtraProperties();
 		CapsidPluginExtension capsidExt = extensions.getByType(CapsidPluginExtension.class);
 
+		// cannot generate changelog without knowing where to look
+		boolean hasDefinedRepo = ext.has("repo.owner") && ext.has("repo.name");
+		onlyIf(it -> hasDefinedRepo);
+
 		Map<GenerateChangelogOptions, Object> optionsMap = capsidExt.generateChangelogOptions;
-		optionsMap.putIfAbsent(GenerateChangelogOptions.USER, ext.get("repo.owner"));
-		optionsMap.putIfAbsent(GenerateChangelogOptions.PROJECT, ext.get("repo.name"));
-		optionsMap.putIfAbsent(GenerateChangelogOptions.ISSUES_WITHOUT_LABELS, "false");
+		if (hasDefinedRepo)
+		{
+			optionsMap.putIfAbsent(GenerateChangelogOptions.USER, ext.get("repo.owner"));
+			optionsMap.putIfAbsent(GenerateChangelogOptions.PROJECT, ext.get("repo.name"));
+			optionsMap.putIfAbsent(GenerateChangelogOptions.ISSUES_WITHOUT_LABELS, "false");
+		}
+		else CapsidPlugin.LOGGER.warn("WARN: Repository owner and name not specified");
 
 		// first check for token in environment variables
 		String token = System.getenv(TOKEN_ENV_VAR_NAME);
