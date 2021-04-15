@@ -58,7 +58,7 @@ public class ZomboidVersionTask extends JavaExec implements CapsidTask {
 		// get command output from stream
 		ByteArrayOutputStream stream = (ByteArrayOutputStream) getStandardOutput();
 		String streamText = stream.toString(StandardCharsets.UTF_8.name());
-		List<String> versionText = Splitter.on("\r\n|\r|\n").splitToList(streamText);
+		List<String> versionText = Splitter.onPattern("\r\n|\r|\n").splitToList(streamText);
 
 		// ZomboidDoc version
 		CapsidPlugin.LOGGER.lifecycle(versionText.get(0));
