@@ -51,3 +51,12 @@ gradlePlugin {
 	}
 	testSourceSets(sourceSets.integrationTest, sourceSets.functionalTest)
 }
+
+// publish to mavenLocal every time we build project
+getTasks().named('classes').configure({
+	it.finalizedBy('publishToMavenLocal')
+})
+// publish to mavenLocal after all classes have been compiled
+publishToMavenLocal {
+	mustRunAfter('testClasses', 'functionalTestClasses', 'integrationTestClasses')
+}
