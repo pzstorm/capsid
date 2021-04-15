@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ import com.google.common.collect.ImmutableMap;
 import io.pzstorm.capsid.PluginIntegrationTest;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.mod.ModProperties;
+import io.pzstorm.capsid.mod.ModTasks;
 
 class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 
@@ -69,6 +71,9 @@ class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 		// apply plugin before validating properties
 		applyCapsidPlugin();
 
+		// register all mod tasks
+		registerModTasks();
+
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 		for (Map.Entry<String, String> entry : MOD_METADATA.entrySet())
 		{
@@ -87,6 +92,9 @@ class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 		// apply plugin before validating properties
 		applyCapsidPlugin();
 
+		// register all mod tasks
+		registerModTasks();
+
 		Assertions.assertEquals(project.getName(), ModProperties.MOD_NAME.findProperty(project));
 	}
 
@@ -98,6 +106,9 @@ class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 
 		// apply plugin before validating properties
 		applyCapsidPlugin();
+
+		// register all mod tasks
+		registerModTasks();
 
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 		for (Map.Entry<String, String> entry : MOD_METADATA.entrySet())
@@ -116,6 +127,9 @@ class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 		// apply plugin before validating properties
 		applyCapsidPlugin();
 
+		// register all mod tasks
+		registerModTasks();
+
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 
 		Assertions.assertTrue(ext.has("repo.owner"));
@@ -131,7 +145,14 @@ class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 		// apply plugin before validating properties
 		applyCapsidPlugin();
 
+		// register all mod tasks
+		registerModTasks();
+
 		String projectName = project.getRootProject().getName();
 		Assertions.assertEquals(projectName, ModProperties.MOD_ID.findProperty(project));
+	}
+
+	private void registerModTasks() {
+		Arrays.stream(ModTasks.values()).forEach(t -> t.createOrRegister(project));
 	}
 }
