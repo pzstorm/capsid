@@ -17,6 +17,7 @@
  */
 package io.pzstorm.capsid;
 
+import java.net.URL;
 import java.util.*;
 
 import org.jetbrains.annotations.Contract;
@@ -32,9 +33,77 @@ import io.pzstorm.capsid.dist.task.GenerateChangelogTask;
 public class CapsidPluginExtension {
 
 	/**
+	 * <p>
+	 *     Name of the Github repository owner that hosts the project.
+	 *     This property is used to generate project changelog and is
+	 *     normally extracted from {@code url} mod property.
+	 * </p>
+	 * For example if the {@link URL} to repository was:
+	 * <blockquote>
+	 *     <code>https://github.com/pzmodder/pz-mod</code>
+	 * </blockquote>
+	 * Then the name of the owner would be {@code pzmodder}.
+	 *
+	 * @see GenerateChangelogTask
+	 */
+	private String repositoryOwner = "";
+
+	/**
+	 * <p>
+	 *     Name of the Github repository that hosts the project.
+	 *     This property is used to generate project changelog and is
+	 *     normally extracted from {@code url} mod property.
+	 * </p>
+	 * For example if the {@link URL} to repository was:
+	 * <blockquote>
+	 *     <code>https://github.com/pzmodder/pz-mod</code>
+	 * </blockquote>
+	 * Then the name of the repository would be {@code pz-mod}.
+	 *
+	 * 	 * @see GenerateChangelogTask
+	 */
+	private String repositoryName = "";
+
+	/**
 	 * {@code Set} of resource directories to exclude from source set.
 	 */
 	private final Set<String> excludedResourceDirs = new HashSet<>();
+
+	/**
+	 * Set the owner of Github repository where the project is hosted.
+	 * @see GenerateChangelogTask
+	 */
+	public void setRepositoryOwner(String owner) {
+		repositoryOwner = owner;
+	}
+
+	/**
+	 * Set the name of the Github repository where the project is hosted.
+	 * @see GenerateChangelogTask
+	 */
+	public void setRepositoryName(String name) {
+		repositoryName = name;
+	}
+
+	/**
+	 * Returns the owner of the Github repository where the project is hosted.
+	 *
+	 * @return value of configure property or an empty {@code String}
+	 * 		if property has not been configured by user.
+	 */
+	public String getRepositoryOwner() {
+		return repositoryOwner;
+	}
+
+	/**
+	 * Returns the name of the Github repository where the project is hosted.
+	 *
+	 * @return value of configure property or an empty {@code String}
+	 * 		if property has not been configured by user.
+	 */
+	public String getRepositoryName() {
+		return repositoryName;
+	}
 
 	/**
 	 * Options used when generating project changelog.
