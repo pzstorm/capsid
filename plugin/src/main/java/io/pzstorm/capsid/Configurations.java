@@ -20,13 +20,13 @@ package io.pzstorm.capsid;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.jetbrains.annotations.Nullable;
+
+import com.google.common.collect.ImmutableSet;
 
 public enum Configurations {
 
@@ -38,7 +38,7 @@ public enum Configurations {
 	/**
 	 * Project Zomboid dependencies available during compile and runtime.
 	 */
-	ZOMBOID_IMPLEMENTATION("zomboidImplementation", ImmutableSet.of("implementation" ), null),
+	ZOMBOID_IMPLEMENTATION("zomboidImplementation", ImmutableSet.of("implementation"), null),
 
 	/**
 	 * Zomboid Doc dependencies only available during runtime.
@@ -48,7 +48,8 @@ public enum Configurations {
 	private final String name;
 	private final ImmutableSet<String> extendedTo, extendsFrom;
 
-	Configurations(String name, @Nullable ImmutableSet<String> extendedTo, @Nullable ImmutableSet<String> extendsFrom) {
+	Configurations(String name, @Nullable ImmutableSet<String> extendedTo,
+				   @Nullable ImmutableSet<String> extendsFrom) {
 		this.name = name;
 		this.extendedTo = extendedTo != null ? extendedTo : ImmutableSet.of();
 		this.extendsFrom = extendsFrom != null ? extendsFrom : ImmutableSet.of();

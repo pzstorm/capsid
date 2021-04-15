@@ -17,10 +17,10 @@
  */
 package io.pzstorm.capsid;
 
-import com.google.errorprone.annotations.Immutable;
-
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.artifacts.repositories.ArtifactRepository;
+
+import com.google.errorprone.annotations.Immutable;
 
 /**
  * This interface resolves {@link ArtifactRepository} instances on demand.

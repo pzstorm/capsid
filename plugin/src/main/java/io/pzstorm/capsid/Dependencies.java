@@ -22,11 +22,11 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
+
+import com.google.common.collect.ImmutableSet;
 
 import io.pzstorm.capsid.mod.ModProperties;
 
@@ -53,7 +53,7 @@ public enum Dependencies {
 		String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
 		if (modPzVersion != null)
 		{
-			String jarName =  String.format("zomboid-%s.jar", modPzVersion);
+			String jarName = String.format("zomboid-%s.jar", modPzVersion);
 			return ImmutableSet.of(project.files(Paths.get("lib", jarName)));
 		}
 		else return ImmutableSet.of();

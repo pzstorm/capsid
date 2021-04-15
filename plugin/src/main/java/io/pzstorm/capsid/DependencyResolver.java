@@ -19,9 +19,9 @@ package io.pzstorm.capsid;
 
 import java.util.Set;
 
-import com.google.errorprone.annotations.Immutable;
-
 import org.gradle.api.Project;
+
+import com.google.errorprone.annotations.Immutable;
 
 @Immutable
 interface DependencyResolver {
