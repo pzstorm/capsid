@@ -115,11 +115,6 @@ public class CapsidPlugin implements Plugin<Project> {
 		for (Configurations configuration : Configurations.values()) {
 			configuration.register(configurations);
 		}
-		// register project dependencies
-		DependencyHandler dependencies = project.getDependencies();
-		for (Dependencies dependency : Dependencies.values()) {
-			dependency.register(project, dependencies);
-		}
 		// register all zomboid tasks
 		for (ZomboidTasks task : ZomboidTasks.values()) {
 			task.register(project);
@@ -133,6 +128,11 @@ public class CapsidPlugin implements Plugin<Project> {
 			// register all mod tasks
 			for (ModTasks task : ModTasks.values()) {
 				task.createOrRegister(project);
+			}
+			// register project dependencies
+			DependencyHandler dependencies = project.getDependencies();
+			for (Dependencies dependency : Dependencies.values()) {
+				dependency.register(project, dependencies);
 			}
 			// set default excluded directories if map is not user configured
 			if (capsidExt.getExcludedResourceDirs().isEmpty())
