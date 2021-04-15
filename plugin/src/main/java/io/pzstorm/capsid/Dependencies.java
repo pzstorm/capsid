@@ -47,9 +47,9 @@ public enum Dependencies {
 	)),
 
 	/**
-	 * Project Zomboid Java classes used during runtime.
+	 * Project Zomboid Java classes.
 	 */
-	ZOMBOID_CLASSES("zomboidRuntimeOnly", project -> {
+	ZOMBOID_CLASSES("zomboidImplementation", project -> {
 		String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
 		if (modPzVersion != null)
 		{
