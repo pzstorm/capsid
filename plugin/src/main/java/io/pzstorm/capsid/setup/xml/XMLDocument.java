@@ -175,8 +175,9 @@ public abstract class XMLDocument {
 	 */
 	public void writeToFile() throws IOException, TransformerException {
 
-		Writer writer = Files.newBufferedWriter(getAsFile(true).toPath(), StandardCharsets.UTF_8);
-		createAndConfigureTransformer().transform(new DOMSource(document), new StreamResult(writer));
+		try (Writer writer = Files.newBufferedWriter(getAsFile(true).toPath(), StandardCharsets.UTF_8)) {
+			createAndConfigureTransformer().transform(new DOMSource(document), new StreamResult(writer));
+		}
 	}
 
 	/**
