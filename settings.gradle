@@ -5,4 +5,6 @@ pluginManagement {
 	}
 }
 rootProject.name = 'pz-capsid'
-include('consumer')
+if (System.getenv("CI") == null) {
+	include('consumer')
+}
