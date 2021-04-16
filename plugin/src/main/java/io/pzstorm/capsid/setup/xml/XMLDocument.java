@@ -100,7 +100,7 @@ public abstract class XMLDocument {
 		// replace dashed with underscores and whitespaces with underscores
 		return name.replace('-', '_').replaceAll("\\s", "_")
 				// remove all non-word characters and consecutive with single underscores
-				.replaceAll("[^\\w_]", "").replaceAll("_+", "_") + ".xml";
+				.replaceAll("[^\\w_]", "").replaceAll("_+", "_");
 	}
 
 	/**
@@ -114,6 +114,13 @@ public abstract class XMLDocument {
 
 		// translate config name to filename (similar to what IDEA is doing)
 		String filename = translateConfigNameToFilename();
+
+		// resolve filename for subproject
+		if (!project.getRootDir().equals(project.getProjectDir())) {
+			filename += '_' + project.getName();
+		}
+		// append XML file extension
+		filename += ".xml";
 
 		// resolve parent directory of this document
 		File parentDir = new File(project.getRootDir(), dirPath.toString());

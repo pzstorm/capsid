@@ -87,8 +87,11 @@ public class LaunchRunConfig extends XMLDocument {
 		// <module name="<rootProjectName>.main" />",
 		Element module = document.createElement("module");
 
-		String rootProjectName = project.getRootProject().getName();
-		module.setAttribute("name", rootProjectName + ".main");
+		String scopeValue = project.getRootProject().getName();
+		if (!project.getProjectDir().equals(project.getRootDir())) {
+			scopeValue += '.' + project.getProject().getName();
+		}
+		module.setAttribute("name", scopeValue + ".main");
 		configuration.appendChild(module);
 
 		// <option name="VM_PARAMETERS" value="<launchParameters> />
