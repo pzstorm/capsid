@@ -1,2 +1,7 @@
+pluginManagement {
+	repositories {
+		gradlePluginPortal()
+	}
+}
 rootProject.name = 'pz-capsid'
 include('plugin', 'plugin-consumer')
