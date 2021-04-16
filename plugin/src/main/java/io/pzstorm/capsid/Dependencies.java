@@ -49,15 +49,9 @@ public enum Dependencies {
 	/**
 	 * Project Zomboid Java classes.
 	 */
-	ZOMBOID_CLASSES("zomboidImplementation", project -> {
-		String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
-		if (modPzVersion != null)
-		{
-			String jarName = String.format("zomboid-%s.jar", modPzVersion);
-			return ImmutableSet.of(project.files(Paths.get("lib", jarName)));
-		}
-		else return ImmutableSet.of();
-	}),
+	ZOMBOID_CLASSES("zomboidImplementation", project -> ImmutableSet.of(
+			project.files(Paths.get("lib", "zomboid.jar")))
+	),
 
 	/**
 	 * Lua library compiler for Project Zomboid.

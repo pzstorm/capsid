@@ -23,10 +23,12 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import org.gradle.testkit.runner.BuildResult;
+import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
 
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.setup.SetupTasks;
@@ -37,6 +39,10 @@ class CreateModSearchScopesFunctionalTest extends PluginFunctionalTest {
 	private static final ImmutableMap<ModSearchScope, String> SEARCH_SCOPES = ImmutableMap.of(
 			ModSearchScope.MOD_LUA, "mod_lua.xml",
 			ModSearchScope.MOD_MEDIA, "mod_media.xml"
+	);
+	private static final ImmutableMap<ModSearchScope, String[]> SEARCH_SCOPES_SUBPROJECT = ImmutableMap.of(
+			ModSearchScope.MOD_LUA, new String[] { "mod_lua.xml", "mod_lua_subproject.xml" },
+			ModSearchScope.MOD_MEDIA, new String[] { "mod_media.xml", "mod_media_subproject.xml" }
 	);
 
 	CreateModSearchScopesFunctionalTest() {
@@ -58,6 +64,40 @@ class CreateModSearchScopesFunctionalTest extends PluginFunctionalTest {
 
 			String expected = Utils.readResourceAsTextFromStream(getClass(), filename);
 			String actual = Utils.readTextFromFile(runConfig);
+
+			Assertions.assertEquals(expected, actual);
+		}
+	}
+
+	@Test
+	void shouldWriteToRootProjectModSearchScopes() throws IOException {
+
+		GradleRunner runner = getRunner();
+		File projectDir = runner.getProjectDir();
+
+		File subProjectDir = new File(projectDir, "subproject");
+		Assertions.assertTrue(subProjectDir.mkdir());
+
+		writeToProjectFile("settings.gradle", new String[] {
+				"include 'subproject'"
+		});
+		File copyDestination = new File(subProjectDir, "build.gradle");
+		Files.copy(new File(projectDir, "build.gradle"), copyDestination);
+
+		BuildResult result = runner.withArguments(SetupTasks.CREATE_MOD_SEARCH_SCOPES.name).build();
+		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_MOD_SEARCH_SCOPES.name);
+
+		Assertions.assertFalse(new File(subProjectDir, ".idea/scopes").exists());
+		Assertions.assertTrue(new File(projectDir, ".idea/scopes").exists());
+
+		File searchScopes = new File(projectDir, ".idea/scopes");
+		for (Map.Entry<ModSearchScope, String[]> entry : SEARCH_SCOPES_SUBPROJECT.entrySet())
+		{
+			File searchScope = new File(searchScopes, entry.getValue()[1]);
+			Assertions.assertTrue(searchScope.exists());
+
+			String expected = Utils.readResourceAsTextFromStream(getClass(), searchScope.getName());
+			String actual = Utils.readTextFromFile(searchScope);
 
 			Assertions.assertEquals(expected, actual);
 		}

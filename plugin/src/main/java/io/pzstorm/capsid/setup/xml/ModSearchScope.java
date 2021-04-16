@@ -49,7 +49,11 @@ public class ModSearchScope extends XMLDocument {
 		Element scope = document.createElement("scope");
 
 		scope.setAttribute("name", name);
-		scope.setAttribute("pattern", String.format(pattern, project.getRootProject().getName()));
+		String scopeValue = project.getRootProject().getName();
+		if (!project.getProjectDir().equals(project.getRootDir())) {
+			scopeValue += '.' + project.getProject().getName();
+		}
+		scope.setAttribute("pattern", String.format(pattern, scopeValue));
 
 		component.appendChild(scope);
 		return (ModSearchScope) super.configure(project);
