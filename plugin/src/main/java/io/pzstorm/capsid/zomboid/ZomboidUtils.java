@@ -82,7 +82,7 @@ public class ZomboidUtils {
 	/**
 	 * Returns last used ZomboidDoc version used by given {@code Project}.
 	 *
-	 * @throws IOException If an I/O error occurred while creating or reading file.
+	 * @return last used ZomboidDoc version or version {@code 0.0.0} if file is empty.
 	 */
 	public static SemanticVersion getLastZomboidDocVersion(Project project) throws IOException {
 
@@ -91,6 +91,6 @@ public class ZomboidUtils {
 		if (!content.isEmpty()) {
 			return new SemanticVersion(content.get(0));
 		}
-		throw new InvalidUserDataException("ZomboidDoc version file is empty");
+		return new SemanticVersion("0.0.0");
 	}
 }
