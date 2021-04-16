@@ -1,0 +1,11 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+
+# Other files
+inspectionProfiles
+jarRepositories.xml
+compiler.xml
+discord.xml
+gradle.xml
+misc.xml
