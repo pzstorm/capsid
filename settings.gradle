@@ -5,4 +5,4 @@ pluginManagement {
 	}
 }
 rootProject.name = 'pz-capsid'
-include('plugin', 'plugin-consumer')
+include('plugin-consumer')
