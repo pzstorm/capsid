@@ -1,11 +1,87 @@
+# User data
+local.properties
+zdoc.version
+media
+
+# Temporary
+serialize.lua
+Gemfile
+LICENSE
+README.md
+images
+
+# Libraries
+lib
+
+### IntelliJ ###
+.idea
+
+### Java ###
+
+# Compiled class file
+*.class
+
+# Package Files #
+*.jar
+*.zip
+*.rar
+
+# Log files
+logs/
+*.log
+
+### Gradle ###
+
 # Ignore Gradle project-specific cache directory
 .gradle
 
 # Ignore Gradle build output directory
-build
+build/
 
-# Ignore all mod files
-media
+# Exclude gradle-wrapper.jar from rules
+!**/wrapper/gradle-wrapper.jar
 
-# Ignore readme image files
-images
+### Windows ###
+# Windows thumbnail cache files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+### Ruby ###
+
+# No need for lock file in workflow
+Gemfile.lock
