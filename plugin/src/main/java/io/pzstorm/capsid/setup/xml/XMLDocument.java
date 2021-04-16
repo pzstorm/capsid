@@ -116,7 +116,7 @@ public abstract class XMLDocument {
 		String filename = translateConfigNameToFilename();
 
 		// resolve parent directory of this document
-		File parentDir = new File(project.getProjectDir(), dirPath.toString());
+		File parentDir = new File(project.getRootDir(), dirPath.toString());
 
 		// file representing this document
 		File xmlFile = new File(parentDir, filename);
