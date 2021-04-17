@@ -24,3 +24,14 @@ Capsid serves as an umbrella for these tools, connecting everything you need in 
 - Fully automated project changelog generation.
 - Create mod distributions with a click of a button.
 - Fully integrates with IntelliJ IDEA.
+
+## Where do I get it?
+
+Check the latest version on [Gradle Plugin Portal](https://plugins.gradle.org/plugin/io.pzstorm.capsid) and declare the plugin like this:
+
+```groovy
+plugins {
+    id 'io.pzstorm.capsid' version '0.1.0' 
+}
+```
+
