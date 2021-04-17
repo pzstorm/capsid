@@ -31,7 +31,7 @@ import java.nio.file.Paths;
  *     <li>Windows path: {@code C:\path\to\file}</li>
  * </ul>
  *
- * @see <a href=http://www.linfo.org/forward_slash.html>Forward Slash Definition</a>
+ * @see <a href="http://www.linfo.org/forward_slash.html">Forward Slash Definition</a>
  */
 @SuppressWarnings("WeakerAccess")
 public class UnixPath {

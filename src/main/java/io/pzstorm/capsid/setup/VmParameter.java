@@ -69,7 +69,7 @@ public class VmParameter {
 	 * @param flag whether to enable or disable the option.
 	 * @return formatted advanced JVM runtime option string.
 	 *
-	 * @see <a href=https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html">
+	 * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html">
 	 * 		Java Platform, Standard Edition Tools Reference</a>
 	 */
 	public static String formatAdvancedRuntimeOption(String name, boolean flag) {
