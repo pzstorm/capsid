@@ -148,3 +148,7 @@ Capsid handles this for you. Just run `assembleDist` and a distribution archive 
 - `generateChangelog` - Generate a project changelog.
 - `mediaClasses` - Assembles mod Lua classes.
 - `processMediaResources` - Process mod resources.
+
+## License
+
+This project is licensed under [GNU General Public License v3.0](https://github.com/cocolabs/pz-zdoc/blob/master/LICENSE.txt).
