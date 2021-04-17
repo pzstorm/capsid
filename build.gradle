@@ -61,6 +61,17 @@ gradlePlugin {
 	testSourceSets(sourceSets.integrationTest, sourceSets.functionalTest)
 }
 
+pluginBundle {
+	website = 'https://github.com/pzstorm/capsid'
+	vcsUrl = 'https://github.com/pzstorm/capsid'
+	description = 'Project Zomboid mod development framework for Gradle'
+	tags = ['java', 'project-zomboid', 'modding', 'framework']
+
+	plugins {
+		capsid.displayName = 'Storm Capsid'
+	}
+}
+
 // publish to mavenLocal every time we build project
 getTasks().named('classes').configure({
 	it.finalizedBy('publishToMavenLocal')
