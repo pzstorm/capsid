@@ -3,14 +3,14 @@ plugins {
 	// https://docs.gradle.org/current/userguide/java_gradle_plugin.html
 	id 'java-gradle-plugin'
 
-	// Provides the ability to publish build artifacts to an Apache Maven repository.
+	// Provides the ability to publish build artifacts to an Apache Maven repository
 	// https://docs.gradle.org/current/userguide/publishing_maven.html
 	id 'maven-publish'
 
 	// https://plugins.gradle.org/plugin/net.ltgt.errorprone
 	id 'net.ltgt.errorprone' version '2.0.1'
 
-	// Plugin that keeps your code spotless with Gradle.
+	// Plugin that keeps your code spotless with Gradle
 	// https://plugins.gradle.org/plugin/com.diffplug.spotless
 	id "com.diffplug.spotless" version "5.12.1"
 }
