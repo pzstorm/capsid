@@ -113,3 +113,38 @@ Assembling distributions is a process of packaging everything your mod needs to 
 
 Capsid handles this for you. Just run `assembleDist` and a distribution archive matching the current project version will be created in `build/distributions` directory.
 
+## List of tasks
+
+### Setup tasks
+
+- `initLocalProperties` - Initialize local project properties.
+- `createLaunchRunConfigs` - Create game launch run configurations.
+- `createModSearchScopes` - Create IDEA search scopes for mod files.
+- `createDiscordIntegration` - Show IDEA project in Discord via rich presence.
+
+### Zomboid tasks
+
+- `zomboidClasses` - Assembles Project Zomboid classes.
+- `decompileZomboid` - Decompile Project Zomboid classes.
+- `zomboidJar` - Assembles a jar archive containing game classes.
+- `zomboidSourcesJar` - Assembles a jar containing decompiled game sources.
+- `zomboidLuaJar` - Assembles a jar containing compiled Lua classes.
+- `zomboidVersion` - Save and print Project Zomboid game version.
+- `annotateZomboidLua` - Annotate vanilla Lua with EmmyLua.
+- `compileZomboidLua` - Compile Lua library from modding API.
+- `updateZomboidLua` - Run ZomboidDoc to update compiled Lua library.
+
+### Mod tasks
+
+- `createModStructure` - Create default mod directory structure.
+- `saveModMetadata` - Save mod metadata to file.
+- `loadModMetadata` - Load mod metadata information.
+- `initModMetadata` - Initialize mod metadata information.
+- `showModMetadata` - Print mod metadata information.
+- `applyModTemplate` - Apply Project Zomboid mod template.
+
+### Distribution tasks
+
+- `generateChangelog` - Generate a project changelog.
+- `mediaClasses` - Assembles mod Lua classes.
+- `processMediaResources` - Process mod resources.
