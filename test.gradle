@@ -1,0 +1,48 @@
+sourceSets {
+	functionalTest {
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+	integrationTest {
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
+
+configurations {
+	functionalTestImplementation.extendsFrom(implementation, testImplementation)
+	integrationTestImplementation.extendsFrom(implementation, testImplementation)
+}
+
+test {
+	useJUnitPlatform()
+	testLogging.events "passed", "skipped", "failed"
+}
+
+def integrationTest = tasks.register('integrationTest', Test) {
+	it.useJUnitPlatform()
+	it.testLogging.events "passed", "skipped", "failed"
+	it.testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	it.classpath = sourceSets.integrationTest.runtimeClasspath
+	it.shouldRunAfter("test")
+}
+
+tasks.register('functionalTest', Test) {
+	it.useJUnitPlatform()
+	it.testLogging.events "passed", "skipped", "failed"
+	it.testClassesDirs = sourceSets.functionalTest.output.classesDirs
+	it.classpath = sourceSets.functionalTest.runtimeClasspath
+	it.shouldRunAfter(integrationTest, "test")
+}
+
+task runTests {
+	description 'Run all test categories in order.'
+	group 'verification'
+
+	tasks.withType(Test.class).each {
+		dependsOn(it)
+	}
+}
+tasks.named('check') {
+	it.dependsOn(tasks.functionalTest, tasks.integrationTest)
+}

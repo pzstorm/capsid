@@ -2,6 +2,10 @@
 /shelf/
 /workspace.xml
 
+# Run configurations and scopes
+runConfigurations
+scopes
+
 # User-specific stuff
 **/tasks.xml
 **/usage.statistics.xml

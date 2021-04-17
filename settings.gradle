@@ -1,2 +1,10 @@
+pluginManagement {
+	repositories {
+		mavenLocal()
+		gradlePluginPortal()
+	}
+}
 rootProject.name = 'pz-capsid'
-include('plugin')
+if (System.getenv("CI") == null) {
+	include('consumer')
+}

@@ -1,0 +1,10 @@
+template/images/init_mod.gif
+template/images/load_gradle_project.png
+template/images/module_dependencies.png
+template/images/module_library.png
+template/images/open_project.png
+template/images/path_variables.png
+template/images/project_search_scopes.png
+template/images/update_run_configs.png
+template/LICENSE.txt
+template/README.md
