@@ -3,6 +3,10 @@ plugins {
 	// https://docs.gradle.org/current/userguide/java_gradle_plugin.html
 	id 'java-gradle-plugin'
 
+	// Publish plugins to the Gradle Plugin Portal
+	// https://plugins.gradle.org/plugin/com.gradle.plugin-publish
+	id "com.gradle.plugin-publish" version "0.14.0"
+
 	// Provides the ability to publish build artifacts to an Apache Maven repository
 	// https://docs.gradle.org/current/userguide/publishing_maven.html
 	id 'maven-publish'
