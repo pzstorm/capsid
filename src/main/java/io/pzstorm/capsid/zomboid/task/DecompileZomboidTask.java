@@ -99,7 +99,7 @@ public class DecompileZomboidTask extends JavaExec implements CapsidTask {
 			else parameters.add(from.toString());
 
 			// decompile to this directory
-			parameters.add(zomboidClassesDir.toPath().toString());
+			parameters.add(zomboidSourcesDir.toPath().toString());
 
 			setArgs(parameters);
 			dependsOn(project.getTasks().getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
