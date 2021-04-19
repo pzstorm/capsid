@@ -1,6 +1,6 @@
 # Storm Capsid
 
-[![Java CI](https://github.com/pzstorm/capsid/actions/workflows/java-ci.yaml/badge.svg?branch=dev)](https://github.com/pzstorm/capsid/actions/workflows/java-ci.yaml) [![License](https://img.shields.io/github/license/pzstorm/capsid)](https://www.gnu.org/licenses/) [![Discord](https://img.shields.io/discord/823907021178798150?color=7289DA&label=discord&logo=discord&logoColor=white)](https://discord.gg/ZCmg9VsvSW)
+[![Java CI](https://github.com/pzstorm/capsid/actions/workflows/java-ci.yaml/badge.svg?branch=dev)](https://github.com/pzstorm/capsid/actions/workflows/java-ci.yaml) [![License](https://img.shields.io/github/license/pzstorm/capsid?logo=gnu)](https://www.gnu.org/licenses/) [![Discord](https://img.shields.io/discord/823907021178798150?color=7289DA&label=discord&logo=discord&logoColor=white)](https://discord.gg/ZCmg9VsvSW)
 
 Capsid is a compact mod development environment for [Project Zomboid](https://projectzomboid.com/blog/).
 
