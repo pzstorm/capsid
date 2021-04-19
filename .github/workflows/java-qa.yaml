@@ -8,7 +8,7 @@ on:
   pull_request:
 
 # Quality Assurance
-name: Java QA
+name: code
 
 jobs:
   check:

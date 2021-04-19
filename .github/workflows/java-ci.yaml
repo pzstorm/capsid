@@ -8,7 +8,7 @@ on:
       - '**.java'
 
 # Continuous integration
-name: Java CI
+name: build
 
 jobs:
   build:
