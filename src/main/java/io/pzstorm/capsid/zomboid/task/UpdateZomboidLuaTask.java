@@ -34,6 +34,9 @@ import io.pzstorm.capsid.util.SemanticVersion;
 import io.pzstorm.capsid.zomboid.ZomboidTasks;
 import io.pzstorm.capsid.zomboid.ZomboidUtils;
 
+/**
+ * This task runs {@code ZomboidDoc} to update compiled Lua library.
+ */
 public class UpdateZomboidLuaTask extends DefaultTask implements CapsidTask {
 
 	@Override
@@ -46,6 +49,7 @@ public class UpdateZomboidLuaTask extends DefaultTask implements CapsidTask {
 					ZomboidUtils.getZomboidDocVersion(project), lastZomboidDocVer
 			);
 			// current version is higher then last version
+			// skip task if semantic version could not be resolved
 			onlyIf(t -> !lastZomboidDocVer.equals(new SemanticVersion("0.0.0")) && compareResult < 0);
 
 			// current version is higher then last version
