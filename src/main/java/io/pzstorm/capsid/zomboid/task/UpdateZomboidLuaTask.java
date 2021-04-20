@@ -41,12 +41,12 @@ public class UpdateZomboidLuaTask extends DefaultTask implements CapsidTask {
 		CapsidTask.super.configure(group, description, project);
 
 		try {
+			SemanticVersion lastZomboidDocVer = ZomboidUtils.getLastZomboidDocVersion(project);
 			int compareResult = new SemanticVersion.Comparator().compare(
-					ZomboidUtils.getZomboidDocVersion(project),
-					ZomboidUtils.getLastZomboidDocVersion(project)
+					ZomboidUtils.getZomboidDocVersion(project), lastZomboidDocVer
 			);
 			// current version is higher then last version
-			onlyIf(t -> compareResult < 0);
+			onlyIf(t -> !lastZomboidDocVer.equals(new SemanticVersion("0.0.0")) && compareResult < 0);
 
 			// current version is higher then last version
 			if (compareResult < 0) {
