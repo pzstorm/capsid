@@ -73,8 +73,6 @@ public class SemanticVersion {
 		}
 	}
 
-	// TODO: implement testing for equals and hashCode
-
 	@Override
 	public boolean equals(Object o) {
 
