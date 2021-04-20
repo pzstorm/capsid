@@ -129,8 +129,10 @@ public class CapsidPlugin implements Plugin<Project> {
 			task.register(project);
 		}
 		TaskContainer tasks = project.getTasks();
-		tasks.getByName("classes").dependsOn(tasks.getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
-
+		tasks.getByName("classes").dependsOn(
+				tasks.getByName(ZomboidTasks.ZOMBOID_CLASSES.name),
+				tasks.getByName(ZomboidTasks.UPDATE_ZOMBOID_LUA.name)
+		);
 		// plugin extension will be configured in evaluation phase
 		project.afterEvaluate(p ->
 		{
