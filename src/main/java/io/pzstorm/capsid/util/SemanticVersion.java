@@ -72,4 +72,29 @@ public class SemanticVersion {
 			return o1.patch.compareTo(o2.patch);
 		}
 	}
+
+	// TODO: implement testing for equals and hashCode
+
+	@Override
+	public boolean equals(Object o) {
+
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		SemanticVersion that = (SemanticVersion) o;
+		if (new Comparator().compare(this, that) != 0) {
+			return false;
+		}
+		return classifier.equals(that.classifier);
+	}
+
+	@Override
+	public int hashCode() {
+
+		int result = 31 * major.hashCode() + minor.hashCode();
+		return 31 * (31 * result + patch.hashCode()) + classifier.hashCode();
+	}
 }
