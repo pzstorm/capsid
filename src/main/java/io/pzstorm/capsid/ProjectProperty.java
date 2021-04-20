@@ -114,4 +114,11 @@ public class ProjectProperty<T> {
 	public T get(Project project) {
 		return propertySupplier.getProjectProperty(project);
 	}
+
+	/**
+	 * Returns {@code Supplier} used to resolve the project property.
+	 */
+	public ProjectPropertiesSupplier<T> getSupplier() {
+		return propertySupplier;
+	}
 }
