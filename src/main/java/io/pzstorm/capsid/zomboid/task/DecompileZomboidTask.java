@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import com.google.common.base.Splitter;
 
 import org.gradle.api.Project;
@@ -45,7 +47,8 @@ import io.pzstorm.capsid.ProjectProperty;
  */
 public class DecompileZomboidTask extends DecompileJavaTask {
 
-	DecompileZomboidTask() {
+	@Inject
+	public DecompileZomboidTask() {
 		super(ProjectProperty.ZOMBOID_CLASSES_DIR.getSupplier(), ProjectProperty.ZOMBOID_SOURCES_DIR.getSupplier());
 	}
 

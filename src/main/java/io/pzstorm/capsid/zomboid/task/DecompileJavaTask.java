@@ -21,6 +21,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 
+import javax.inject.Inject;
+
 import com.google.common.collect.ImmutableMap;
 
 import org.gradle.api.DefaultTask;
@@ -44,6 +46,7 @@ public class DecompileJavaTask extends DefaultTask implements CapsidTask {
 	final ProjectPropertiesSupplier<File> source, destination;
 	private final Map<String, Object> parameters;
 
+	@Inject
 	DecompileJavaTask(ProjectPropertiesSupplier<File> source,
 					  ProjectPropertiesSupplier<File> destination,
 					  Map<String, Object> parameters) {
@@ -53,8 +56,9 @@ public class DecompileJavaTask extends DefaultTask implements CapsidTask {
 		this.parameters = parameters;
 	}
 
-	// default parameters used by IDEA compiler
+	@Inject
 	DecompileJavaTask(ProjectPropertiesSupplier<File> source, ProjectPropertiesSupplier<File> destination) {
+		// default parameters used by IDEA compiler
 		this(source, destination, ImmutableMap.<String, Object>builder()
 				.put(IFernflowerPreferences.HIDE_DEFAULT_CONSTRUCTOR, "0")
 				.put(IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1")
