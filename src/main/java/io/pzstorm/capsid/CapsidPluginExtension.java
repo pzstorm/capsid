@@ -36,6 +36,12 @@ public class CapsidPluginExtension {
 	 * {@code Set} of resource directories to exclude from source set.
 	 */
 	private final Set<String> excludedResourceDirs = new HashSet<>();
+
+	/**
+	 * Determines whether the consumer project is treated as a mod project.
+	 * This property should be set to {@code false} if your project is not a mod project.
+	 */
+	public boolean isModProject = true;
 	/**
 	 * Options used when generating project changelog.
 	 *
