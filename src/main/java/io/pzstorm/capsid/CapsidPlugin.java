@@ -124,23 +124,23 @@ public class CapsidPlugin implements Plugin<Project> {
 		for (Configurations configuration : Configurations.values()) {
 			configuration.register(configurations);
 		}
-		// register all zomboid tasks
-		for (ZomboidTasks task : ZomboidTasks.values()) {
-			task.register(project);
+		// register project dependencies
+		DependencyHandler dependencies = project.getDependencies();
+		for (Dependencies dependency : Dependencies.values()) {
+			dependency.register(project, dependencies);
 		}
-		TaskContainer tasks = project.getTasks();
-		tasks.getByName("classes").dependsOn(
-				tasks.getByName(ZomboidTasks.ZOMBOID_CLASSES.name),
-				tasks.getByName(ZomboidTasks.UPDATE_ZOMBOID_LUA.name)
-		);
 		// plugin extension will be configured in evaluation phase
 		project.afterEvaluate(p ->
 		{
-			// register project dependencies
-			DependencyHandler dependencies = project.getDependencies();
-			for (Dependencies dependency : Dependencies.values()) {
-				dependency.register(project, dependencies);
+			// register all zomboid tasks
+			for (ZomboidTasks task : ZomboidTasks.values()) {
+				task.register(project);
 			}
+			TaskContainer tasks = project.getTasks();
+			tasks.getByName("classes").dependsOn(
+					tasks.getByName(ZomboidTasks.ZOMBOID_CLASSES.name),
+					tasks.getByName(ZomboidTasks.UPDATE_ZOMBOID_LUA.name)
+			);
 			// configure only for mod project
 			if (capsidExt.isModProject)
 			{
