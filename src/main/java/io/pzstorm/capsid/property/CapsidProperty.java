@@ -31,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.base.Strings;
 
 import io.pzstorm.capsid.property.validator.PropertyValidator;
-import io.pzstorm.capsid.util.GameVersion;
 import io.pzstorm.capsid.util.SemanticVersion;
 import io.pzstorm.capsid.util.UnixPath;
 
@@ -140,11 +139,6 @@ public class CapsidProperty<T> {
 		if (type.equals(SemanticVersion.class))
 		{
 			T result = (T) new SemanticVersion(property);
-			return validator != null ? validator.validate(result) : result;
-		}
-		if (type.equals(GameVersion.class))
-		{
-			T result = (T) new GameVersion(property);
 			return validator != null ? validator.validate(result) : result;
 		}
 		if (type.equals(Path.class))

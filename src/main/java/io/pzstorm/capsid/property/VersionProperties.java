@@ -32,9 +32,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 
 import io.pzstorm.capsid.CapsidPlugin;
-import io.pzstorm.capsid.util.GameVersion;
 import io.pzstorm.capsid.util.SemanticVersion;
-import io.pzstorm.capsid.zomboid.task.ZomboidVersionTask;
 
 /**
  * This class holds properties related to tracking versions.
@@ -47,9 +45,9 @@ public class VersionProperties extends CapsidProperties {
 	public static final CapsidProperty<SemanticVersion> LAST_ZDOC_VERSION;
 
 	/**
-	 * Game version registered last time {@link ZomboidVersionTask} was run.
+	 * This property will be {@code true} if {@link #LAST_ZDOC_VERSION} recently changed.
 	 */
-	public static final CapsidProperty<GameVersion> LAST_GAME_VERSION;
+	public static final CapsidProperty<Boolean> HAS_ZDOC_VERSION_CHANGED;
 
 	private static final VersionProperties INSTANCE = new VersionProperties();
 	private static final @Unmodifiable Set<CapsidProperty<?>> PROPERTIES;
@@ -60,12 +58,12 @@ public class VersionProperties extends CapsidProperties {
 				.withDefaultValue(new SemanticVersion("0.0.0"))
 				.build();
 
-		LAST_GAME_VERSION = new CapsidProperty.Builder<>("lastGameVersion", GameVersion.class)
-				.withComment("Game version registered last time ZomboidVersionTask was run")
-				.withDefaultValue(new GameVersion("0.0"))
+		HAS_ZDOC_VERSION_CHANGED = new CapsidProperty.Builder<>("zDocVersionChanged", Boolean.class)
+				.withComment("This property will be true if zDoc version recently changed.")
+				.withDefaultValue(false)
 				.build();
 
-		PROPERTIES = ImmutableSet.of(LAST_ZDOC_VERSION, LAST_GAME_VERSION);
+		PROPERTIES = ImmutableSet.of(LAST_ZDOC_VERSION, HAS_ZDOC_VERSION_CHANGED);
 	}
 
 	private VersionProperties() {
