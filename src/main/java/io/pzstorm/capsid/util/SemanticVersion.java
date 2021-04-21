@@ -55,7 +55,9 @@ public class SemanticVersion {
 
 	@Override
 	public String toString() {
-		return String.format("%d.%d.%d%s", major, minor, patch, classifier);
+
+		String sClassifier = !classifier.isEmpty() ? '-' + classifier : classifier;
+		return String.format("%d.%d.%d%s", major, minor, patch, sClassifier);
 	}
 
 	public static class Comparator implements java.util.Comparator<SemanticVersion> {
