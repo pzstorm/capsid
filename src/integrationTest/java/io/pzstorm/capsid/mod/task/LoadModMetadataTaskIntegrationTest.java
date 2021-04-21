@@ -39,6 +39,7 @@ import io.pzstorm.capsid.PluginIntegrationTest;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.mod.ModProperties;
 import io.pzstorm.capsid.mod.ModTasks;
+import io.pzstorm.capsid.zomboid.ZomboidTasks;
 
 class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 
@@ -153,6 +154,8 @@ class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 	}
 
 	private void registerModTasks() {
+
+		ZomboidTasks.ZOMBOID_VERSION.register(project);
 		Arrays.stream(ModTasks.values()).forEach(t -> t.createOrRegister(project));
 	}
 }
