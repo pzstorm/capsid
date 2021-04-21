@@ -46,7 +46,8 @@ public class DecompileJavaTask extends DefaultTask implements CapsidTask {
 	final ProjectPropertiesSupplier<File> source, destination;
 	private final Map<String, Object> parameters;
 
-	@Inject DecompileJavaTask(ProjectPropertiesSupplier<File> source,
+	@Inject
+	DecompileJavaTask(ProjectPropertiesSupplier<File> source,
 							  ProjectPropertiesSupplier<File> destination,
 							  Map<String, Object> parameters) {
 
@@ -55,7 +56,8 @@ public class DecompileJavaTask extends DefaultTask implements CapsidTask {
 		this.parameters = parameters;
 	}
 
-	@Inject DecompileJavaTask(ProjectPropertiesSupplier<File> source, ProjectPropertiesSupplier<File> destination) {
+	@Inject
+	DecompileJavaTask(ProjectPropertiesSupplier<File> source, ProjectPropertiesSupplier<File> destination) {
 		// default parameters used by IDEA compiler
 		this(source, destination, ImmutableMap.<String, Object>builder()
 				.put(IFernflowerPreferences.HIDE_DEFAULT_CONSTRUCTOR, "0")

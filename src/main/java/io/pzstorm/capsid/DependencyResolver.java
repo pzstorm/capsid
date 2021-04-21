@@ -27,10 +27,10 @@ import com.google.errorprone.annotations.Immutable;
 interface DependencyResolver {
 
 	/**
-	 * Resolve dependency notations for given project.
+	 * Resolve dependency notations, files or paths for given project.
 	 *
 	 * @param project {@code Project} resolving dependencies.
-	 * @return resolved dependency notations.
+	 * @return resolved dependency objects.
 	 */
 	Set<Object> resolveDependencies(Project project);
 }
