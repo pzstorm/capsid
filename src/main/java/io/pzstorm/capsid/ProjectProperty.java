@@ -23,10 +23,21 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
 import org.gradle.api.Project;
+import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.jetbrains.annotations.Unmodifiable;
 
 public class ProjectProperty<T> {
+
+	/**
+	 * Libraries used by Project Zomboid during runtime.
+	 */
+	public static final ProjectProperty<ConfigurableFileTree> ZOMBOID_LIBRARIES;
+
+	/**
+	 * Directory where library sources are decompiled into.
+	 */
+	public static final ProjectProperty<File> ZOMBOID_LIBRARY_SOURCES_DIR;
 
 	/**
 	 * Directory containing Project Zomboid classes.
@@ -63,6 +74,12 @@ public class ProjectProperty<T> {
 
 	static
 	{
+		ZOMBOID_LIBRARIES = new ProjectProperty<>("zomboidLibraries", project ->
+				project.fileTree(CapsidPlugin.getGameDirProperty(project), t -> t.include("*.jar"))
+		);
+		ZOMBOID_LIBRARY_SOURCES_DIR = new ProjectProperty<>("zomboidLibrariesSourcesDir", project ->
+				project.file(project.getBuildDir() + "/generated/sources/libraries")
+		);
 		ZOMBOID_CLASSES_DIR = new ProjectProperty<>("zomboidClassesDir", project ->
 				project.file(project.getBuildDir() + "/classes/zomboid")
 		);
