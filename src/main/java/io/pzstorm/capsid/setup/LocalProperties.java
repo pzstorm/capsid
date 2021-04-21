@@ -45,10 +45,7 @@ public class LocalProperties extends CapsidProperties {
 	 * {@code Path} to Project Zomboid installation directory.
 	 */
 	public static final CapsidProperty<UnixPath> GAME_DIR;
-	/**
-	 * {@code Path} to IntelliJ IDEA installation directory.
-	 */
-	public static final CapsidProperty<UnixPath> IDEA_HOME;
+
 	private static final LocalProperties INSTANCE = new LocalProperties();
 	private static final @Unmodifiable Set<CapsidProperty<?>> PROPERTIES;
 
@@ -60,13 +57,7 @@ public class LocalProperties extends CapsidProperties {
 				.withEnvironmentVar("PZ_DIR_PATH")
 				.build();
 
-		IDEA_HOME = new CapsidProperty.Builder<>("ideaHome", UnixPath.class)
-				.withComment("Path to IntelliJ IDEA installation directory")
-				.withValidator(PropertyValidators.DIRECTORY_PATH_VALIDATOR)
-				.withEnvironmentVar("IDEA_HOME")
-				.build();
-
-		PROPERTIES = ImmutableSet.of(GAME_DIR, IDEA_HOME);
+		PROPERTIES = ImmutableSet.of(GAME_DIR);
 	}
 
 	private LocalProperties() {
@@ -80,9 +71,6 @@ public class LocalProperties extends CapsidProperties {
 		return INSTANCE;
 	}
 
-	/**
-	 * Returns all registered local properties.
-	 */
 	@Override
 	@Contract(pure = true)
 	public @Unmodifiable Set<CapsidProperty<?>> getProperties() {

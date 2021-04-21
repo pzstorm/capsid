@@ -51,8 +51,7 @@ public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
 			throw new IOException(String.format("Unable to create %s file", propertiesFile.getName()));
 		}
 		Map<CapsidProperty<?>, String> PROPERTIES_INPUT_MAP = ImmutableMap.of(
-				LocalProperties.GAME_DIR, "Enter path to game installation directory:",
-				LocalProperties.IDEA_HOME, "\nEnter path to IntelliJ IDEA installation directory:"
+				LocalProperties.GAME_DIR, "Enter path to game installation directory:"
 		);
 		org.apache.tools.ant.Project antProject = gradleProject.getAnt().getAntProject();
 		Input inputTask = (Input) antProject.createTask("input");
