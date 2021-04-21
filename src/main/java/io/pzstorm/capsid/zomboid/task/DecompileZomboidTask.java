@@ -56,11 +56,11 @@ public class DecompileZomboidTask extends DecompileJavaTask {
 	public List<Path> getSourcePaths(Project project) {
 
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-		List<Path> sourcePaths = new ArrayList<>();
-
-		Path sourcePath = source.getProjectProperty(project).toPath();
 		if (ext.has("decompileFiles"))
 		{
+			List<Path> sourcePaths = new ArrayList<>();
+			Path sourcePath = getSourcePathFromObject(source.getProjectProperty(project));
+
 			String sDecompileFiles = (String) Objects.requireNonNull(ext.get("decompileFiles"));
 			List<String> decompileFiles = Splitter.on(',').splitToList(sDecompileFiles);
 			if (!decompileFiles.isEmpty())
@@ -69,7 +69,6 @@ public class DecompileZomboidTask extends DecompileJavaTask {
 				return sourcePaths;
 			}
 		}
-		sourcePaths.add(sourcePath);
-		return sourcePaths;
+		return super.getSourcePaths(project);
 	}
 }
