@@ -41,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import io.pzstorm.capsid.dist.DistributionTasks;
 import io.pzstorm.capsid.mod.ModTasks;
+import io.pzstorm.capsid.property.VersionProperties;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.SetupTasks;
 import io.pzstorm.capsid.util.UnixPath;
@@ -132,6 +133,9 @@ public class CapsidPlugin implements Plugin<Project> {
 		// plugin extension will be configured in evaluation phase
 		project.afterEvaluate(p ->
 		{
+			// load version properties
+			VersionProperties.get().load(project);
+
 			// register all zomboid tasks
 			for (ZomboidTasks task : ZomboidTasks.values()) {
 				task.register(project);
