@@ -28,6 +28,7 @@ import org.gradle.api.InvalidUserDataException;
  */
 public class GameVersion {
 
+	public static final Comparator COMPARATOR = new Comparator();
 	private static final Pattern SEM_VER = Pattern.compile("^(\\d+)\\.(\\d+)(-(.*))?$");
 
 	public final Integer major, minor;
