@@ -25,11 +25,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-
 import org.gradle.api.Project;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
+
+import com.google.common.collect.ImmutableSet;
 
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.util.SemanticVersion;
@@ -47,7 +47,8 @@ public class VersionProperties extends CapsidProperties {
 	private static final VersionProperties INSTANCE = new VersionProperties();
 	private static final @Unmodifiable Set<CapsidProperty<?>> PROPERTIES;
 
-	static {
+	static
+	{
 		LAST_ZDOC_VERSION = new CapsidProperty.Builder<>("lastZDocVersion", SemanticVersion.class)
 				.withComment("ZomboidDoc version registered last time ZomboidDoc task was run")
 				.withDefaultValue(new SemanticVersion("0.0.0"))
@@ -84,7 +85,7 @@ public class VersionProperties extends CapsidProperties {
 	public void writeToFile(Project project) throws IOException {
 
 		File target = getFile(project);
-		if (!target.exists() && ! target.createNewFile()) {
+		if (!target.exists() && !target.createNewFile()) {
 			throw new IOException("Unable to create 'version.properties' file in root directory");
 		}
 		try (Writer writer = Files.newBufferedWriter(getFile(project).toPath(), StandardCharsets.UTF_8))

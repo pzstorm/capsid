@@ -1,5 +1,10 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
+// found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler.stats;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.jetbrains.java.decompiler.code.CodeConstants;
 import org.jetbrains.java.decompiler.code.cfg.BasicBlock;
@@ -13,191 +18,203 @@ import org.jetbrains.java.decompiler.modules.decompiler.exps.VarExprent;
 import org.jetbrains.java.decompiler.struct.gen.VarType;
 import org.jetbrains.java.decompiler.util.TextBuffer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 public final class CatchStatement extends Statement {
-  private final List<List<String>> exctstrings = new ArrayList<>();
-  private final List<VarExprent> vars = new ArrayList<>();
 
-  // *****************************************************************************
-  // constructors
-  // *****************************************************************************
+	private final List<List<String>> exctstrings = new ArrayList<>();
+	private final List<VarExprent> vars = new ArrayList<>();
 
-  private CatchStatement() {
-    type = TYPE_TRYCATCH;
-  }
+	// *****************************************************************************
+	// constructors
+	// *****************************************************************************
 
-  private CatchStatement(Statement head, Statement next, Set<Statement> setHandlers) {
-    this();
+	private CatchStatement() {
+		type = TYPE_TRYCATCH;
+	}
 
-    first = head;
-    stats.addWithKey(first, first.id);
+	private CatchStatement(Statement head, Statement next, Set<Statement> setHandlers) {
+		this();
 
-    for (StatEdge edge : head.getSuccessorEdges(StatEdge.TYPE_EXCEPTION)) {
-      Statement stat = edge.getDestination();
+		first = head;
+		stats.addWithKey(first, first.id);
 
-      if (setHandlers.contains(stat)) {
-        stats.addWithKey(stat, stat.id);
-        exctstrings.add(new ArrayList<>(edge.getExceptions()));
+		for (StatEdge edge : head.getSuccessorEdges(StatEdge.TYPE_EXCEPTION))
+		{
+			Statement stat = edge.getDestination();
 
-        vars.add(new VarExprent(DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.VAR_COUNTER),
-                                new VarType(CodeConstants.TYPE_OBJECT, 0, edge.getExceptions().get(0)),
-                                // FIXME: for now simply the first type. Should get the first common superclass when possible.
-                                DecompilerContext.getVarProcessor()));
-      }
-    }
+			if (setHandlers.contains(stat))
+			{
+				stats.addWithKey(stat, stat.id);
+				exctstrings.add(new ArrayList<>(edge.getExceptions()));
 
-    if (next != null) {
-      post = next;
-    }
-  }
+				vars.add(new VarExprent(DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.VAR_COUNTER),
+						new VarType(CodeConstants.TYPE_OBJECT, 0, edge.getExceptions().get(0)),
+						// FIXME: for now simply the first type. Should get the first common superclass when possible.
+						DecompilerContext.getVarProcessor()));
+			}
+		}
 
-  // *****************************************************************************
-  // public methods
-  // *****************************************************************************
+		if (next != null) {
+			post = next;
+		}
+	}
 
-  public static Statement isHead(Statement head) {
-    if (head.getLastBasicType() != LASTBASICTYPE_GENERAL) {
-      return null;
-    }
+	// *****************************************************************************
+	// public methods
+	// *****************************************************************************
 
-    Set<Statement> setHandlers = DecHelper.getUniquePredExceptions(head);
-    if (!setHandlers.isEmpty()) {
-      int hnextcount = 0; // either no statements with connection to next, or more than 1
+	public static Statement isHead(Statement head) {
+		if (head.getLastBasicType() != LASTBASICTYPE_GENERAL) {
+			return null;
+		}
 
-      Statement next = null;
-      List<StatEdge> lstHeadSuccs = head.getSuccessorEdges(STATEDGE_DIRECT_ALL);
-      if (!lstHeadSuccs.isEmpty() && lstHeadSuccs.get(0).getType() == StatEdge.TYPE_REGULAR) {
-        next = lstHeadSuccs.get(0).getDestination();
-        hnextcount = 2;
-      }
+		Set<Statement> setHandlers = DecHelper.getUniquePredExceptions(head);
+		if (!setHandlers.isEmpty())
+		{
+			int hnextcount = 0; // either no statements with connection to next, or more than 1
 
-      for (StatEdge edge : head.getSuccessorEdges(StatEdge.TYPE_EXCEPTION)) {
-        Statement stat = edge.getDestination();
+			Statement next = null;
+			List<StatEdge> lstHeadSuccs = head.getSuccessorEdges(STATEDGE_DIRECT_ALL);
+			if (!lstHeadSuccs.isEmpty() && lstHeadSuccs.get(0).getType() == StatEdge.TYPE_REGULAR)
+			{
+				next = lstHeadSuccs.get(0).getDestination();
+				hnextcount = 2;
+			}
 
-        boolean handlerok = true;
+			for (StatEdge edge : head.getSuccessorEdges(StatEdge.TYPE_EXCEPTION))
+			{
+				Statement stat = edge.getDestination();
 
-        if (edge.getExceptions() != null && setHandlers.contains(stat)) {
-          if (stat.getLastBasicType() != LASTBASICTYPE_GENERAL) {
-            handlerok = false;
-          }
-          else {
-            List<StatEdge> lstStatSuccs = stat.getSuccessorEdges(STATEDGE_DIRECT_ALL);
-            if (!lstStatSuccs.isEmpty() && lstStatSuccs.get(0).getType() == StatEdge.TYPE_REGULAR) {
+				boolean handlerok = true;
 
-              Statement statn = lstStatSuccs.get(0).getDestination();
+				if (edge.getExceptions() != null && setHandlers.contains(stat))
+				{
+					if (stat.getLastBasicType() != LASTBASICTYPE_GENERAL) {
+						handlerok = false;
+					}
+					else {
+						List<StatEdge> lstStatSuccs = stat.getSuccessorEdges(STATEDGE_DIRECT_ALL);
+						if (!lstStatSuccs.isEmpty() && lstStatSuccs.get(0).getType() == StatEdge.TYPE_REGULAR)
+						{
 
-              if (next == null) {
-                next = statn;
-              }
-              else if (next != statn) {
-                handlerok = false;
-              }
+							Statement statn = lstStatSuccs.get(0).getDestination();
 
-              if (handlerok) {
-                hnextcount++;
-              }
-            }
-          }
-        }
-        else {
-          handlerok = false;
-        }
+							if (next == null) {
+								next = statn;
+							}
+							else if (next != statn) {
+								handlerok = false;
+							}
 
-        if (!handlerok) {
-          setHandlers.remove(stat);
-        }
-      }
+							if (handlerok) {
+								hnextcount++;
+							}
+						}
+					}
+				}
+				else {
+					handlerok = false;
+				}
 
-      if (hnextcount != 1 && !setHandlers.isEmpty()) {
-        List<Statement> lst = new ArrayList<>();
-        lst.add(head);
-        lst.addAll(setHandlers);
+				if (!handlerok) {
+					setHandlers.remove(stat);
+				}
+			}
 
-        for (Statement st : lst) {
-          if (st.isMonitorEnter()) {
-            return null;
-          }
-        }
+			if (hnextcount != 1 && !setHandlers.isEmpty())
+			{
+				List<Statement> lst = new ArrayList<>();
+				lst.add(head);
+				lst.addAll(setHandlers);
 
-        if (DecHelper.checkStatementExceptions(lst)) {
-          return new CatchStatement(head, next, setHandlers);
-        }
-      }
-    }
-    return null;
-  }
+				for (Statement st : lst)
+				{
+					if (st.isMonitorEnter()) {
+						return null;
+					}
+				}
 
-  @Override
-  public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
-    TextBuffer buf = new TextBuffer();
+				if (DecHelper.checkStatementExceptions(lst)) {
+					return new CatchStatement(head, next, setHandlers);
+				}
+			}
+		}
+		return null;
+	}
 
-    buf.append(ExprProcessor.listToJava(varDefinitions, indent, tracer));
+	@Override
+	public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
+		TextBuffer buf = new TextBuffer();
 
-    if (isLabeled()) {
-      buf.appendIndent(indent).append("label").append(this.id.toString()).append(":").appendLineSeparator();
-      tracer.incrementCurrentSourceLine();
-    }
+		buf.append(ExprProcessor.listToJava(varDefinitions, indent, tracer));
 
-    buf.appendIndent(indent).append("try {").appendLineSeparator();
-    tracer.incrementCurrentSourceLine();
+		if (isLabeled())
+		{
+			buf.appendIndent(indent).append("label").append(this.id.toString()).append(":").appendLineSeparator();
+			tracer.incrementCurrentSourceLine();
+		}
 
-    buf.append(ExprProcessor.jmpWrapper(first, indent + 1, true, tracer));
-    buf.appendIndent(indent).append("}");
+		buf.appendIndent(indent).append("try {").appendLineSeparator();
+		tracer.incrementCurrentSourceLine();
 
-    for (int i = 1; i < stats.size(); i++) {
-      Statement stat = stats.get(i);
-      // map first instruction storing the exception to the catch statement
-      BasicBlock block = stat.getBasichead().getBlock();
-      if (!block.getSeq().isEmpty() && block.getInstruction(0).opcode == CodeConstants.opc_astore) {
-        Integer offset = block.getOldOffset(0);
-        if (offset > -1) tracer.addMapping(offset);
-      }
+		buf.append(ExprProcessor.jmpWrapper(first, indent + 1, true, tracer));
+		buf.appendIndent(indent).append("}");
 
-      buf.append(" catch (");
+		for (int i = 1; i < stats.size(); i++)
+		{
+			Statement stat = stats.get(i);
+			// map first instruction storing the exception to the catch statement
+			BasicBlock block = stat.getBasichead().getBlock();
+			if (!block.getSeq().isEmpty() && block.getInstruction(0).opcode == CodeConstants.opc_astore)
+			{
+				Integer offset = block.getOldOffset(0);
+				if (offset > -1) tracer.addMapping(offset);
+			}
 
-      List<String> exception_types = exctstrings.get(i - 1);
-      if (exception_types.size() > 1) { // multi-catch, Java 7 style
-        for (int exc_index = 1; exc_index < exception_types.size(); ++exc_index) {
-          VarType exc_type = new VarType(CodeConstants.TYPE_OBJECT, 0, exception_types.get(exc_index));
-          String exc_type_name = ExprProcessor.getCastTypeName(exc_type);
+			buf.append(" catch (");
 
-          buf.append(exc_type_name).append(" | ");
-        }
-      }
-      buf.append(vars.get(i - 1).toJava(indent, tracer));
-      buf.append(") {").appendLineSeparator();
-      tracer.incrementCurrentSourceLine();
-      buf.append(ExprProcessor.jmpWrapper(stat, indent + 1, false, tracer)).appendIndent(indent)
-        .append("}");
-    }
-    buf.appendLineSeparator();
+			List<String> exception_types = exctstrings.get(i - 1);
+			if (exception_types.size() > 1)
+			{ // multi-catch, Java 7 style
+				for (int exc_index = 1; exc_index < exception_types.size(); ++exc_index)
+				{
+					VarType exc_type = new VarType(CodeConstants.TYPE_OBJECT, 0, exception_types.get(exc_index));
+					String exc_type_name = ExprProcessor.getCastTypeName(exc_type);
 
-    tracer.incrementCurrentSourceLine();
-    return buf;
-  }
+					buf.append(exc_type_name).append(" | ");
+				}
+			}
+			buf.append(vars.get(i - 1).toJava(indent, tracer));
+			buf.append(") {").appendLineSeparator();
+			tracer.incrementCurrentSourceLine();
+			buf.append(ExprProcessor.jmpWrapper(stat, indent + 1, false, tracer)).appendIndent(indent)
+					.append("}");
+		}
+		buf.appendLineSeparator();
 
-  @Override
-  public Statement getSimpleCopy() {
-    CatchStatement cs = new CatchStatement();
+		tracer.incrementCurrentSourceLine();
+		return buf;
+	}
 
-    for (List<String> exc : this.exctstrings) {
-      cs.exctstrings.add(new ArrayList<>(exc));
-      cs.vars.add(new VarExprent(DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.VAR_COUNTER),
-                                 new VarType(CodeConstants.TYPE_OBJECT, 0, exc.get(0)),
-                                 DecompilerContext.getVarProcessor()));
-    }
+	@Override
+	public Statement getSimpleCopy() {
+		CatchStatement cs = new CatchStatement();
 
-    return cs;
-  }
+		for (List<String> exc : this.exctstrings)
+		{
+			cs.exctstrings.add(new ArrayList<>(exc));
+			cs.vars.add(new VarExprent(DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.VAR_COUNTER),
+					new VarType(CodeConstants.TYPE_OBJECT, 0, exc.get(0)),
+					DecompilerContext.getVarProcessor()));
+		}
 
-  // *****************************************************************************
-  // getter and setter methods
-  // *****************************************************************************
+		return cs;
+	}
 
-  public List<VarExprent> getVars() {
-    return vars;
-  }
+	// *****************************************************************************
+	// getter and setter methods
+	// *****************************************************************************
+
+	public List<VarExprent> getVars() {
+		return vars;
+	}
 }

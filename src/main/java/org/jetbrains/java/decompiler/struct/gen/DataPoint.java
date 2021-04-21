@@ -1,83 +1,84 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
+// found in the LICENSE file.
 package org.jetbrains.java.decompiler.struct.gen;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jetbrains.java.decompiler.code.CodeConstants;
 import org.jetbrains.java.decompiler.struct.StructMethod;
 import org.jetbrains.java.decompiler.util.ListStack;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DataPoint {
 
-  private List<VarType> localVariables = new ArrayList<>();
+	private List<VarType> localVariables = new ArrayList<>();
 
-  private ListStack<VarType> stack = new ListStack<>();
+	private ListStack<VarType> stack = new ListStack<>();
 
+	public static DataPoint getInitialDataPoint(StructMethod mt) {
 
-  public void setVariable(int index, VarType value) {
-    if (index >= localVariables.size()) {
-      for (int i = localVariables.size(); i <= index; i++) {
-        localVariables.add(new VarType(CodeConstants.TYPE_NOTINITIALIZED));
-      }
-    }
+		DataPoint point = new DataPoint();
 
-    localVariables.set(index, value);
-  }
+		MethodDescriptor md = MethodDescriptor.parseDescriptor(mt.getDescriptor());
 
-  public VarType getVariable(int index) {
-    if (index < localVariables.size()) {
-      return localVariables.get(index);
-    }
-    else {
-      return new VarType(CodeConstants.TYPE_NOTINITIALIZED);
-    }
-  }
+		int k = 0;
+		if (!mt.hasModifier(CodeConstants.ACC_STATIC)) {
+			point.setVariable(k++, new VarType(CodeConstants.TYPE_OBJECT, 0, null));
+		}
 
-  public DataPoint copy() {
-    DataPoint point = new DataPoint();
-    point.setLocalVariables(new ArrayList<>(localVariables));
-    point.setStack(stack.clone());
-    return point;
-  }
+		for (int i = 0; i < md.params.length; i++)
+		{
+			VarType var = md.params[i];
 
-  public static DataPoint getInitialDataPoint(StructMethod mt) {
+			point.setVariable(k++, var);
+			if (var.stackSize == 2) {
+				point.setVariable(k++, new VarType(CodeConstants.TYPE_GROUP2EMPTY));
+			}
+		}
 
-    DataPoint point = new DataPoint();
+		return point;
+	}
 
-    MethodDescriptor md = MethodDescriptor.parseDescriptor(mt.getDescriptor());
+	public void setVariable(int index, VarType value) {
+		if (index >= localVariables.size())
+		{
+			for (int i = localVariables.size(); i <= index; i++) {
+				localVariables.add(new VarType(CodeConstants.TYPE_NOTINITIALIZED));
+			}
+		}
 
-    int k = 0;
-    if (!mt.hasModifier(CodeConstants.ACC_STATIC)) {
-      point.setVariable(k++, new VarType(CodeConstants.TYPE_OBJECT, 0, null));
-    }
+		localVariables.set(index, value);
+	}
 
-    for (int i = 0; i < md.params.length; i++) {
-      VarType var = md.params[i];
+	public VarType getVariable(int index) {
+		if (index < localVariables.size()) {
+			return localVariables.get(index);
+		}
+		else {
+			return new VarType(CodeConstants.TYPE_NOTINITIALIZED);
+		}
+	}
 
-      point.setVariable(k++, var);
-      if (var.stackSize == 2) {
-        point.setVariable(k++, new VarType(CodeConstants.TYPE_GROUP2EMPTY));
-      }
-    }
+	public DataPoint copy() {
+		DataPoint point = new DataPoint();
+		point.setLocalVariables(new ArrayList<>(localVariables));
+		point.setStack(stack.clone());
+		return point;
+	}
 
-    return point;
-  }
+	public List<VarType> getLocalVariables() {
+		return localVariables;
+	}
 
+	public void setLocalVariables(List<VarType> localVariables) {
+		this.localVariables = localVariables;
+	}
 
-  public List<VarType> getLocalVariables() {
-    return localVariables;
-  }
+	public ListStack<VarType> getStack() {
+		return stack;
+	}
 
-  public void setLocalVariables(List<VarType> localVariables) {
-    this.localVariables = localVariables;
-  }
-
-  public ListStack<VarType> getStack() {
-    return stack;
-  }
-
-  public void setStack(ListStack<VarType> stack) {
-    this.stack = stack;
-  }
+	public void setStack(ListStack<VarType> stack) {
+		this.stack = stack;
+	}
 }

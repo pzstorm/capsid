@@ -1,5 +1,9 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
+// found in the LICENSE file.
 package org.jetbrains.java.decompiler.main;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jetbrains.java.decompiler.code.CodeConstants;
 import org.jetbrains.java.decompiler.main.ClassesProcessor.ClassNode;
@@ -15,237 +19,274 @@ import org.jetbrains.java.decompiler.struct.StructClass;
 import org.jetbrains.java.decompiler.struct.StructField;
 import org.jetbrains.java.decompiler.util.InterpreterUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public final class InitializerProcessor {
-  public static void extractInitializers(ClassWrapper wrapper) {
-    MethodWrapper method = wrapper.getMethodWrapper(CodeConstants.CLINIT_NAME, "()V");
-    if (method != null && method.root != null) {  // successfully decompiled static constructor
-      extractStaticInitializers(wrapper, method);
-    }
 
-    extractDynamicInitializers(wrapper);
+	public static void extractInitializers(ClassWrapper wrapper) {
+		MethodWrapper method = wrapper.getMethodWrapper(CodeConstants.CLINIT_NAME, "()V");
+		if (method != null && method.root != null)
+		{  // successfully decompiled static constructor
+			extractStaticInitializers(wrapper, method);
+		}
 
-    // required e.g. if anonymous class is being decompiled as a standard one.
-    // This can happen if InnerClasses attributes are erased
-    liftConstructor(wrapper);
+		extractDynamicInitializers(wrapper);
 
-    if (DecompilerContext.getOption(IFernflowerPreferences.HIDE_EMPTY_SUPER)) {
-      hideEmptySuper(wrapper);
-    }
-  }
+		// required e.g. if anonymous class is being decompiled as a standard one.
+		// This can happen if InnerClasses attributes are erased
+		liftConstructor(wrapper);
 
-  private static void liftConstructor(ClassWrapper wrapper) {
-    for (MethodWrapper method : wrapper.getMethods()) {
-      if (CodeConstants.INIT_NAME.equals(method.methodStruct.getName()) && method.root != null) {
-        Statement firstData = Statements.findFirstData(method.root);
-        if (firstData == null) {
-          return;
-        }
+		if (DecompilerContext.getOption(IFernflowerPreferences.HIDE_EMPTY_SUPER)) {
+			hideEmptySuper(wrapper);
+		}
+	}
 
-        int index = 0;
-        List<Exprent> lstExprents = firstData.getExprents();
+	private static void liftConstructor(ClassWrapper wrapper) {
+		for (MethodWrapper method : wrapper.getMethods())
+		{
+			if (CodeConstants.INIT_NAME.equals(method.methodStruct.getName()) && method.root != null)
+			{
+				Statement firstData = Statements.findFirstData(method.root);
+				if (firstData == null) {
+					return;
+				}
 
-        for (Exprent exprent : lstExprents) {
-          int action = 0;
+				int index = 0;
+				List<Exprent> lstExprents = firstData.getExprents();
 
-          if (exprent.type == Exprent.EXPRENT_ASSIGNMENT) {
-            AssignmentExprent assignExpr = (AssignmentExprent)exprent;
-            if (assignExpr.getLeft().type == Exprent.EXPRENT_FIELD && assignExpr.getRight().type == Exprent.EXPRENT_VAR) {
-              FieldExprent fExpr = (FieldExprent)assignExpr.getLeft();
-              if (fExpr.getClassname().equals(wrapper.getClassStruct().qualifiedName)) {
-                StructField structField = wrapper.getClassStruct().getField(fExpr.getName(), fExpr.getDescriptor().descriptorString);
-                if (structField != null && structField.hasModifier(CodeConstants.ACC_FINAL)) {
-                  action = 1;
-                }
-              }
-            }
-          }
-          else if (index > 0 && exprent.type == Exprent.EXPRENT_INVOCATION &&
-                   Statements.isInvocationInitConstructor((InvocationExprent)exprent, method, wrapper, true)) {
-            // this() or super()
-            lstExprents.add(0, lstExprents.remove(index));
-            action = 2;
-          }
+				for (Exprent exprent : lstExprents)
+				{
+					int action = 0;
 
-          if (action != 1) {
-            break;
-          }
+					if (exprent.type == Exprent.EXPRENT_ASSIGNMENT)
+					{
+						AssignmentExprent assignExpr = (AssignmentExprent) exprent;
+						if (assignExpr.getLeft().type == Exprent.EXPRENT_FIELD && assignExpr.getRight().type == Exprent.EXPRENT_VAR)
+						{
+							FieldExprent fExpr = (FieldExprent) assignExpr.getLeft();
+							if (fExpr.getClassname().equals(wrapper.getClassStruct().qualifiedName))
+							{
+								StructField structField = wrapper.getClassStruct().getField(fExpr.getName(),
+										fExpr.getDescriptor().descriptorString);
+								if (structField != null && structField.hasModifier(CodeConstants.ACC_FINAL)) {
+									action = 1;
+								}
+							}
+						}
+					}
+					else if (index > 0 && exprent.type == Exprent.EXPRENT_INVOCATION &&
+							Statements.isInvocationInitConstructor((InvocationExprent) exprent, method, wrapper, true))
+					{
+						// this() or super()
+						lstExprents.add(0, lstExprents.remove(index));
+						action = 2;
+					}
 
-          index++;
-        }
-      }
-    }
-  }
+					if (action != 1) {
+						break;
+					}
 
-  private static void hideEmptySuper(ClassWrapper wrapper) {
-    for (MethodWrapper method : wrapper.getMethods()) {
-      if (CodeConstants.INIT_NAME.equals(method.methodStruct.getName()) && method.root != null) {
-        Statement firstData = Statements.findFirstData(method.root);
-        if (firstData == null || firstData.getExprents().isEmpty()) {
-          return;
-        }
+					index++;
+				}
+			}
+		}
+	}
 
-        Exprent exprent = firstData.getExprents().get(0);
-        if (exprent.type == Exprent.EXPRENT_INVOCATION) {
-          InvocationExprent invExpr = (InvocationExprent)exprent;
-          if (Statements.isInvocationInitConstructor(invExpr, method, wrapper, false) && invExpr.getLstParameters().isEmpty()) {
-            firstData.getExprents().remove(0);
-          }
-        }
-      }
-    }
-  }
+	private static void hideEmptySuper(ClassWrapper wrapper) {
+		for (MethodWrapper method : wrapper.getMethods())
+		{
+			if (CodeConstants.INIT_NAME.equals(method.methodStruct.getName()) && method.root != null)
+			{
+				Statement firstData = Statements.findFirstData(method.root);
+				if (firstData == null || firstData.getExprents().isEmpty()) {
+					return;
+				}
 
-  private static void extractStaticInitializers(ClassWrapper wrapper, MethodWrapper method) {
-    RootStatement root = method.root;
-    StructClass cl = wrapper.getClassStruct();
-    Statement firstData = Statements.findFirstData(root);
-    if (firstData != null) {
-      boolean inlineInitializers = cl.hasModifier(CodeConstants.ACC_INTERFACE) || cl.hasModifier(CodeConstants.ACC_ENUM);
+				Exprent exprent = firstData.getExprents().get(0);
+				if (exprent.type == Exprent.EXPRENT_INVOCATION)
+				{
+					InvocationExprent invExpr = (InvocationExprent) exprent;
+					if (Statements.isInvocationInitConstructor(invExpr, method, wrapper, false) && invExpr.getLstParameters().isEmpty()) {
+						firstData.getExprents().remove(0);
+					}
+				}
+			}
+		}
+	}
 
-      while (!firstData.getExprents().isEmpty()) {
-        Exprent exprent = firstData.getExprents().get(0);
+	private static void extractStaticInitializers(ClassWrapper wrapper, MethodWrapper method) {
+		RootStatement root = method.root;
+		StructClass cl = wrapper.getClassStruct();
+		Statement firstData = Statements.findFirstData(root);
+		if (firstData != null)
+		{
+			boolean inlineInitializers =
+					cl.hasModifier(CodeConstants.ACC_INTERFACE) || cl.hasModifier(CodeConstants.ACC_ENUM);
 
-        boolean found = false;
+			while (!firstData.getExprents().isEmpty())
+			{
+				Exprent exprent = firstData.getExprents().get(0);
 
-        if (exprent.type == Exprent.EXPRENT_ASSIGNMENT) {
-          AssignmentExprent assignExpr = (AssignmentExprent)exprent;
-          if (assignExpr.getLeft().type == Exprent.EXPRENT_FIELD) {
-            FieldExprent fExpr = (FieldExprent)assignExpr.getLeft();
-            if (fExpr.isStatic() && fExpr.getClassname().equals(cl.qualifiedName) &&
-                cl.hasField(fExpr.getName(), fExpr.getDescriptor().descriptorString)) {
+				boolean found = false;
 
-              // interfaces fields should always be initialized inline
-              if (inlineInitializers || isExprentIndependent(assignExpr.getRight(), method)) {
-                String keyField = InterpreterUtil.makeUniqueKey(fExpr.getName(), fExpr.getDescriptor().descriptorString);
-                if (!wrapper.getStaticFieldInitializers().containsKey(keyField)) {
-                  wrapper.getStaticFieldInitializers().addWithKey(assignExpr.getRight(), keyField);
-                  firstData.getExprents().remove(0);
-                  found = true;
-                }
-              }
-            }
-          }
-        }
+				if (exprent.type == Exprent.EXPRENT_ASSIGNMENT)
+				{
+					AssignmentExprent assignExpr = (AssignmentExprent) exprent;
+					if (assignExpr.getLeft().type == Exprent.EXPRENT_FIELD)
+					{
+						FieldExprent fExpr = (FieldExprent) assignExpr.getLeft();
+						if (fExpr.isStatic() && fExpr.getClassname().equals(cl.qualifiedName) &&
+								cl.hasField(fExpr.getName(), fExpr.getDescriptor().descriptorString))
+						{
 
-        if (!found) {
-          break;
-        }
-      }
-    }
-  }
+							// interfaces fields should always be initialized inline
+							if (inlineInitializers || isExprentIndependent(assignExpr.getRight(), method))
+							{
+								String keyField = InterpreterUtil.makeUniqueKey(fExpr.getName(),
+										fExpr.getDescriptor().descriptorString);
+								if (!wrapper.getStaticFieldInitializers().containsKey(keyField))
+								{
+									wrapper.getStaticFieldInitializers().addWithKey(assignExpr.getRight(), keyField);
+									firstData.getExprents().remove(0);
+									found = true;
+								}
+							}
+						}
+					}
+				}
 
-  private static void extractDynamicInitializers(ClassWrapper wrapper) {
-    StructClass cl = wrapper.getClassStruct();
+				if (!found) {
+					break;
+				}
+			}
+		}
+	}
 
-    boolean isAnonymous = DecompilerContext.getClassProcessor().getMapRootClasses().get(cl.qualifiedName).type == ClassNode.CLASS_ANONYMOUS;
+	private static void extractDynamicInitializers(ClassWrapper wrapper) {
+		StructClass cl = wrapper.getClassStruct();
 
-    List<List<Exprent>> lstFirst = new ArrayList<>();
-    List<MethodWrapper> lstMethodWrappers = new ArrayList<>();
+		boolean isAnonymous =
+				DecompilerContext.getClassProcessor().getMapRootClasses().get(cl.qualifiedName).type == ClassNode.CLASS_ANONYMOUS;
 
-    for (MethodWrapper method : wrapper.getMethods()) {
-      if (CodeConstants.INIT_NAME.equals(method.methodStruct.getName()) && method.root != null) { // successfully decompiled constructor
-        Statement firstData = Statements.findFirstData(method.root);
-        if (firstData == null || firstData.getExprents().isEmpty()) {
-          return;
-        }
-        lstFirst.add(firstData.getExprents());
-        lstMethodWrappers.add(method);
+		List<List<Exprent>> lstFirst = new ArrayList<>();
+		List<MethodWrapper> lstMethodWrappers = new ArrayList<>();
 
-        Exprent exprent = firstData.getExprents().get(0);
-        if (!isAnonymous) { // FIXME: doesn't make sense
-          if (exprent.type != Exprent.EXPRENT_INVOCATION ||
-              !Statements.isInvocationInitConstructor((InvocationExprent)exprent, method, wrapper, false)) {
-            return;
-          }
-        }
-      }
-    }
+		for (MethodWrapper method : wrapper.getMethods())
+		{
+			if (CodeConstants.INIT_NAME.equals(method.methodStruct.getName()) && method.root != null)
+			{ // successfully decompiled constructor
+				Statement firstData = Statements.findFirstData(method.root);
+				if (firstData == null || firstData.getExprents().isEmpty()) {
+					return;
+				}
+				lstFirst.add(firstData.getExprents());
+				lstMethodWrappers.add(method);
 
-    if (lstFirst.isEmpty()) {
-      return;
-    }
+				Exprent exprent = firstData.getExprents().get(0);
+				if (!isAnonymous)
+				{ // FIXME: doesn't make sense
+					if (exprent.type != Exprent.EXPRENT_INVOCATION ||
+							!Statements.isInvocationInitConstructor((InvocationExprent) exprent, method, wrapper,
+									false)) {
+						return;
+					}
+				}
+			}
+		}
 
-    while (true) {
-      String fieldWithDescr = null;
-      Exprent value = null;
+		if (lstFirst.isEmpty()) {
+			return;
+		}
 
-      for (int i = 0; i < lstFirst.size(); i++) {
-        List<Exprent> lst = lstFirst.get(i);
+		while (true)
+		{
+			String fieldWithDescr = null;
+			Exprent value = null;
 
-        if (lst.size() < (isAnonymous ? 1 : 2)) {
-          return;
-        }
+			for (int i = 0; i < lstFirst.size(); i++)
+			{
+				List<Exprent> lst = lstFirst.get(i);
 
-        Exprent exprent = lst.get(isAnonymous ? 0 : 1);
+				if (lst.size() < (isAnonymous ? 1 : 2)) {
+					return;
+				}
 
-        boolean found = false;
+				Exprent exprent = lst.get(isAnonymous ? 0 : 1);
 
-        if (exprent.type == Exprent.EXPRENT_ASSIGNMENT) {
-          AssignmentExprent assignExpr = (AssignmentExprent)exprent;
-          if (assignExpr.getLeft().type == Exprent.EXPRENT_FIELD) {
-            FieldExprent fExpr = (FieldExprent)assignExpr.getLeft();
-            if (!fExpr.isStatic() && fExpr.getClassname().equals(cl.qualifiedName) &&
-                cl.hasField(fExpr.getName(), fExpr.getDescriptor().descriptorString)) { // check for the physical existence of the field. Could be defined in a superclass.
+				boolean found = false;
 
-              if (isExprentIndependent(assignExpr.getRight(), lstMethodWrappers.get(i))) {
-                String fieldKey = InterpreterUtil.makeUniqueKey(fExpr.getName(), fExpr.getDescriptor().descriptorString);
-                if (fieldWithDescr == null) {
-                  fieldWithDescr = fieldKey;
-                  value = assignExpr.getRight();
-                }
-                else {
-                  if (!fieldWithDescr.equals(fieldKey) ||
-                      !value.equals(assignExpr.getRight())) {
-                    return;
-                  }
-                }
-                found = true;
-              }
-            }
-          }
-        }
+				if (exprent.type == Exprent.EXPRENT_ASSIGNMENT)
+				{
+					AssignmentExprent assignExpr = (AssignmentExprent) exprent;
+					if (assignExpr.getLeft().type == Exprent.EXPRENT_FIELD)
+					{
+						FieldExprent fExpr = (FieldExprent) assignExpr.getLeft();
+						if (!fExpr.isStatic() && fExpr.getClassname().equals(cl.qualifiedName) &&
+								cl.hasField(fExpr.getName(), fExpr.getDescriptor().descriptorString))
+						{ // check for the physical existence of the field. Could be defined in a superclass.
 
-        if (!found) {
-          return;
-        }
-      }
+							if (isExprentIndependent(assignExpr.getRight(), lstMethodWrappers.get(i)))
+							{
+								String fieldKey = InterpreterUtil.makeUniqueKey(fExpr.getName(),
+										fExpr.getDescriptor().descriptorString);
+								if (fieldWithDescr == null)
+								{
+									fieldWithDescr = fieldKey;
+									value = assignExpr.getRight();
+								}
+								else {
+									if (!fieldWithDescr.equals(fieldKey) ||
+											!value.equals(assignExpr.getRight())) {
+										return;
+									}
+								}
+								found = true;
+							}
+						}
+					}
+				}
 
-      if (!wrapper.getDynamicFieldInitializers().containsKey(fieldWithDescr)) {
-        wrapper.getDynamicFieldInitializers().addWithKey(value, fieldWithDescr);
+				if (!found) {
+					return;
+				}
+			}
 
-        for (List<Exprent> lst : lstFirst) {
-          lst.remove(isAnonymous ? 0 : 1);
-        }
-      }
-      else {
-        return;
-      }
-    }
-  }
+			if (!wrapper.getDynamicFieldInitializers().containsKey(fieldWithDescr))
+			{
+				wrapper.getDynamicFieldInitializers().addWithKey(value, fieldWithDescr);
 
-  private static boolean isExprentIndependent(Exprent exprent, MethodWrapper method) {
-    List<Exprent> lst = exprent.getAllExprents(true);
-    lst.add(exprent);
+				for (List<Exprent> lst : lstFirst) {
+					lst.remove(isAnonymous ? 0 : 1);
+				}
+			}
+			else {
+				return;
+			}
+		}
+	}
 
-    for (Exprent expr : lst) {
-      switch (expr.type) {
-        case Exprent.EXPRENT_VAR:
-          VarVersionPair varPair = new VarVersionPair((VarExprent)expr);
-          if (!method.varproc.getExternalVars().contains(varPair)) {
-            String varName = method.varproc.getVarName(varPair);
-            if (!varName.equals("this") && !varName.endsWith(".this")) { // FIXME: remove direct comparison with strings
-              return false;
-            }
-          }
-          break;
-        case Exprent.EXPRENT_FIELD:
-          return false;
-      }
-    }
+	private static boolean isExprentIndependent(Exprent exprent, MethodWrapper method) {
+		List<Exprent> lst = exprent.getAllExprents(true);
+		lst.add(exprent);
 
-    return true;
-  }
+		for (Exprent expr : lst)
+		{
+			switch (expr.type)
+			{
+				case Exprent.EXPRENT_VAR:
+					VarVersionPair varPair = new VarVersionPair((VarExprent) expr);
+					if (!method.varproc.getExternalVars().contains(varPair))
+					{
+						String varName = method.varproc.getVarName(varPair);
+						if (!varName.equals("this") && !varName.endsWith(".this"))
+						{ // FIXME: remove direct comparison with strings
+							return false;
+						}
+					}
+					break;
+				case Exprent.EXPRENT_FIELD:
+					return false;
+			}
+		}
+
+		return true;
+	}
 }

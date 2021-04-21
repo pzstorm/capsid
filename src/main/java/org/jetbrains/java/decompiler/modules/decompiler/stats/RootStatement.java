@@ -1,4 +1,5 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
+// found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler.stats;
 
 import org.jetbrains.java.decompiler.main.collectors.BytecodeMappingTracer;
@@ -6,24 +7,25 @@ import org.jetbrains.java.decompiler.modules.decompiler.ExprProcessor;
 import org.jetbrains.java.decompiler.util.TextBuffer;
 
 public class RootStatement extends Statement {
-  private final DummyExitStatement dummyExit;
 
-  public RootStatement(Statement head, DummyExitStatement dummyExit) {
-    type = Statement.TYPE_ROOT;
+	private final DummyExitStatement dummyExit;
 
-    first = head;
-    this.dummyExit = dummyExit;
+	public RootStatement(Statement head, DummyExitStatement dummyExit) {
+		type = Statement.TYPE_ROOT;
 
-    stats.addWithKey(first, first.id);
-    first.setParent(this);
-  }
+		first = head;
+		this.dummyExit = dummyExit;
 
-  @Override
-  public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
-    return ExprProcessor.listToJava(varDefinitions, indent, tracer).append(first.toJava(indent, tracer));
-  }
+		stats.addWithKey(first, first.id);
+		first.setParent(this);
+	}
 
-  public DummyExitStatement getDummyExit() {
-    return dummyExit;
-  }
+	@Override
+	public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
+		return ExprProcessor.listToJava(varDefinitions, indent, tracer).append(first.toJava(indent, tracer));
+	}
+
+	public DummyExitStatement getDummyExit() {
+		return dummyExit;
+	}
 }

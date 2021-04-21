@@ -24,10 +24,10 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-import com.google.common.base.Splitter;
-
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
+
+import com.google.common.base.Splitter;
 
 import io.pzstorm.capsid.ProjectProperty;
 

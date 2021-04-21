@@ -1,5 +1,12 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
+// found in the LICENSE file.
 package org.jetbrains.java.decompiler.struct.consts;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
 
 import org.jetbrains.java.decompiler.code.CodeConstants;
 import org.jetbrains.java.decompiler.main.DecompilerContext;
@@ -10,230 +17,238 @@ import org.jetbrains.java.decompiler.struct.gen.NewClassNameBuilder;
 import org.jetbrains.java.decompiler.struct.gen.VarType;
 import org.jetbrains.java.decompiler.util.DataInputFullStream;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
-
 @SuppressWarnings("AssignmentToForLoopParameter")
 public class ConstantPool implements NewClassNameBuilder {
-  public static final int FIELD = 1;
-  public static final int METHOD = 2;
 
-  private final List<PooledConstant> pool;
-  private final PoolInterceptor interceptor;
+	public static final int FIELD = 1;
+	public static final int METHOD = 2;
 
-  public ConstantPool(DataInputStream in) throws IOException {
-    int size = in.readUnsignedShort();
-    pool = new ArrayList<>(size);
-    BitSet[] nextPass = {new BitSet(size), new BitSet(size), new BitSet(size)};
+	private final List<PooledConstant> pool;
+	private final PoolInterceptor interceptor;
 
-    // first dummy constant
-    pool.add(null);
+	public ConstantPool(DataInputStream in) throws IOException {
+		int size = in.readUnsignedShort();
+		pool = new ArrayList<>(size);
+		BitSet[] nextPass = { new BitSet(size), new BitSet(size), new BitSet(size) };
 
-    // first pass: read the elements
-    for (int i = 1; i < size; i++) {
-      byte tag = (byte)in.readUnsignedByte();
+		// first dummy constant
+		pool.add(null);
 
-      switch (tag) {
-        case CodeConstants.CONSTANT_Utf8:
-          pool.add(new PrimitiveConstant(CodeConstants.CONSTANT_Utf8, in.readUTF()));
-          break;
+		// first pass: read the elements
+		for (int i = 1; i < size; i++)
+		{
+			byte tag = (byte) in.readUnsignedByte();
 
-        case CodeConstants.CONSTANT_Integer:
-          pool.add(new PrimitiveConstant(CodeConstants.CONSTANT_Integer, Integer.valueOf(in.readInt())));
-          break;
+			switch (tag)
+			{
+				case CodeConstants.CONSTANT_Utf8:
+					pool.add(new PrimitiveConstant(CodeConstants.CONSTANT_Utf8, in.readUTF()));
+					break;
 
-        case CodeConstants.CONSTANT_Float:
-          pool.add(new PrimitiveConstant(CodeConstants.CONSTANT_Float, in.readFloat()));
-          break;
+				case CodeConstants.CONSTANT_Integer:
+					pool.add(new PrimitiveConstant(CodeConstants.CONSTANT_Integer, Integer.valueOf(in.readInt())));
+					break;
 
-        case CodeConstants.CONSTANT_Long:
-          pool.add(new PrimitiveConstant(CodeConstants.CONSTANT_Long, in.readLong()));
-          pool.add(null);
-          i++;
-          break;
+				case CodeConstants.CONSTANT_Float:
+					pool.add(new PrimitiveConstant(CodeConstants.CONSTANT_Float, in.readFloat()));
+					break;
 
-        case CodeConstants.CONSTANT_Double:
-          pool.add(new PrimitiveConstant(CodeConstants.CONSTANT_Double, in.readDouble()));
-          pool.add(null);
-          i++;
-          break;
+				case CodeConstants.CONSTANT_Long:
+					pool.add(new PrimitiveConstant(CodeConstants.CONSTANT_Long, in.readLong()));
+					pool.add(null);
+					i++;
+					break;
 
-        case CodeConstants.CONSTANT_Class:
-        case CodeConstants.CONSTANT_String:
-        case CodeConstants.CONSTANT_MethodType:
-          pool.add(new PrimitiveConstant(tag, in.readUnsignedShort()));
-          nextPass[0].set(i);
-          break;
+				case CodeConstants.CONSTANT_Double:
+					pool.add(new PrimitiveConstant(CodeConstants.CONSTANT_Double, in.readDouble()));
+					pool.add(null);
+					i++;
+					break;
 
-        case CodeConstants.CONSTANT_NameAndType:
-          pool.add(new LinkConstant(tag, in.readUnsignedShort(), in.readUnsignedShort()));
-          nextPass[0].set(i);
-          break;
+				case CodeConstants.CONSTANT_Class:
+				case CodeConstants.CONSTANT_String:
+				case CodeConstants.CONSTANT_MethodType:
+					pool.add(new PrimitiveConstant(tag, in.readUnsignedShort()));
+					nextPass[0].set(i);
+					break;
 
-        case CodeConstants.CONSTANT_Fieldref:
-        case CodeConstants.CONSTANT_Methodref:
-        case CodeConstants.CONSTANT_InterfaceMethodref:
-        case CodeConstants.CONSTANT_InvokeDynamic:
-          pool.add(new LinkConstant(tag, in.readUnsignedShort(), in.readUnsignedShort()));
-          nextPass[1].set(i);
-          break;
+				case CodeConstants.CONSTANT_NameAndType:
+					pool.add(new LinkConstant(tag, in.readUnsignedShort(), in.readUnsignedShort()));
+					nextPass[0].set(i);
+					break;
 
-        case CodeConstants.CONSTANT_MethodHandle:
-          pool.add(new LinkConstant(tag, in.readUnsignedByte(), in.readUnsignedShort()));
-          nextPass[2].set(i);
-          break;
-      }
-    }
+				case CodeConstants.CONSTANT_Fieldref:
+				case CodeConstants.CONSTANT_Methodref:
+				case CodeConstants.CONSTANT_InterfaceMethodref:
+				case CodeConstants.CONSTANT_InvokeDynamic:
+					pool.add(new LinkConstant(tag, in.readUnsignedShort(), in.readUnsignedShort()));
+					nextPass[1].set(i);
+					break;
 
-    // resolving complex pool elements
-    for (BitSet pass : nextPass) {
-      int idx = 0;
-      while ((idx = pass.nextSetBit(idx + 1)) > 0) {
-        pool.get(idx).resolveConstant(this);
-      }
-    }
+				case CodeConstants.CONSTANT_MethodHandle:
+					pool.add(new LinkConstant(tag, in.readUnsignedByte(), in.readUnsignedShort()));
+					nextPass[2].set(i);
+					break;
+			}
+		}
 
-    // get global constant pool interceptor instance, if any available
-    interceptor = DecompilerContext.getPoolInterceptor();
-  }
+		// resolving complex pool elements
+		for (BitSet pass : nextPass)
+		{
+			int idx = 0;
+			while ((idx = pass.nextSetBit(idx + 1)) > 0) {
+				pool.get(idx).resolveConstant(this);
+			}
+		}
 
-  public static void skipPool(DataInputFullStream in) throws IOException {
-    int size = in.readUnsignedShort();
+		// get global constant pool interceptor instance, if any available
+		interceptor = DecompilerContext.getPoolInterceptor();
+	}
 
-    for (int i = 1; i < size; i++) {
-      switch (in.readUnsignedByte()) {
-        case CodeConstants.CONSTANT_Utf8:
-          in.readUTF();
-          break;
+	public static void skipPool(DataInputFullStream in) throws IOException {
+		int size = in.readUnsignedShort();
 
-        case CodeConstants.CONSTANT_Integer:
-        case CodeConstants.CONSTANT_Float:
-        case CodeConstants.CONSTANT_Fieldref:
-        case CodeConstants.CONSTANT_Methodref:
-        case CodeConstants.CONSTANT_InterfaceMethodref:
-        case CodeConstants.CONSTANT_NameAndType:
-        case CodeConstants.CONSTANT_InvokeDynamic:
-          in.discard(4);
-          break;
+		for (int i = 1; i < size; i++)
+		{
+			switch (in.readUnsignedByte())
+			{
+				case CodeConstants.CONSTANT_Utf8:
+					in.readUTF();
+					break;
 
-        case CodeConstants.CONSTANT_Long:
-        case CodeConstants.CONSTANT_Double:
-          in.discard(8);
-          i++;
-          break;
+				case CodeConstants.CONSTANT_Integer:
+				case CodeConstants.CONSTANT_Float:
+				case CodeConstants.CONSTANT_Fieldref:
+				case CodeConstants.CONSTANT_Methodref:
+				case CodeConstants.CONSTANT_InterfaceMethodref:
+				case CodeConstants.CONSTANT_NameAndType:
+				case CodeConstants.CONSTANT_InvokeDynamic:
+					in.discard(4);
+					break;
 
-        case CodeConstants.CONSTANT_Class:
-        case CodeConstants.CONSTANT_String:
-        case CodeConstants.CONSTANT_MethodType:
-          in.discard(2);
-          break;
+				case CodeConstants.CONSTANT_Long:
+				case CodeConstants.CONSTANT_Double:
+					in.discard(8);
+					i++;
+					break;
 
-        case CodeConstants.CONSTANT_MethodHandle:
-          in.discard(3);
-      }
-    }
-  }
+				case CodeConstants.CONSTANT_Class:
+				case CodeConstants.CONSTANT_String:
+				case CodeConstants.CONSTANT_MethodType:
+					in.discard(2);
+					break;
 
-  public String[] getClassElement(int elementType, String className, int nameIndex, int descriptorIndex) {
-    String elementName = ((PrimitiveConstant)getConstant(nameIndex)).getString();
-    String descriptor = ((PrimitiveConstant)getConstant(descriptorIndex)).getString();
+				case CodeConstants.CONSTANT_MethodHandle:
+					in.discard(3);
+			}
+		}
+	}
 
-    if (interceptor != null) {
-      String oldClassName = interceptor.getOldName(className);
-      if (oldClassName != null) {
-        className = oldClassName;
-      }
+	public String[] getClassElement(int elementType, String className, int nameIndex, int descriptorIndex) {
+		String elementName = ((PrimitiveConstant) getConstant(nameIndex)).getString();
+		String descriptor = ((PrimitiveConstant) getConstant(descriptorIndex)).getString();
 
-      String newElement = interceptor.getName(className + ' ' + elementName + ' ' + descriptor);
-      if (newElement != null) {
-        elementName = newElement.split(" ")[1];
-      }
+		if (interceptor != null)
+		{
+			String oldClassName = interceptor.getOldName(className);
+			if (oldClassName != null) {
+				className = oldClassName;
+			}
 
-      String newDescriptor = buildNewDescriptor(elementType == FIELD, descriptor);
-      if (newDescriptor != null) {
-        descriptor = newDescriptor;
-      }
-    }
+			String newElement = interceptor.getName(className + ' ' + elementName + ' ' + descriptor);
+			if (newElement != null) {
+				elementName = newElement.split(" ")[1];
+			}
 
-    return new String[]{elementName, descriptor};
-  }
+			String newDescriptor = buildNewDescriptor(elementType == FIELD, descriptor);
+			if (newDescriptor != null) {
+				descriptor = newDescriptor;
+			}
+		}
 
-  public PooledConstant getConstant(int index) {
-    return pool.get(index);
-  }
+		return new String[]{ elementName, descriptor };
+	}
 
-  public PrimitiveConstant getPrimitiveConstant(int index) {
-    PrimitiveConstant cn = (PrimitiveConstant)getConstant(index);
+	public PooledConstant getConstant(int index) {
+		return pool.get(index);
+	}
 
-    if (cn != null && interceptor != null) {
-      if (cn.type == CodeConstants.CONSTANT_Class) {
-        String newName = buildNewClassname(cn.getString());
-        if (newName != null) {
-          cn = new PrimitiveConstant(CodeConstants.CONSTANT_Class, newName);
-        }
-      }
-    }
+	public PrimitiveConstant getPrimitiveConstant(int index) {
+		PrimitiveConstant cn = (PrimitiveConstant) getConstant(index);
 
-    return cn;
-  }
+		if (cn != null && interceptor != null)
+		{
+			if (cn.type == CodeConstants.CONSTANT_Class)
+			{
+				String newName = buildNewClassname(cn.getString());
+				if (newName != null) {
+					cn = new PrimitiveConstant(CodeConstants.CONSTANT_Class, newName);
+				}
+			}
+		}
 
-  public LinkConstant getLinkConstant(int index) {
-    LinkConstant ln = (LinkConstant)getConstant(index);
+		return cn;
+	}
 
-    if (ln != null && interceptor != null &&
-        (ln.type == CodeConstants.CONSTANT_Fieldref ||
-         ln.type == CodeConstants.CONSTANT_Methodref ||
-         ln.type == CodeConstants.CONSTANT_InterfaceMethodref)) {
-      String newClassName = buildNewClassname(ln.classname);
-      String newElement = interceptor.getName(ln.classname + ' ' + ln.elementname + ' ' + ln.descriptor);
-      String newDescriptor = buildNewDescriptor(ln.type == CodeConstants.CONSTANT_Fieldref, ln.descriptor);
-      //TODO: Fix newElement being null caused by ln.classname being a leaf class instead of the class that declared the field/method.
-      //See the comments of IDEA-137253 for more information.
-      if (newClassName != null || newElement != null || newDescriptor != null) {
-        String className = newClassName == null ? ln.classname : newClassName;
-        String elementName = newElement == null ? ln.elementname : newElement.split(" ")[1];
-        String descriptor = newDescriptor == null ? ln.descriptor : newDescriptor;
-        ln = new LinkConstant(ln.type, className, elementName, descriptor);
-      }
-    }
+	public LinkConstant getLinkConstant(int index) {
+		LinkConstant ln = (LinkConstant) getConstant(index);
 
-    return ln;
-  }
+		if (ln != null && interceptor != null &&
+				(ln.type == CodeConstants.CONSTANT_Fieldref ||
+						ln.type == CodeConstants.CONSTANT_Methodref ||
+						ln.type == CodeConstants.CONSTANT_InterfaceMethodref))
+		{
+			String newClassName = buildNewClassname(ln.classname);
+			String newElement = interceptor.getName(ln.classname + ' ' + ln.elementname + ' ' + ln.descriptor);
+			String newDescriptor = buildNewDescriptor(ln.type == CodeConstants.CONSTANT_Fieldref, ln.descriptor);
+			//TODO: Fix newElement being null caused by ln.classname being a leaf class instead of the class that
+			// declared the field/method.
+			//See the comments of IDEA-137253 for more information.
+			if (newClassName != null || newElement != null || newDescriptor != null)
+			{
+				String className = newClassName == null ? ln.classname : newClassName;
+				String elementName = newElement == null ? ln.elementname : newElement.split(" ")[1];
+				String descriptor = newDescriptor == null ? ln.descriptor : newDescriptor;
+				ln = new LinkConstant(ln.type, className, elementName, descriptor);
+			}
+		}
 
-  @Override
-  public String buildNewClassname(String className) {
-    VarType vt = new VarType(className, true);
+		return ln;
+	}
 
-    String newName = interceptor.getName(vt.value);
-    if (newName != null) {
-      StringBuilder buffer = new StringBuilder();
+	@Override
+	public String buildNewClassname(String className) {
+		VarType vt = new VarType(className, true);
 
-      if (vt.arrayDim > 0) {
-        for (int i = 0; i < vt.arrayDim; i++) {
-          buffer.append('[');
-        }
+		String newName = interceptor.getName(vt.value);
+		if (newName != null)
+		{
+			StringBuilder buffer = new StringBuilder();
 
-        buffer.append('L').append(newName).append(';');
-      }
-      else {
-        buffer.append(newName);
-      }
+			if (vt.arrayDim > 0)
+			{
+				for (int i = 0; i < vt.arrayDim; i++) {
+					buffer.append('[');
+				}
 
-      return buffer.toString();
-    }
+				buffer.append('L').append(newName).append(';');
+			}
+			else {
+				buffer.append(newName);
+			}
 
-    return null;
-  }
+			return buffer.toString();
+		}
 
-  private String buildNewDescriptor(boolean isField, String descriptor) {
-    if (isField) {
-      return FieldDescriptor.parseDescriptor(descriptor).buildNewDescriptor(this);
-    }
-    else {
-      return MethodDescriptor.parseDescriptor(descriptor).buildNewDescriptor(this);
-    }
-  }
+		return null;
+	}
+
+	private String buildNewDescriptor(boolean isField, String descriptor) {
+		if (isField) {
+			return FieldDescriptor.parseDescriptor(descriptor).buildNewDescriptor(this);
+		}
+		else {
+			return MethodDescriptor.parseDescriptor(descriptor).buildNewDescriptor(this);
+		}
+	}
 }

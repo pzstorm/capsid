@@ -1,5 +1,10 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
+// found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.jetbrains.java.decompiler.code.cfg.BasicBlock;
 import org.jetbrains.java.decompiler.main.DecompilerContext;
@@ -8,382 +13,414 @@ import org.jetbrains.java.decompiler.modules.decompiler.exps.Exprent;
 import org.jetbrains.java.decompiler.modules.decompiler.exps.IfExprent;
 import org.jetbrains.java.decompiler.modules.decompiler.stats.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 public final class MergeHelper {
-  public static void enhanceLoops(Statement root) {
-    while (enhanceLoopsRec(root)) /**/;
-    SequenceHelper.condenseSequences(root);
-  }
 
-  private static boolean enhanceLoopsRec(Statement stat) {
-    boolean res = false;
+	public static void enhanceLoops(Statement root) {
+		while (enhanceLoopsRec(root)) /**/ ;
+		SequenceHelper.condenseSequences(root);
+	}
 
-    for (Statement st : stat.getStats()) {
-      if (st.getExprents() == null) {
-        res |= enhanceLoopsRec(st);
-      }
-    }
+	private static boolean enhanceLoopsRec(Statement stat) {
+		boolean res = false;
 
-    if (stat.type == Statement.TYPE_DO) {
-      res |= enhanceLoop((DoStatement)stat);
-    }
+		for (Statement st : stat.getStats())
+		{
+			if (st.getExprents() == null) {
+				res |= enhanceLoopsRec(st);
+			}
+		}
 
-    return res;
-  }
+		if (stat.type == Statement.TYPE_DO) {
+			res |= enhanceLoop((DoStatement) stat);
+		}
 
-  private static boolean enhanceLoop(DoStatement stat) {
-    int oldloop = stat.getLooptype();
+		return res;
+	}
 
-    switch (oldloop) {
-      case DoStatement.LOOP_DO:
+	private static boolean enhanceLoop(DoStatement stat) {
+		int oldloop = stat.getLooptype();
 
-        // identify a while loop
-        if (matchWhile(stat)) {
-          // identify a for loop - subtype of while
-          matchFor(stat);
-        }
-        else {
-          // identify a do{}while loop
-          matchDoWhile(stat);
-        }
+		switch (oldloop)
+		{
+			case DoStatement.LOOP_DO:
 
-        break;
-      case DoStatement.LOOP_WHILE:
-        matchFor(stat);
-    }
+				// identify a while loop
+				if (matchWhile(stat))
+				{
+					// identify a for loop - subtype of while
+					matchFor(stat);
+				}
+				else {
+					// identify a do{}while loop
+					matchDoWhile(stat);
+				}
 
-    return (stat.getLooptype() != oldloop);
-  }
+				break;
+			case DoStatement.LOOP_WHILE:
+				matchFor(stat);
+		}
 
-  private static void matchDoWhile(DoStatement stat) {
-    // search for an if condition at the end of the loop
-    Statement last = stat.getFirst();
-    while (last.type == Statement.TYPE_SEQUENCE) {
-      last = last.getStats().getLast();
-    }
+		return (stat.getLooptype() != oldloop);
+	}
 
-    if (last.type == Statement.TYPE_IF) {
-      IfStatement lastif = (IfStatement)last;
-      if (lastif.iftype == IfStatement.IFTYPE_IF && lastif.getIfstat() == null) {
-        StatEdge ifedge = lastif.getIfEdge();
-        StatEdge elseedge = lastif.getAllSuccessorEdges().get(0);
+	private static void matchDoWhile(DoStatement stat) {
+		// search for an if condition at the end of the loop
+		Statement last = stat.getFirst();
+		while (last.type == Statement.TYPE_SEQUENCE) {
+			last = last.getStats().getLast();
+		}
 
-        if ((ifedge.getType() == StatEdge.TYPE_BREAK && elseedge.getType() == StatEdge.TYPE_CONTINUE && elseedge.closure == stat
-             && isDirectPath(stat, ifedge.getDestination())) ||
-            (ifedge.getType() == StatEdge.TYPE_CONTINUE && elseedge.getType() == StatEdge.TYPE_BREAK && ifedge.closure == stat
-             && isDirectPath(stat, elseedge.getDestination()))) {
+		if (last.type == Statement.TYPE_IF)
+		{
+			IfStatement lastif = (IfStatement) last;
+			if (lastif.iftype == IfStatement.IFTYPE_IF && lastif.getIfstat() == null)
+			{
+				StatEdge ifedge = lastif.getIfEdge();
+				StatEdge elseedge = lastif.getAllSuccessorEdges().get(0);
 
-          Set<Statement> set = stat.getNeighboursSet(StatEdge.TYPE_CONTINUE, Statement.DIRECTION_BACKWARD);
-          set.remove(last);
+				if ((ifedge.getType() == StatEdge.TYPE_BREAK && elseedge.getType() == StatEdge.TYPE_CONTINUE && elseedge.closure == stat
+						&& isDirectPath(stat, ifedge.getDestination())) ||
+						(ifedge.getType() == StatEdge.TYPE_CONTINUE && elseedge.getType() == StatEdge.TYPE_BREAK && ifedge.closure == stat
+								&& isDirectPath(stat, elseedge.getDestination())))
+				{
 
-          if (!set.isEmpty()) {
-            return;
-          }
+					Set<Statement> set = stat.getNeighboursSet(StatEdge.TYPE_CONTINUE, Statement.DIRECTION_BACKWARD);
+					set.remove(last);
 
-          stat.setLooptype(DoStatement.LOOP_DOWHILE);
+					if (!set.isEmpty()) {
+						return;
+					}
 
-          IfExprent ifexpr = (IfExprent)lastif.getHeadexprent().copy();
-          if (ifedge.getType() == StatEdge.TYPE_BREAK) {
-            ifexpr.negateIf();
-          }
-          stat.setConditionExprent(ifexpr.getCondition());
-          lastif.getFirst().removeSuccessor(ifedge);
-          lastif.removeSuccessor(elseedge);
+					stat.setLooptype(DoStatement.LOOP_DOWHILE);
 
-          // remove empty if
-          if (lastif.getFirst().getExprents().isEmpty()) {
-            removeLastEmptyStatement(stat, lastif);
-          }
-          else {
-            lastif.setExprents(lastif.getFirst().getExprents());
+					IfExprent ifexpr = (IfExprent) lastif.getHeadexprent().copy();
+					if (ifedge.getType() == StatEdge.TYPE_BREAK) {
+						ifexpr.negateIf();
+					}
+					stat.setConditionExprent(ifexpr.getCondition());
+					lastif.getFirst().removeSuccessor(ifedge);
+					lastif.removeSuccessor(elseedge);
 
-            StatEdge newedge = new StatEdge(StatEdge.TYPE_CONTINUE, lastif, stat);
-            lastif.addSuccessor(newedge);
-            stat.addLabeledEdge(newedge);
-          }
+					// remove empty if
+					if (lastif.getFirst().getExprents().isEmpty()) {
+						removeLastEmptyStatement(stat, lastif);
+					}
+					else {
+						lastif.setExprents(lastif.getFirst().getExprents());
 
-          if (stat.getAllSuccessorEdges().isEmpty()) {
-            StatEdge edge = elseedge.getType() == StatEdge.TYPE_CONTINUE ? ifedge : elseedge;
+						StatEdge newedge = new StatEdge(StatEdge.TYPE_CONTINUE, lastif, stat);
+						lastif.addSuccessor(newedge);
+						stat.addLabeledEdge(newedge);
+					}
 
-            edge.setSource(stat);
-            if (edge.closure == stat) {
-              edge.closure = stat.getParent();
-            }
-            stat.addSuccessor(edge);
-          }
-        }
-      }
-    }
-  }
+					if (stat.getAllSuccessorEdges().isEmpty())
+					{
+						StatEdge edge = elseedge.getType() == StatEdge.TYPE_CONTINUE ? ifedge : elseedge;
 
-  private static boolean matchWhile(DoStatement stat) {
+						edge.setSource(stat);
+						if (edge.closure == stat) {
+							edge.closure = stat.getParent();
+						}
+						stat.addSuccessor(edge);
+					}
+				}
+			}
+		}
+	}
 
-    // search for an if condition at the entrance of the loop
-    Statement first = stat.getFirst();
-    while (first.type == Statement.TYPE_SEQUENCE) {
-      first = first.getFirst();
-    }
+	private static boolean matchWhile(DoStatement stat) {
 
-    // found an if statement
-    if (first.type == Statement.TYPE_IF) {
-      IfStatement firstif = (IfStatement)first;
+		// search for an if condition at the entrance of the loop
+		Statement first = stat.getFirst();
+		while (first.type == Statement.TYPE_SEQUENCE) {
+			first = first.getFirst();
+		}
 
-      if (firstif.getFirst().getExprents().isEmpty()) {
+		// found an if statement
+		if (first.type == Statement.TYPE_IF)
+		{
+			IfStatement firstif = (IfStatement) first;
 
-        if (firstif.iftype == IfStatement.IFTYPE_IF) {
-          if (firstif.getIfstat() == null) {
-            StatEdge ifedge = firstif.getIfEdge();
-            if (isDirectPath(stat, ifedge.getDestination())) {
-              // exit condition identified
-              stat.setLooptype(DoStatement.LOOP_WHILE);
+			if (firstif.getFirst().getExprents().isEmpty())
+			{
 
-              // negate condition (while header)
-              IfExprent ifexpr = (IfExprent)firstif.getHeadexprent().copy();
-              ifexpr.negateIf();
-              stat.setConditionExprent(ifexpr.getCondition());
+				if (firstif.iftype == IfStatement.IFTYPE_IF)
+				{
+					if (firstif.getIfstat() == null)
+					{
+						StatEdge ifedge = firstif.getIfEdge();
+						if (isDirectPath(stat, ifedge.getDestination()))
+						{
+							// exit condition identified
+							stat.setLooptype(DoStatement.LOOP_WHILE);
 
-              // remove edges
-              firstif.getFirst().removeSuccessor(ifedge);
-              firstif.removeSuccessor(firstif.getAllSuccessorEdges().get(0));
+							// negate condition (while header)
+							IfExprent ifexpr = (IfExprent) firstif.getHeadexprent().copy();
+							ifexpr.negateIf();
+							stat.setConditionExprent(ifexpr.getCondition());
 
-              if (stat.getAllSuccessorEdges().isEmpty()) {
-                ifedge.setSource(stat);
-                if (ifedge.closure == stat) {
-                  ifedge.closure = stat.getParent();
-                }
-                stat.addSuccessor(ifedge);
-              }
+							// remove edges
+							firstif.getFirst().removeSuccessor(ifedge);
+							firstif.removeSuccessor(firstif.getAllSuccessorEdges().get(0));
 
-              // remove empty if statement as it is now part of the loop
-              if (firstif == stat.getFirst()) {
-                BasicBlockStatement bstat = new BasicBlockStatement(new BasicBlock(
-                  DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.STATEMENT_COUNTER)));
-                bstat.setExprents(new ArrayList<>());
-                stat.replaceStatement(firstif, bstat);
-              }
-              else {
-                // precondition: sequence must contain more than one statement!
-                Statement sequence = firstif.getParent();
-                sequence.getStats().removeWithKey(firstif.id);
-                sequence.setFirst(sequence.getStats().get(0));
-              }
+							if (stat.getAllSuccessorEdges().isEmpty())
+							{
+								ifedge.setSource(stat);
+								if (ifedge.closure == stat) {
+									ifedge.closure = stat.getParent();
+								}
+								stat.addSuccessor(ifedge);
+							}
 
-              return true;
-            }
-          }
-          else {
-            StatEdge elseedge = firstif.getAllSuccessorEdges().get(0);
-            if (isDirectPath(stat, elseedge.getDestination())) {
-              // exit condition identified
-              stat.setLooptype(DoStatement.LOOP_WHILE);
+							// remove empty if statement as it is now part of the loop
+							if (firstif == stat.getFirst())
+							{
+								BasicBlockStatement bstat = new BasicBlockStatement(new BasicBlock(
+										DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.STATEMENT_COUNTER)));
+								bstat.setExprents(new ArrayList<>());
+								stat.replaceStatement(firstif, bstat);
+							}
+							else {
+								// precondition: sequence must contain more than one statement!
+								Statement sequence = firstif.getParent();
+								sequence.getStats().removeWithKey(firstif.id);
+								sequence.setFirst(sequence.getStats().get(0));
+							}
 
-              // no need to negate the while condition
-              stat.setConditionExprent(((IfExprent)firstif.getHeadexprent().copy()).getCondition());
+							return true;
+						}
+					}
+					else {
+						StatEdge elseedge = firstif.getAllSuccessorEdges().get(0);
+						if (isDirectPath(stat, elseedge.getDestination()))
+						{
+							// exit condition identified
+							stat.setLooptype(DoStatement.LOOP_WHILE);
 
-              // remove edges
-              StatEdge ifedge = firstif.getIfEdge();
-              firstif.getFirst().removeSuccessor(ifedge);
-              firstif.removeSuccessor(elseedge);
+							// no need to negate the while condition
+							stat.setConditionExprent(((IfExprent) firstif.getHeadexprent().copy()).getCondition());
 
-              if (stat.getAllSuccessorEdges().isEmpty()) {
+							// remove edges
+							StatEdge ifedge = firstif.getIfEdge();
+							firstif.getFirst().removeSuccessor(ifedge);
+							firstif.removeSuccessor(elseedge);
 
-                elseedge.setSource(stat);
-                if (elseedge.closure == stat) {
-                  elseedge.closure = stat.getParent();
-                }
-                stat.addSuccessor(elseedge);
-              }
+							if (stat.getAllSuccessorEdges().isEmpty())
+							{
 
-              if (firstif.getIfstat() == null) {
-                BasicBlockStatement bstat = new BasicBlockStatement(new BasicBlock(
-                  DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.STATEMENT_COUNTER)));
-                bstat.setExprents(new ArrayList<>());
+								elseedge.setSource(stat);
+								if (elseedge.closure == stat) {
+									elseedge.closure = stat.getParent();
+								}
+								stat.addSuccessor(elseedge);
+							}
 
-                ifedge.setSource(bstat);
-                bstat.addSuccessor(ifedge);
+							if (firstif.getIfstat() == null)
+							{
+								BasicBlockStatement bstat = new BasicBlockStatement(new BasicBlock(
+										DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.STATEMENT_COUNTER)));
+								bstat.setExprents(new ArrayList<>());
 
-                stat.replaceStatement(firstif, bstat);
-              }
-              else {
-                // replace the if statement with its content
-                first.getParent().replaceStatement(first, firstif.getIfstat());
+								ifedge.setSource(bstat);
+								bstat.addSuccessor(ifedge);
 
-                // lift closures
-                for (StatEdge prededge : elseedge.getDestination().getPredecessorEdges(StatEdge.TYPE_BREAK)) {
-                  if (stat.containsStatementStrict(prededge.closure)) {
-                    stat.addLabeledEdge(prededge);
-                  }
-                }
+								stat.replaceStatement(firstif, bstat);
+							}
+							else {
+								// replace the if statement with its content
+								first.getParent().replaceStatement(first, firstif.getIfstat());
 
-                LabelHelper.lowClosures(stat);
-              }
+								// lift closures
+								for (StatEdge prededge :
+										elseedge.getDestination().getPredecessorEdges(StatEdge.TYPE_BREAK))
+								{
+									if (stat.containsStatementStrict(prededge.closure)) {
+										stat.addLabeledEdge(prededge);
+									}
+								}
 
-              return true;
-            }
-          }
-        }
-      }
-    }
-    return false;
-  }
+								LabelHelper.lowClosures(stat);
+							}
 
-  public static boolean isDirectPath(Statement stat, Statement endstat) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
 
-    Set<Statement> setStat = stat.getNeighboursSet(Statement.STATEDGE_DIRECT_ALL, Statement.DIRECTION_FORWARD);
-    if (setStat.isEmpty()) {
-      Statement parent = stat.getParent();
-      if (parent == null) {
-        return false;
-      }
-      else {
-        switch (parent.type) {
-          case Statement.TYPE_ROOT:
-            return endstat.type == Statement.TYPE_DUMMYEXIT;
-          case Statement.TYPE_DO:
-            return (endstat == parent);
-          case Statement.TYPE_SWITCH:
-            SwitchStatement swst = (SwitchStatement)parent;
-            for (int i = 0; i < swst.getCaseStatements().size() - 1; i++) {
-              Statement stt = swst.getCaseStatements().get(i);
-              if (stt == stat) {
-                Statement stnext = swst.getCaseStatements().get(i + 1);
+	public static boolean isDirectPath(Statement stat, Statement endstat) {
 
-                if (stnext.getExprents() != null && stnext.getExprents().isEmpty()) {
-                  stnext = stnext.getAllSuccessorEdges().get(0).getDestination();
-                }
-                return (endstat == stnext);
-              }
-            }
-          default:
-            return isDirectPath(parent, endstat);
-        }
-      }
-    }
-    else {
-      return setStat.contains(endstat);
-    }
-  }
+		Set<Statement> setStat = stat.getNeighboursSet(Statement.STATEDGE_DIRECT_ALL, Statement.DIRECTION_FORWARD);
+		if (setStat.isEmpty())
+		{
+			Statement parent = stat.getParent();
+			if (parent == null) {
+				return false;
+			}
+			else {
+				switch (parent.type)
+				{
+					case Statement.TYPE_ROOT:
+						return endstat.type == Statement.TYPE_DUMMYEXIT;
+					case Statement.TYPE_DO:
+						return (endstat == parent);
+					case Statement.TYPE_SWITCH:
+						SwitchStatement swst = (SwitchStatement) parent;
+						for (int i = 0; i < swst.getCaseStatements().size() - 1; i++)
+						{
+							Statement stt = swst.getCaseStatements().get(i);
+							if (stt == stat)
+							{
+								Statement stnext = swst.getCaseStatements().get(i + 1);
 
-  private static void matchFor(DoStatement stat) {
-    Exprent lastDoExprent, initDoExprent;
-    Statement lastData, preData = null;
+								if (stnext.getExprents() != null && stnext.getExprents().isEmpty()) {
+									stnext = stnext.getAllSuccessorEdges().get(0).getDestination();
+								}
+								return (endstat == stnext);
+							}
+						}
+					default:
+						return isDirectPath(parent, endstat);
+				}
+			}
+		}
+		else {
+			return setStat.contains(endstat);
+		}
+	}
 
-    // get last exprent
-    lastData = getLastDirectData(stat.getFirst());
-    if (lastData == null || lastData.getExprents().isEmpty()) {
-      return;
-    }
+	private static void matchFor(DoStatement stat) {
+		Exprent lastDoExprent, initDoExprent;
+		Statement lastData, preData = null;
 
-    List<Exprent> lstExpr = lastData.getExprents();
-    lastDoExprent = lstExpr.get(lstExpr.size() - 1);
+		// get last exprent
+		lastData = getLastDirectData(stat.getFirst());
+		if (lastData == null || lastData.getExprents().isEmpty()) {
+			return;
+		}
 
-    boolean issingle = false;
-    if (lstExpr.size() == 1) {  // single exprent
-      if (lastData.getAllPredecessorEdges().size() > 1) { // break edges
-        issingle = true;
-      }
-    }
+		List<Exprent> lstExpr = lastData.getExprents();
+		lastDoExprent = lstExpr.get(lstExpr.size() - 1);
 
-    boolean haslast = issingle || lastDoExprent.type == Exprent.EXPRENT_ASSIGNMENT || lastDoExprent.type == Exprent.EXPRENT_FUNCTION;
-    if (!haslast) {
-      return;
-    }
+		boolean issingle = false;
+		if (lstExpr.size() == 1)
+		{  // single exprent
+			if (lastData.getAllPredecessorEdges().size() > 1)
+			{ // break edges
+				issingle = true;
+			}
+		}
 
-    boolean hasinit = false;
+		boolean haslast =
+				issingle || lastDoExprent.type == Exprent.EXPRENT_ASSIGNMENT || lastDoExprent.type == Exprent.EXPRENT_FUNCTION;
+		if (!haslast) {
+			return;
+		}
 
-    // search for an initializing exprent
-    Statement current = stat;
-    while (true) {
-      Statement parent = current.getParent();
-      if (parent == null) {
-        break;
-      }
+		boolean hasinit = false;
 
-      if (parent.type == Statement.TYPE_SEQUENCE) {
-        if (current == parent.getFirst()) {
-          current = parent;
-        }
-        else {
-          preData = current.getNeighbours(StatEdge.TYPE_REGULAR, Statement.DIRECTION_BACKWARD).get(0);
-          preData = getLastDirectData(preData);
-          if (preData != null && !preData.getExprents().isEmpty()) {
-            initDoExprent = preData.getExprents().get(preData.getExprents().size() - 1);
-            if (initDoExprent.type == Exprent.EXPRENT_ASSIGNMENT) {
-              hasinit = true;
-            }
-          }
-          break;
-        }
-      }
-      else {
-        break;
-      }
-    }
+		// search for an initializing exprent
+		Statement current = stat;
+		while (true)
+		{
+			Statement parent = current.getParent();
+			if (parent == null) {
+				break;
+			}
 
-    if (hasinit || issingle) {  // FIXME: issingle sufficient?
-      Set<Statement> set = stat.getNeighboursSet(StatEdge.TYPE_CONTINUE, Statement.DIRECTION_BACKWARD);
-      set.remove(lastData);
+			if (parent.type == Statement.TYPE_SEQUENCE)
+			{
+				if (current == parent.getFirst()) {
+					current = parent;
+				}
+				else {
+					preData = current.getNeighbours(StatEdge.TYPE_REGULAR, Statement.DIRECTION_BACKWARD).get(0);
+					preData = getLastDirectData(preData);
+					if (preData != null && !preData.getExprents().isEmpty())
+					{
+						initDoExprent = preData.getExprents().get(preData.getExprents().size() - 1);
+						if (initDoExprent.type == Exprent.EXPRENT_ASSIGNMENT) {
+							hasinit = true;
+						}
+					}
+					break;
+				}
+			}
+			else {
+				break;
+			}
+		}
 
-      if (!set.isEmpty()) {
-        return;
-      }
+		if (hasinit || issingle)
+		{  // FIXME: issingle sufficient?
+			Set<Statement> set = stat.getNeighboursSet(StatEdge.TYPE_CONTINUE, Statement.DIRECTION_BACKWARD);
+			set.remove(lastData);
 
-      stat.setLooptype(DoStatement.LOOP_FOR);
-      if (hasinit) {
-        stat.setInitExprent(preData.getExprents().remove(preData.getExprents().size() - 1));
-      }
-      stat.setIncExprent(lastData.getExprents().remove(lastData.getExprents().size() - 1));
-    }
+			if (!set.isEmpty()) {
+				return;
+			}
 
-    if (lastData.getExprents().isEmpty()) {
-      List<StatEdge> lst = lastData.getAllSuccessorEdges();
-      if (!lst.isEmpty()) {
-        lastData.removeSuccessor(lst.get(0));
-      }
-      removeLastEmptyStatement(stat, lastData);
-    }
-  }
+			stat.setLooptype(DoStatement.LOOP_FOR);
+			if (hasinit) {
+				stat.setInitExprent(preData.getExprents().remove(preData.getExprents().size() - 1));
+			}
+			stat.setIncExprent(lastData.getExprents().remove(lastData.getExprents().size() - 1));
+		}
 
-  private static void removeLastEmptyStatement(DoStatement dostat, Statement stat) {
+		if (lastData.getExprents().isEmpty())
+		{
+			List<StatEdge> lst = lastData.getAllSuccessorEdges();
+			if (!lst.isEmpty()) {
+				lastData.removeSuccessor(lst.get(0));
+			}
+			removeLastEmptyStatement(stat, lastData);
+		}
+	}
 
-    if (stat == dostat.getFirst()) {
-      BasicBlockStatement bstat = new BasicBlockStatement(new BasicBlock(
-        DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.STATEMENT_COUNTER)));
-      bstat.setExprents(new ArrayList<>());
-      dostat.replaceStatement(stat, bstat);
-    }
-    else {
-      for (StatEdge edge : stat.getAllPredecessorEdges()) {
-        edge.getSource().changeEdgeType(Statement.DIRECTION_FORWARD, edge, StatEdge.TYPE_CONTINUE);
+	private static void removeLastEmptyStatement(DoStatement dostat, Statement stat) {
 
-        stat.removePredecessor(edge);
-        edge.getSource().changeEdgeNode(Statement.DIRECTION_FORWARD, edge, dostat);
-        dostat.addPredecessor(edge);
+		if (stat == dostat.getFirst())
+		{
+			BasicBlockStatement bstat = new BasicBlockStatement(new BasicBlock(
+					DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.STATEMENT_COUNTER)));
+			bstat.setExprents(new ArrayList<>());
+			dostat.replaceStatement(stat, bstat);
+		}
+		else {
+			for (StatEdge edge : stat.getAllPredecessorEdges())
+			{
+				edge.getSource().changeEdgeType(Statement.DIRECTION_FORWARD, edge, StatEdge.TYPE_CONTINUE);
 
-        dostat.addLabeledEdge(edge);
-      }
+				stat.removePredecessor(edge);
+				edge.getSource().changeEdgeNode(Statement.DIRECTION_FORWARD, edge, dostat);
+				dostat.addPredecessor(edge);
 
-      // parent is a sequence statement
-      stat.getParent().getStats().removeWithKey(stat.id);
-    }
-  }
+				dostat.addLabeledEdge(edge);
+			}
 
-  private static Statement getLastDirectData(Statement stat) {
-    if (stat.getExprents() != null) {
-      return stat;
-    }
+			// parent is a sequence statement
+			stat.getParent().getStats().removeWithKey(stat.id);
+		}
+	}
 
-    if (stat.type == Statement.TYPE_SEQUENCE) {
-      for (int i = stat.getStats().size() - 1; i >= 0; i--) {
-        Statement tmp = getLastDirectData(stat.getStats().get(i));
-        if (tmp == null || !tmp.getExprents().isEmpty()) {
-          return tmp;
-        }
-      }
-    }
-    return null;
-  }
+	private static Statement getLastDirectData(Statement stat) {
+		if (stat.getExprents() != null) {
+			return stat;
+		}
+
+		if (stat.type == Statement.TYPE_SEQUENCE)
+		{
+			for (int i = stat.getStats().size() - 1; i >= 0; i--)
+			{
+				Statement tmp = getLastDirectData(stat.getStats().get(i));
+				if (tmp == null || !tmp.getExprents().isEmpty()) {
+					return tmp;
+				}
+			}
+		}
+		return null;
+	}
 }

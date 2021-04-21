@@ -1,5 +1,9 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
+// found in the LICENSE file.
 package org.jetbrains.java.decompiler.struct;
+
+import java.io.IOException;
+import java.util.List;
 
 import org.jetbrains.java.decompiler.code.CodeConstants;
 import org.jetbrains.java.decompiler.struct.attr.StructGeneralAttribute;
@@ -10,9 +14,6 @@ import org.jetbrains.java.decompiler.struct.lazy.LazyLoader;
 import org.jetbrains.java.decompiler.util.DataInputFullStream;
 import org.jetbrains.java.decompiler.util.InterpreterUtil;
 import org.jetbrains.java.decompiler.util.VBStyleCollection;
-
-import java.io.IOException;
-import java.util.List;
 
 /*
   class_file {
@@ -36,153 +37,157 @@ import java.util.List;
 */
 public class StructClass extends StructMember {
 
-  public final String qualifiedName;
-  public final PrimitiveConstant superClass;
+	public final String qualifiedName;
+	public final PrimitiveConstant superClass;
 
-  private final boolean own;
-  private final LazyLoader loader;
-  private final int minorVersion;
-  private final int majorVersion;
-  private final int[] interfaces;
-  private final String[] interfaceNames;
-  private final VBStyleCollection<StructField, String> fields;
-  private final VBStyleCollection<StructMethod, String> methods;
+	private final boolean own;
+	private final LazyLoader loader;
+	private final int minorVersion;
+	private final int majorVersion;
+	private final int[] interfaces;
+	private final String[] interfaceNames;
+	private final VBStyleCollection<StructField, String> fields;
+	private final VBStyleCollection<StructMethod, String> methods;
 
-  private ConstantPool pool;
+	private ConstantPool pool;
 
-  public StructClass(byte[] bytes, boolean own, LazyLoader loader) throws IOException {
-    this(new DataInputFullStream(bytes), own, loader);
-  }
+	public StructClass(byte[] bytes, boolean own, LazyLoader loader) throws IOException {
+		this(new DataInputFullStream(bytes), own, loader);
+	}
 
-  public StructClass(DataInputFullStream in, boolean own, LazyLoader loader) throws IOException {
-    this.own = own;
-    this.loader = loader;
+	public StructClass(DataInputFullStream in, boolean own, LazyLoader loader) throws IOException {
+		this.own = own;
+		this.loader = loader;
 
-    in.discard(4);
+		in.discard(4);
 
-    minorVersion = in.readUnsignedShort();
-    majorVersion = in.readUnsignedShort();
+		minorVersion = in.readUnsignedShort();
+		majorVersion = in.readUnsignedShort();
 
-    pool = new ConstantPool(in);
+		pool = new ConstantPool(in);
 
-    accessFlags = in.readUnsignedShort();
-    int thisClassIdx = in.readUnsignedShort();
-    int superClassIdx = in.readUnsignedShort();
-    qualifiedName = pool.getPrimitiveConstant(thisClassIdx).getString();
-    superClass = pool.getPrimitiveConstant(superClassIdx);
+		accessFlags = in.readUnsignedShort();
+		int thisClassIdx = in.readUnsignedShort();
+		int superClassIdx = in.readUnsignedShort();
+		qualifiedName = pool.getPrimitiveConstant(thisClassIdx).getString();
+		superClass = pool.getPrimitiveConstant(superClassIdx);
 
-    // interfaces
-    int length = in.readUnsignedShort();
-    interfaces = new int[length];
-    interfaceNames = new String[length];
-    for (int i = 0; i < length; i++) {
-      interfaces[i] = in.readUnsignedShort();
-      interfaceNames[i] = pool.getPrimitiveConstant(interfaces[i]).getString();
-    }
+		// interfaces
+		int length = in.readUnsignedShort();
+		interfaces = new int[length];
+		interfaceNames = new String[length];
+		for (int i = 0; i < length; i++)
+		{
+			interfaces[i] = in.readUnsignedShort();
+			interfaceNames[i] = pool.getPrimitiveConstant(interfaces[i]).getString();
+		}
 
-    // fields
-    length = in.readUnsignedShort();
-    fields = new VBStyleCollection<>(length);
-    for (int i = 0; i < length; i++) {
-      StructField field = new StructField(in, this);
-      fields.addWithKey(field, InterpreterUtil.makeUniqueKey(field.getName(), field.getDescriptor()));
-    }
+		// fields
+		length = in.readUnsignedShort();
+		fields = new VBStyleCollection<>(length);
+		for (int i = 0; i < length; i++)
+		{
+			StructField field = new StructField(in, this);
+			fields.addWithKey(field, InterpreterUtil.makeUniqueKey(field.getName(), field.getDescriptor()));
+		}
 
-    // methods
-    length = in.readUnsignedShort();
-    methods = new VBStyleCollection<>(length);
-    for (int i = 0; i < length; i++) {
-      StructMethod method = new StructMethod(in, this);
-      methods.addWithKey(method, InterpreterUtil.makeUniqueKey(method.getName(), method.getDescriptor()));
-    }
+		// methods
+		length = in.readUnsignedShort();
+		methods = new VBStyleCollection<>(length);
+		for (int i = 0; i < length; i++)
+		{
+			StructMethod method = new StructMethod(in, this);
+			methods.addWithKey(method, InterpreterUtil.makeUniqueKey(method.getName(), method.getDescriptor()));
+		}
 
-    // attributes
-    attributes = readAttributes(in, pool);
+		// attributes
+		attributes = readAttributes(in, pool);
 
-    releaseResources();
-  }
+		releaseResources();
+	}
 
-  public boolean hasField(String name, String descriptor) {
-    return getField(name, descriptor) != null;
-  }
+	public boolean hasField(String name, String descriptor) {
+		return getField(name, descriptor) != null;
+	}
 
-  public StructField getField(String name, String descriptor) {
-    return fields.getWithKey(InterpreterUtil.makeUniqueKey(name, descriptor));
-  }
+	public StructField getField(String name, String descriptor) {
+		return fields.getWithKey(InterpreterUtil.makeUniqueKey(name, descriptor));
+	}
 
-  public StructMethod getMethod(String key) {
-    return methods.getWithKey(key);
-  }
+	public StructMethod getMethod(String key) {
+		return methods.getWithKey(key);
+	}
 
-  public StructMethod getMethod(String name, String descriptor) {
-    return methods.getWithKey(InterpreterUtil.makeUniqueKey(name, descriptor));
-  }
+	public StructMethod getMethod(String name, String descriptor) {
+		return methods.getWithKey(InterpreterUtil.makeUniqueKey(name, descriptor));
+	}
 
-  public String getInterface(int i) {
-    return interfaceNames[i];
-  }
+	public String getInterface(int i) {
+		return interfaceNames[i];
+	}
 
-  public void releaseResources() {
-    if (loader != null) {
-      pool = null;
-    }
-  }
+	public void releaseResources() {
+		if (loader != null) {
+			pool = null;
+		}
+	}
 
-  public ConstantPool getPool() {
-    if (pool == null && loader != null) {
-      pool = loader.loadPool(qualifiedName);
-    }
-    return pool;
-  }
+	public ConstantPool getPool() {
+		if (pool == null && loader != null) {
+			pool = loader.loadPool(qualifiedName);
+		}
+		return pool;
+	}
 
-  /**
-   * @return list of record components; null if this class is not a record
-   */
-  public List<StructRecordComponent> getRecordComponents() {
-    StructRecordAttribute recordAttr = getAttribute(StructGeneralAttribute.ATTRIBUTE_RECORD);
-    if (recordAttr == null) return null;
-    return recordAttr.getComponents();
-  }
+	/**
+	 * @return list of record components; null if this class is not a record
+	 */
+	public List<StructRecordComponent> getRecordComponents() {
+		StructRecordAttribute recordAttr = getAttribute(StructGeneralAttribute.ATTRIBUTE_RECORD);
+		if (recordAttr == null) return null;
+		return recordAttr.getComponents();
+	}
 
-  public int[] getInterfaces() {
-    return interfaces;
-  }
+	public int[] getInterfaces() {
+		return interfaces;
+	}
 
-  public String[] getInterfaceNames() {
-    return interfaceNames;
-  }
+	public String[] getInterfaceNames() {
+		return interfaceNames;
+	}
 
-  public VBStyleCollection<StructMethod, String> getMethods() {
-    return methods;
-  }
+	public VBStyleCollection<StructMethod, String> getMethods() {
+		return methods;
+	}
 
-  public VBStyleCollection<StructField, String> getFields() {
-    return fields;
-  }
+	public VBStyleCollection<StructField, String> getFields() {
+		return fields;
+	}
 
-  public boolean isOwn() {
-    return own;
-  }
+	public boolean isOwn() {
+		return own;
+	}
 
-  public LazyLoader getLoader() {
-    return loader;
-  }
+	public LazyLoader getLoader() {
+		return loader;
+	}
 
-  public boolean isVersionGE_1_5() {
-    return (majorVersion > CodeConstants.BYTECODE_JAVA_LE_4 ||
-            (majorVersion == CodeConstants.BYTECODE_JAVA_LE_4 && minorVersion > 0)); // FIXME: check second condition
-  }
+	public boolean isVersionGE_1_5() {
+		return (majorVersion > CodeConstants.BYTECODE_JAVA_LE_4 ||
+				(majorVersion == CodeConstants.BYTECODE_JAVA_LE_4 && minorVersion > 0)); // FIXME: check second
+		// condition
+	}
 
-  public boolean isVersionGE_1_7() {
-    return (majorVersion >= CodeConstants.BYTECODE_JAVA_7);
-  }
+	public boolean isVersionGE_1_7() {
+		return (majorVersion >= CodeConstants.BYTECODE_JAVA_7);
+	}
 
-  public int getBytecodeVersion() {
-    return Math.max(majorVersion, CodeConstants.BYTECODE_JAVA_LE_4);
-  }
+	public int getBytecodeVersion() {
+		return Math.max(majorVersion, CodeConstants.BYTECODE_JAVA_LE_4);
+	}
 
-  @Override
-  public String toString() {
-    return qualifiedName;
-  }
+	@Override
+	public String toString() {
+		return qualifiedName;
+	}
 }

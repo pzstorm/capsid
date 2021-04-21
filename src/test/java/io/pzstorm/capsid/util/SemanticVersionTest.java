@@ -114,9 +114,9 @@ class SemanticVersionTest extends PluginUnitTest {
 	void shouldCorrectlyCompareUsingHashCode() {
 
 		Set<SemanticVersion> semanticVersions = Sets.newHashSet(
-			new SemanticVersion("0.1.0"),
-			new SemanticVersion("0.2.0"),
-			new SemanticVersion("0.3.0")
+				new SemanticVersion("0.1.0"),
+				new SemanticVersion("0.2.0"),
+				new SemanticVersion("0.3.0")
 		);
 		Assertions.assertTrue(semanticVersions.contains(new SemanticVersion("0.1.0")));
 		Assertions.assertTrue(semanticVersions.contains(new SemanticVersion("0.2.0")));

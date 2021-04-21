@@ -23,8 +23,6 @@ import java.util.*;
 
 import javax.inject.Inject;
 
-import com.google.common.collect.ImmutableMap;
-
 import org.gradle.api.DefaultTask;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
@@ -32,6 +30,8 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.TaskAction;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
+
+import com.google.common.collect.ImmutableMap;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.ProjectPropertiesSupplier;
@@ -46,18 +46,16 @@ public class DecompileJavaTask extends DefaultTask implements CapsidTask {
 	final ProjectPropertiesSupplier<File> source, destination;
 	private final Map<String, Object> parameters;
 
-	@Inject
-	DecompileJavaTask(ProjectPropertiesSupplier<File> source,
-					  ProjectPropertiesSupplier<File> destination,
-					  Map<String, Object> parameters) {
+	@Inject DecompileJavaTask(ProjectPropertiesSupplier<File> source,
+							  ProjectPropertiesSupplier<File> destination,
+							  Map<String, Object> parameters) {
 
 		this.source = source;
 		this.destination = destination;
 		this.parameters = parameters;
 	}
 
-	@Inject
-	DecompileJavaTask(ProjectPropertiesSupplier<File> source, ProjectPropertiesSupplier<File> destination) {
+	@Inject DecompileJavaTask(ProjectPropertiesSupplier<File> source, ProjectPropertiesSupplier<File> destination) {
 		// default parameters used by IDEA compiler
 		this(source, destination, ImmutableMap.<String, Object>builder()
 				.put(IFernflowerPreferences.HIDE_DEFAULT_CONSTRUCTOR, "0")
@@ -122,6 +120,7 @@ public class DecompileJavaTask extends DefaultTask implements CapsidTask {
 	 * Returns list of arguments to use for decompile task.
 	 *
 	 * @param project {@code Project} to load the arguments from.
+	 *
 	 * @throws InvalidUserDataException when decompile arguments are missing.
 	 */
 	@SuppressWarnings("unchecked")

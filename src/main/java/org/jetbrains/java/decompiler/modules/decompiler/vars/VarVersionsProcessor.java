@@ -1,5 +1,9 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
+// found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler.vars;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 import org.jetbrains.java.decompiler.code.CodeConstants;
 import org.jetbrains.java.decompiler.main.DecompilerContext;
@@ -16,282 +20,308 @@ import org.jetbrains.java.decompiler.struct.gen.MethodDescriptor;
 import org.jetbrains.java.decompiler.struct.gen.VarType;
 import org.jetbrains.java.decompiler.util.FastSparseSetFactory.FastSparseSet;
 
-import java.util.*;
-import java.util.Map.Entry;
-
 public class VarVersionsProcessor {
-  private final StructMethod method;
-  private Map<Integer, Integer> mapOriginalVarIndices = Collections.emptyMap();
-  private final VarTypeProcessor typeProcessor;
 
-  public VarVersionsProcessor(StructMethod mt, MethodDescriptor md) {
-    method = mt;
-    typeProcessor = new VarTypeProcessor(mt, md);
-  }
+	private final StructMethod method;
+	private final VarTypeProcessor typeProcessor;
+	private Map<Integer, Integer> mapOriginalVarIndices = Collections.emptyMap();
 
-  public void setVarVersions(RootStatement root, VarVersionsProcessor previousVersionsProcessor) {
-    SSAConstructorSparseEx ssa = new SSAConstructorSparseEx();
-    ssa.splitVariables(root, method);
+	public VarVersionsProcessor(StructMethod mt, MethodDescriptor md) {
+		method = mt;
+		typeProcessor = new VarTypeProcessor(mt, md);
+	}
 
-    FlattenStatementsHelper flattenHelper = new FlattenStatementsHelper();
-    DirectGraph graph = flattenHelper.buildDirectGraph(root);
+	private static void mergePhiVersions(SSAConstructorSparseEx ssa, DirectGraph graph) {
+		// collect phi versions
+		List<Set<VarVersionPair>> lst = new ArrayList<>();
+		for (Entry<VarVersionPair, FastSparseSet<Integer>> ent : ssa.getPhi().entrySet())
+		{
+			Set<VarVersionPair> set = new HashSet<>();
+			set.add(ent.getKey());
+			for (Integer version : ent.getValue()) {
+				set.add(new VarVersionPair(ent.getKey().var, version.intValue()));
+			}
 
-    mergePhiVersions(ssa, graph);
+			for (int i = lst.size() - 1; i >= 0; i--)
+			{
+				Set<VarVersionPair> tset = lst.get(i);
+				Set<VarVersionPair> intersection = new HashSet<>(set);
+				intersection.retainAll(tset);
 
-    typeProcessor.calculateVarTypes(root, graph);
+				if (!intersection.isEmpty())
+				{
+					set.addAll(tset);
+					lst.remove(i);
+				}
+			}
 
-    simpleMerge(typeProcessor, graph, method);
+			lst.add(set);
+		}
 
-    // FIXME: advanced merging
+		Map<VarVersionPair, Integer> phiVersions = new HashMap<>();
+		for (Set<VarVersionPair> set : lst)
+		{
+			int min = Integer.MAX_VALUE;
+			for (VarVersionPair paar : set)
+			{
+				if (paar.version < min) {
+					min = paar.version;
+				}
+			}
 
-    eliminateNonJavaTypes(typeProcessor);
+			for (VarVersionPair paar : set) {
+				phiVersions.put(new VarVersionPair(paar.var, paar.version), min);
+			}
+		}
 
-    setNewVarIndices(typeProcessor, graph, previousVersionsProcessor);
-  }
+		updateVersions(graph, phiVersions);
+	}
 
-  private static void mergePhiVersions(SSAConstructorSparseEx ssa, DirectGraph graph) {
-    // collect phi versions
-    List<Set<VarVersionPair>> lst = new ArrayList<>();
-    for (Entry<VarVersionPair, FastSparseSet<Integer>> ent : ssa.getPhi().entrySet()) {
-      Set<VarVersionPair> set = new HashSet<>();
-      set.add(ent.getKey());
-      for (Integer version : ent.getValue()) {
-        set.add(new VarVersionPair(ent.getKey().var, version.intValue()));
-      }
+	private static void updateVersions(DirectGraph graph, final Map<VarVersionPair, Integer> versions) {
+		graph.iterateExprents(exprent -> {
+			List<Exprent> lst = exprent.getAllExprents(true);
+			lst.add(exprent);
 
-      for (int i = lst.size() - 1; i >= 0; i--) {
-        Set<VarVersionPair> tset = lst.get(i);
-        Set<VarVersionPair> intersection = new HashSet<>(set);
-        intersection.retainAll(tset);
+			for (Exprent expr : lst)
+			{
+				if (expr.type == Exprent.EXPRENT_VAR)
+				{
+					VarExprent var = (VarExprent) expr;
+					Integer version = versions.get(new VarVersionPair(var));
+					if (version != null) {
+						var.setVersion(version);
+					}
+				}
+			}
 
-        if (!intersection.isEmpty()) {
-          set.addAll(tset);
-          lst.remove(i);
-        }
-      }
+			return 0;
+		});
+	}
 
-      lst.add(set);
-    }
+	private static void eliminateNonJavaTypes(VarTypeProcessor typeProcessor) {
+		Map<VarVersionPair, VarType> mapExprentMaxTypes = typeProcessor.getMapExprentMaxTypes();
+		Map<VarVersionPair, VarType> mapExprentMinTypes = typeProcessor.getMapExprentMinTypes();
 
-    Map<VarVersionPair, Integer> phiVersions = new HashMap<>();
-    for (Set<VarVersionPair> set : lst) {
-      int min = Integer.MAX_VALUE;
-      for (VarVersionPair paar : set) {
-        if (paar.version < min) {
-          min = paar.version;
-        }
-      }
+		for (VarVersionPair paar : new ArrayList<>(mapExprentMinTypes.keySet()))
+		{
+			VarType type = mapExprentMinTypes.get(paar);
+			VarType maxType = mapExprentMaxTypes.get(paar);
 
-      for (VarVersionPair paar : set) {
-        phiVersions.put(new VarVersionPair(paar.var, paar.version), min);
-      }
-    }
+			if (type.type == CodeConstants.TYPE_BYTECHAR || type.type == CodeConstants.TYPE_SHORTCHAR)
+			{
+				if (maxType != null && maxType.type == CodeConstants.TYPE_CHAR) {
+					type = VarType.VARTYPE_CHAR;
+				}
+				else {
+					type = type.type == CodeConstants.TYPE_BYTECHAR ? VarType.VARTYPE_BYTE : VarType.VARTYPE_SHORT;
+				}
+				mapExprentMinTypes.put(paar, type);
+				//} else if(type.type == CodeConstants.TYPE_CHAR && (maxType == null || maxType.type == CodeConstants
+				// .TYPE_INT)) { // when possible, lift char to int
+				//	mapExprentMinTypes.put(paar, VarType.VARTYPE_INT);
+			}
+			else if (type.type == CodeConstants.TYPE_NULL) {
+				mapExprentMinTypes.put(paar, VarType.VARTYPE_OBJECT);
+			}
+		}
+	}
 
-    updateVersions(graph, phiVersions);
-  }
+	private static void simpleMerge(VarTypeProcessor typeProcessor, DirectGraph graph, StructMethod mt) {
+		Map<VarVersionPair, VarType> mapExprentMaxTypes = typeProcessor.getMapExprentMaxTypes();
+		Map<VarVersionPair, VarType> mapExprentMinTypes = typeProcessor.getMapExprentMinTypes();
 
-  private static void updateVersions(DirectGraph graph, final Map<VarVersionPair, Integer> versions) {
-    graph.iterateExprents(exprent -> {
-      List<Exprent> lst = exprent.getAllExprents(true);
-      lst.add(exprent);
+		Map<Integer, Set<Integer>> mapVarVersions = new HashMap<>();
 
-      for (Exprent expr : lst) {
-        if (expr.type == Exprent.EXPRENT_VAR) {
-          VarExprent var = (VarExprent)expr;
-          Integer version = versions.get(new VarVersionPair(var));
-          if (version != null) {
-            var.setVersion(version);
-          }
-        }
-      }
+		for (VarVersionPair pair : mapExprentMinTypes.keySet())
+		{
+			if (pair.version >= 0)
+			{  // don't merge constants
+				mapVarVersions.computeIfAbsent(pair.var, k -> new HashSet<>()).add(pair.version);
+			}
+		}
 
-      return 0;
-    });
-  }
+		boolean is_method_static = mt.hasModifier(CodeConstants.ACC_STATIC);
 
-  private static void eliminateNonJavaTypes(VarTypeProcessor typeProcessor) {
-    Map<VarVersionPair, VarType> mapExprentMaxTypes = typeProcessor.getMapExprentMaxTypes();
-    Map<VarVersionPair, VarType> mapExprentMinTypes = typeProcessor.getMapExprentMinTypes();
+		Map<VarVersionPair, Integer> mapMergedVersions = new HashMap<>();
 
-    for (VarVersionPair paar : new ArrayList<>(mapExprentMinTypes.keySet())) {
-      VarType type = mapExprentMinTypes.get(paar);
-      VarType maxType = mapExprentMaxTypes.get(paar);
+		for (Entry<Integer, Set<Integer>> ent : mapVarVersions.entrySet())
+		{
 
-      if (type.type == CodeConstants.TYPE_BYTECHAR || type.type == CodeConstants.TYPE_SHORTCHAR) {
-        if (maxType != null && maxType.type == CodeConstants.TYPE_CHAR) {
-          type = VarType.VARTYPE_CHAR;
-        }
-        else {
-          type = type.type == CodeConstants.TYPE_BYTECHAR ? VarType.VARTYPE_BYTE : VarType.VARTYPE_SHORT;
-        }
-        mapExprentMinTypes.put(paar, type);
-        //} else if(type.type == CodeConstants.TYPE_CHAR && (maxType == null || maxType.type == CodeConstants.TYPE_INT)) { // when possible, lift char to int
-        //	mapExprentMinTypes.put(paar, VarType.VARTYPE_INT);
-      }
-      else if (type.type == CodeConstants.TYPE_NULL) {
-        mapExprentMinTypes.put(paar, VarType.VARTYPE_OBJECT);
-      }
-    }
-  }
+			if (ent.getValue().size() > 1)
+			{
+				List<Integer> lstVersions = new ArrayList<>(ent.getValue());
+				Collections.sort(lstVersions);
 
-  private static void simpleMerge(VarTypeProcessor typeProcessor, DirectGraph graph, StructMethod mt) {
-    Map<VarVersionPair, VarType> mapExprentMaxTypes = typeProcessor.getMapExprentMaxTypes();
-    Map<VarVersionPair, VarType> mapExprentMinTypes = typeProcessor.getMapExprentMinTypes();
+				for (int i = 0; i < lstVersions.size(); i++)
+				{
+					VarVersionPair firstPair = new VarVersionPair(ent.getKey(), lstVersions.get(i));
+					VarType firstType = mapExprentMinTypes.get(firstPair);
 
-    Map<Integer, Set<Integer>> mapVarVersions = new HashMap<>();
+					if (firstPair.var == 0 && firstPair.version == 1 && !is_method_static) {
+						continue; // don't merge 'this' variable
+					}
 
-    for (VarVersionPair pair : mapExprentMinTypes.keySet()) {
-      if (pair.version >= 0) {  // don't merge constants
-        mapVarVersions.computeIfAbsent(pair.var, k -> new HashSet<>()).add(pair.version);
-      }
-    }
+					for (int j = i + 1; j < lstVersions.size(); j++)
+					{
+						VarVersionPair secondPair = new VarVersionPair(ent.getKey(), lstVersions.get(j));
+						VarType secondType = mapExprentMinTypes.get(secondPair);
 
-    boolean is_method_static = mt.hasModifier(CodeConstants.ACC_STATIC);
+						if (firstType.equals(secondType) ||
+								(firstType.equals(VarType.VARTYPE_NULL) && secondType.type == CodeConstants.TYPE_OBJECT) ||
+								(secondType.equals(VarType.VARTYPE_NULL) && firstType.type == CodeConstants.TYPE_OBJECT))
+						{
 
-    Map<VarVersionPair, Integer> mapMergedVersions = new HashMap<>();
+							VarType firstMaxType = mapExprentMaxTypes.get(firstPair);
+							VarType secondMaxType = mapExprentMaxTypes.get(secondPair);
+							VarType type = firstMaxType == null ? secondMaxType :
+									secondMaxType == null ? firstMaxType :
+											VarType.getCommonMinType(firstMaxType, secondMaxType);
 
-    for (Entry<Integer, Set<Integer>> ent : mapVarVersions.entrySet()) {
+							mapExprentMaxTypes.put(firstPair, type);
+							mapMergedVersions.put(secondPair, firstPair.version);
+							mapExprentMaxTypes.remove(secondPair);
+							mapExprentMinTypes.remove(secondPair);
 
-      if (ent.getValue().size() > 1) {
-        List<Integer> lstVersions = new ArrayList<>(ent.getValue());
-        Collections.sort(lstVersions);
+							if (firstType.equals(VarType.VARTYPE_NULL))
+							{
+								mapExprentMinTypes.put(firstPair, secondType);
+								firstType = secondType;
+							}
 
-        for (int i = 0; i < lstVersions.size(); i++) {
-          VarVersionPair firstPair = new VarVersionPair(ent.getKey(), lstVersions.get(i));
-          VarType firstType = mapExprentMinTypes.get(firstPair);
+							typeProcessor.getMapFinalVars().put(firstPair, VarTypeProcessor.VAR_NON_FINAL);
 
-          if (firstPair.var == 0 && firstPair.version == 1 && !is_method_static) {
-            continue; // don't merge 'this' variable
-          }
+							lstVersions.remove(j);
+							//noinspection AssignmentToForLoopParameter
+							j--;
+						}
+					}
+				}
+			}
+		}
 
-          for (int j = i + 1; j < lstVersions.size(); j++) {
-            VarVersionPair secondPair = new VarVersionPair(ent.getKey(), lstVersions.get(j));
-            VarType secondType = mapExprentMinTypes.get(secondPair);
+		if (!mapMergedVersions.isEmpty()) {
+			updateVersions(graph, mapMergedVersions);
+		}
+	}
 
-            if (firstType.equals(secondType) ||
-                (firstType.equals(VarType.VARTYPE_NULL) && secondType.type == CodeConstants.TYPE_OBJECT) ||
-                (secondType.equals(VarType.VARTYPE_NULL) && firstType.type == CodeConstants.TYPE_OBJECT)) {
+	public void setVarVersions(RootStatement root, VarVersionsProcessor previousVersionsProcessor) {
+		SSAConstructorSparseEx ssa = new SSAConstructorSparseEx();
+		ssa.splitVariables(root, method);
 
-              VarType firstMaxType = mapExprentMaxTypes.get(firstPair);
-              VarType secondMaxType = mapExprentMaxTypes.get(secondPair);
-              VarType type = firstMaxType == null ? secondMaxType :
-                             secondMaxType == null ? firstMaxType :
-                             VarType.getCommonMinType(firstMaxType, secondMaxType);
+		FlattenStatementsHelper flattenHelper = new FlattenStatementsHelper();
+		DirectGraph graph = flattenHelper.buildDirectGraph(root);
 
-              mapExprentMaxTypes.put(firstPair, type);
-              mapMergedVersions.put(secondPair, firstPair.version);
-              mapExprentMaxTypes.remove(secondPair);
-              mapExprentMinTypes.remove(secondPair);
+		mergePhiVersions(ssa, graph);
 
-              if (firstType.equals(VarType.VARTYPE_NULL)) {
-                mapExprentMinTypes.put(firstPair, secondType);
-                firstType = secondType;
-              }
+		typeProcessor.calculateVarTypes(root, graph);
 
-              typeProcessor.getMapFinalVars().put(firstPair, VarTypeProcessor.VAR_NON_FINAL);
+		simpleMerge(typeProcessor, graph, method);
 
-              lstVersions.remove(j);
-              //noinspection AssignmentToForLoopParameter
-              j--;
-            }
-          }
-        }
-      }
-    }
+		// FIXME: advanced merging
 
-    if (!mapMergedVersions.isEmpty()) {
-      updateVersions(graph, mapMergedVersions);
-    }
-  }
+		eliminateNonJavaTypes(typeProcessor);
 
-  private void setNewVarIndices(VarTypeProcessor typeProcessor, DirectGraph graph, VarVersionsProcessor previousVersionsProcessor) {
-    final Map<VarVersionPair, VarType> mapExprentMaxTypes = typeProcessor.getMapExprentMaxTypes();
-    Map<VarVersionPair, VarType> mapExprentMinTypes = typeProcessor.getMapExprentMinTypes();
-    Map<VarVersionPair, Integer> mapFinalVars = typeProcessor.getMapFinalVars();
+		setNewVarIndices(typeProcessor, graph, previousVersionsProcessor);
+	}
 
-    CounterContainer counters = DecompilerContext.getCounterContainer();
+	private void setNewVarIndices(VarTypeProcessor typeProcessor, DirectGraph graph,
+								  VarVersionsProcessor previousVersionsProcessor) {
+		final Map<VarVersionPair, VarType> mapExprentMaxTypes = typeProcessor.getMapExprentMaxTypes();
+		Map<VarVersionPair, VarType> mapExprentMinTypes = typeProcessor.getMapExprentMinTypes();
+		Map<VarVersionPair, Integer> mapFinalVars = typeProcessor.getMapFinalVars();
 
-    final Map<VarVersionPair, Integer> mapVarPaar = new HashMap<>();
-    Map<Integer, Integer> mapOriginalVarIndices = new HashMap<>();
+		CounterContainer counters = DecompilerContext.getCounterContainer();
 
-    // map var-version pairs on new var indexes
-    for (VarVersionPair pair : new ArrayList<>(mapExprentMinTypes.keySet())) {
+		final Map<VarVersionPair, Integer> mapVarPaar = new HashMap<>();
+		Map<Integer, Integer> mapOriginalVarIndices = new HashMap<>();
 
-      if (pair.version >= 0) {
-        int newIndex = pair.version == 1 ? pair.var : counters.getCounterAndIncrement(CounterContainer.VAR_COUNTER);
+		// map var-version pairs on new var indexes
+		for (VarVersionPair pair : new ArrayList<>(mapExprentMinTypes.keySet()))
+		{
 
-        VarVersionPair newVar = new VarVersionPair(newIndex, 0);
+			if (pair.version >= 0)
+			{
+				int newIndex = pair.version == 1 ? pair.var :
+						counters.getCounterAndIncrement(CounterContainer.VAR_COUNTER);
 
-        mapExprentMinTypes.put(newVar, mapExprentMinTypes.get(pair));
-        mapExprentMaxTypes.put(newVar, mapExprentMaxTypes.get(pair));
+				VarVersionPair newVar = new VarVersionPair(newIndex, 0);
 
-        if (mapFinalVars.containsKey(pair)) {
-          mapFinalVars.put(newVar, mapFinalVars.remove(pair));
-        }
+				mapExprentMinTypes.put(newVar, mapExprentMinTypes.get(pair));
+				mapExprentMaxTypes.put(newVar, mapExprentMaxTypes.get(pair));
 
-        mapVarPaar.put(pair, newIndex);
-        mapOriginalVarIndices.put(newIndex, pair.var);
-      }
-    }
+				if (mapFinalVars.containsKey(pair)) {
+					mapFinalVars.put(newVar, mapFinalVars.remove(pair));
+				}
 
-    // set new vars
-    graph.iterateExprents(exprent -> {
-      List<Exprent> lst = exprent.getAllExprents(true);
-      lst.add(exprent);
+				mapVarPaar.put(pair, newIndex);
+				mapOriginalVarIndices.put(newIndex, pair.var);
+			}
+		}
 
-      for (Exprent expr : lst) {
-        if (expr.type == Exprent.EXPRENT_VAR) {
-          VarExprent newVar = (VarExprent)expr;
-          Integer newVarIndex = mapVarPaar.get(new VarVersionPair(newVar));
-          if (newVarIndex != null) {
-            newVar.setIndex(newVarIndex);
-            newVar.setVersion(0);
-          }
-        }
-        else if (expr.type == Exprent.EXPRENT_CONST) {
-          VarType maxType = mapExprentMaxTypes.get(new VarVersionPair(expr.id, -1));
-          if (maxType != null && maxType.equals(VarType.VARTYPE_CHAR)) {
-            ((ConstExprent)expr).setConstType(maxType);
-          }
-        }
-      }
+		// set new vars
+		graph.iterateExprents(exprent -> {
+			List<Exprent> lst = exprent.getAllExprents(true);
+			lst.add(exprent);
 
-      return 0;
-    });
+			for (Exprent expr : lst)
+			{
+				if (expr.type == Exprent.EXPRENT_VAR)
+				{
+					VarExprent newVar = (VarExprent) expr;
+					Integer newVarIndex = mapVarPaar.get(new VarVersionPair(newVar));
+					if (newVarIndex != null)
+					{
+						newVar.setIndex(newVarIndex);
+						newVar.setVersion(0);
+					}
+				}
+				else if (expr.type == Exprent.EXPRENT_CONST)
+				{
+					VarType maxType = mapExprentMaxTypes.get(new VarVersionPair(expr.id, -1));
+					if (maxType != null && maxType.equals(VarType.VARTYPE_CHAR)) {
+						((ConstExprent) expr).setConstType(maxType);
+					}
+				}
+			}
 
-    if (previousVersionsProcessor != null) {
-      Map<Integer, Integer> oldIndices = previousVersionsProcessor.getMapOriginalVarIndices();
-      this.mapOriginalVarIndices = new HashMap<>(mapOriginalVarIndices.size());
-      for (Entry<Integer, Integer> entry : mapOriginalVarIndices.entrySet()) {
-        Integer value = entry.getValue();
-        Integer oldValue = oldIndices.get(value);
-        value = oldValue != null ? oldValue : value;
-        this.mapOriginalVarIndices.put(entry.getKey(), value);
-      }
-    }
-    else {
-      this.mapOriginalVarIndices = mapOriginalVarIndices;
-    }
-  }
+			return 0;
+		});
 
-  public VarType getVarType(VarVersionPair pair) {
-    return typeProcessor.getVarType(pair);
-  }
+		if (previousVersionsProcessor != null)
+		{
+			Map<Integer, Integer> oldIndices = previousVersionsProcessor.getMapOriginalVarIndices();
+			this.mapOriginalVarIndices = new HashMap<>(mapOriginalVarIndices.size());
+			for (Entry<Integer, Integer> entry : mapOriginalVarIndices.entrySet())
+			{
+				Integer value = entry.getValue();
+				Integer oldValue = oldIndices.get(value);
+				value = oldValue != null ? oldValue : value;
+				this.mapOriginalVarIndices.put(entry.getKey(), value);
+			}
+		}
+		else {
+			this.mapOriginalVarIndices = mapOriginalVarIndices;
+		}
+	}
 
-  public void setVarType(VarVersionPair pair, VarType type) {
-    typeProcessor.setVarType(pair, type);
-  }
+	public VarType getVarType(VarVersionPair pair) {
+		return typeProcessor.getVarType(pair);
+	}
 
-  public int getVarFinal(VarVersionPair pair) {
-    Integer fin = typeProcessor.getMapFinalVars().get(pair);
-    return fin == null ? VarTypeProcessor.VAR_FINAL : fin;
-  }
+	public void setVarType(VarVersionPair pair, VarType type) {
+		typeProcessor.setVarType(pair, type);
+	}
 
-  public void setVarFinal(VarVersionPair pair, int finalType) {
-    typeProcessor.getMapFinalVars().put(pair, finalType);
-  }
+	public int getVarFinal(VarVersionPair pair) {
+		Integer fin = typeProcessor.getMapFinalVars().get(pair);
+		return fin == null ? VarTypeProcessor.VAR_FINAL : fin;
+	}
 
-  public Map<Integer, Integer> getMapOriginalVarIndices() {
-    return mapOriginalVarIndices;
-  }
+	public void setVarFinal(VarVersionPair pair, int finalType) {
+		typeProcessor.getMapFinalVars().put(pair, finalType);
+	}
+
+	public Map<Integer, Integer> getMapOriginalVarIndices() {
+		return mapOriginalVarIndices;
+	}
 }

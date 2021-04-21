@@ -1,5 +1,10 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
+// found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler.exps;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.jetbrains.java.decompiler.main.collectors.BytecodeMappingTracer;
 import org.jetbrains.java.decompiler.modules.decompiler.ExprProcessor;
@@ -8,105 +13,104 @@ import org.jetbrains.java.decompiler.struct.gen.VarType;
 import org.jetbrains.java.decompiler.util.InterpreterUtil;
 import org.jetbrains.java.decompiler.util.TextBuffer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 public class ArrayExprent extends Exprent {
-  private Exprent array;
-  private Exprent index;
-  private final VarType hardType;
 
-  public ArrayExprent(Exprent array, Exprent index, VarType hardType, Set<Integer> bytecodeOffsets) {
-    super(EXPRENT_ARRAY);
-    this.array = array;
-    this.index = index;
-    this.hardType = hardType;
+	private final VarType hardType;
+	private Exprent array;
+	private Exprent index;
 
-    addBytecodeOffsets(bytecodeOffsets);
-  }
+	public ArrayExprent(Exprent array, Exprent index, VarType hardType, Set<Integer> bytecodeOffsets) {
+		super(EXPRENT_ARRAY);
+		this.array = array;
+		this.index = index;
+		this.hardType = hardType;
 
-  @Override
-  public Exprent copy() {
-    return new ArrayExprent(array.copy(), index.copy(), hardType, bytecode);
-  }
+		addBytecodeOffsets(bytecodeOffsets);
+	}
 
-  @Override
-  public VarType getExprType() {
-    VarType exprType = array.getExprType();
-    if (exprType.equals(VarType.VARTYPE_NULL)) {
-      return hardType.copy();
-    }
-    else {
-      return exprType.decreaseArrayDim();
-    }
-  }
+	@Override
+	public Exprent copy() {
+		return new ArrayExprent(array.copy(), index.copy(), hardType, bytecode);
+	}
 
-  @Override
-  public int getExprentUse() {
-    return array.getExprentUse() & index.getExprentUse() & Exprent.MULTIPLE_USES;
-  }
+	@Override
+	public VarType getExprType() {
+		VarType exprType = array.getExprType();
+		if (exprType.equals(VarType.VARTYPE_NULL)) {
+			return hardType.copy();
+		}
+		else {
+			return exprType.decreaseArrayDim();
+		}
+	}
 
-  @Override
-  public CheckTypesResult checkExprTypeBounds() {
-    CheckTypesResult result = new CheckTypesResult();
-    result.addMinTypeExprent(index, VarType.VARTYPE_BYTECHAR);
-    result.addMaxTypeExprent(index, VarType.VARTYPE_INT);
-    return result;
-  }
+	@Override
+	public int getExprentUse() {
+		return array.getExprentUse() & index.getExprentUse() & Exprent.MULTIPLE_USES;
+	}
 
-  @Override
-  public List<Exprent> getAllExprents() {
-    List<Exprent> lst = new ArrayList<>();
-    lst.add(array);
-    lst.add(index);
-    return lst;
-  }
+	@Override
+	public CheckTypesResult checkExprTypeBounds() {
+		CheckTypesResult result = new CheckTypesResult();
+		result.addMinTypeExprent(index, VarType.VARTYPE_BYTECHAR);
+		result.addMaxTypeExprent(index, VarType.VARTYPE_INT);
+		return result;
+	}
 
-  @Override
-  public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
-    TextBuffer res = array.toJava(indent, tracer);
+	@Override
+	public List<Exprent> getAllExprents() {
+		List<Exprent> lst = new ArrayList<>();
+		lst.add(array);
+		lst.add(index);
+		return lst;
+	}
 
-    if (array.getPrecedence() > getPrecedence()) { // array precedence equals 0
-      res.enclose("(", ")");
-    }
+	@Override
+	public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
+		TextBuffer res = array.toJava(indent, tracer);
 
-    VarType arrType = array.getExprType();
-    if (arrType.arrayDim == 0) {
-      VarType objArr = VarType.VARTYPE_OBJECT.resizeArrayDim(1); // type family does not change
-      res.enclose("((" + ExprProcessor.getCastTypeName(objArr) + ")", ")");
-    }
+		if (array.getPrecedence() > getPrecedence())
+		{ // array precedence equals 0
+			res.enclose("(", ")");
+		}
 
-    tracer.addMapping(bytecode);
+		VarType arrType = array.getExprType();
+		if (arrType.arrayDim == 0)
+		{
+			VarType objArr = VarType.VARTYPE_OBJECT.resizeArrayDim(1); // type family does not change
+			res.enclose("((" + ExprProcessor.getCastTypeName(objArr) + ")", ")");
+		}
 
-    return res.append('[').append(index.toJava(indent, tracer)).append(']');
-  }
+		tracer.addMapping(bytecode);
 
-  @Override
-  public void replaceExprent(Exprent oldExpr, Exprent newExpr) {
-    if (oldExpr == array) {
-      array = newExpr;
-    }
-    if (oldExpr == index) {
-      index = newExpr;
-    }
-  }
+		return res.append('[').append(index.toJava(indent, tracer)).append(']');
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == this) return true;
-    if (!(o instanceof ArrayExprent)) return false;
+	@Override
+	public void replaceExprent(Exprent oldExpr, Exprent newExpr) {
+		if (oldExpr == array) {
+			array = newExpr;
+		}
+		if (oldExpr == index) {
+			index = newExpr;
+		}
+	}
 
-    ArrayExprent arr = (ArrayExprent)o;
-    return InterpreterUtil.equalObjects(array, arr.getArray()) &&
-           InterpreterUtil.equalObjects(index, arr.getIndex());
-  }
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) return true;
+		if (!(o instanceof ArrayExprent)) return false;
 
-  public Exprent getArray() {
-    return array;
-  }
+		ArrayExprent arr = (ArrayExprent) o;
+		return InterpreterUtil.equalObjects(array, arr.getArray()) &&
+				InterpreterUtil.equalObjects(index, arr.getIndex());
+	}
 
-  public Exprent getIndex() {
-    return index;
-  }
+	public Exprent getArray() {
+		return array;
+	}
+
+	public Exprent getIndex() {
+		return index;
+	}
 }

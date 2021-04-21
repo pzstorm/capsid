@@ -1,5 +1,9 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
+// found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler.stats;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jetbrains.java.decompiler.code.CodeConstants;
 import org.jetbrains.java.decompiler.code.cfg.BasicBlock;
@@ -10,141 +14,138 @@ import org.jetbrains.java.decompiler.modules.decompiler.StatEdge;
 import org.jetbrains.java.decompiler.modules.decompiler.exps.Exprent;
 import org.jetbrains.java.decompiler.util.TextBuffer;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 public class SynchronizedStatement extends Statement {
 
-  private Statement body;
+	private final List<Exprent> headexprent = new ArrayList<>(1);
+	private Statement body;
 
-  private final List<Exprent> headexprent = new ArrayList<>(1);
+	// *****************************************************************************
+	// constructors
+	// *****************************************************************************
 
-  // *****************************************************************************
-  // constructors
-  // *****************************************************************************
+	public SynchronizedStatement() {
+		type = TYPE_SYNCRONIZED;
 
-  public SynchronizedStatement() {
-    type = TYPE_SYNCRONIZED;
+		headexprent.add(null);
+	}
 
-    headexprent.add(null);
-  }
+	public SynchronizedStatement(Statement head, Statement body, Statement exc) {
 
-  public SynchronizedStatement(Statement head, Statement body, Statement exc) {
+		this();
 
-    this();
+		first = head;
+		stats.addWithKey(head, head.id);
 
-    first = head;
-    stats.addWithKey(head, head.id);
+		this.body = body;
+		stats.addWithKey(body, body.id);
 
-    this.body = body;
-    stats.addWithKey(body, body.id);
+		stats.addWithKey(exc, exc.id);
 
-    stats.addWithKey(exc, exc.id);
+		List<StatEdge> lstSuccs = body.getSuccessorEdges(STATEDGE_DIRECT_ALL);
+		if (!lstSuccs.isEmpty())
+		{
+			StatEdge edge = lstSuccs.get(0);
+			if (edge.getType() == StatEdge.TYPE_REGULAR) {
+				post = edge.getDestination();
+			}
+		}
+	}
 
-    List<StatEdge> lstSuccs = body.getSuccessorEdges(STATEDGE_DIRECT_ALL);
-    if (!lstSuccs.isEmpty()) {
-      StatEdge edge = lstSuccs.get(0);
-      if (edge.getType() == StatEdge.TYPE_REGULAR) {
-        post = edge.getDestination();
-      }
-    }
-  }
+	// *****************************************************************************
+	// public methods
+	// *****************************************************************************
 
+	@Override
+	public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
+		TextBuffer buf = new TextBuffer();
+		buf.append(ExprProcessor.listToJava(varDefinitions, indent, tracer));
+		buf.append(first.toJava(indent, tracer));
 
-  // *****************************************************************************
-  // public methods
-  // *****************************************************************************
+		if (isLabeled())
+		{
+			buf.appendIndent(indent).append("label").append(this.id.toString()).append(":").appendLineSeparator();
+			tracer.incrementCurrentSourceLine();
+		}
 
-  @Override
-  public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
-    TextBuffer buf = new TextBuffer();
-    buf.append(ExprProcessor.listToJava(varDefinitions, indent, tracer));
-    buf.append(first.toJava(indent, tracer));
+		buf.appendIndent(indent).append(headexprent.get(0).toJava(indent, tracer)).append(" {").appendLineSeparator();
+		tracer.incrementCurrentSourceLine();
 
-    if (isLabeled()) {
-      buf.appendIndent(indent).append("label").append(this.id.toString()).append(":").appendLineSeparator();
-      tracer.incrementCurrentSourceLine();
-    }
+		buf.append(ExprProcessor.jmpWrapper(body, indent + 1, true, tracer));
 
-    buf.appendIndent(indent).append(headexprent.get(0).toJava(indent, tracer)).append(" {").appendLineSeparator();
-    tracer.incrementCurrentSourceLine();
+		buf.appendIndent(indent).append("}").appendLineSeparator();
+		mapMonitorExitInstr(tracer);
+		tracer.incrementCurrentSourceLine();
 
-    buf.append(ExprProcessor.jmpWrapper(body, indent + 1, true, tracer));
+		return buf;
+	}
 
-    buf.appendIndent(indent).append("}").appendLineSeparator();
-    mapMonitorExitInstr(tracer);
-    tracer.incrementCurrentSourceLine();
+	private void mapMonitorExitInstr(BytecodeMappingTracer tracer) {
+		BasicBlock block = body.getBasichead().getBlock();
+		if (!block.getSeq().isEmpty() && block.getLastInstruction().opcode == CodeConstants.opc_monitorexit)
+		{
+			Integer offset = block.getOldOffset(block.size() - 1);
+			if (offset > -1) tracer.addMapping(offset);
+		}
+	}
 
-    return buf;
-  }
+	@Override
+	public void initExprents() {
+		headexprent.set(0, first.getExprents().remove(first.getExprents().size() - 1));
+	}
 
-  private void mapMonitorExitInstr(BytecodeMappingTracer tracer) {
-    BasicBlock block = body.getBasichead().getBlock();
-    if (!block.getSeq().isEmpty() && block.getLastInstruction().opcode == CodeConstants.opc_monitorexit) {
-      Integer offset = block.getOldOffset(block.size() - 1);
-      if (offset > -1) tracer.addMapping(offset);
-    }
-  }
+	@Override
+	public List<Object> getSequentialObjects() {
 
-  @Override
-  public void initExprents() {
-    headexprent.set(0, first.getExprents().remove(first.getExprents().size() - 1));
-  }
+		List<Object> lst = new ArrayList<>(stats);
+		lst.add(1, headexprent.get(0));
 
-  @Override
-  public List<Object> getSequentialObjects() {
+		return lst;
+	}
 
-    List<Object> lst = new ArrayList<>(stats);
-    lst.add(1, headexprent.get(0));
+	@Override
+	public void replaceExprent(Exprent oldexpr, Exprent newexpr) {
+		if (headexprent.get(0) == oldexpr) {
+			headexprent.set(0, newexpr);
+		}
+	}
 
-    return lst;
-  }
+	@Override
+	public void replaceStatement(Statement oldstat, Statement newstat) {
 
-  @Override
-  public void replaceExprent(Exprent oldexpr, Exprent newexpr) {
-    if (headexprent.get(0) == oldexpr) {
-      headexprent.set(0, newexpr);
-    }
-  }
+		if (body == oldstat) {
+			body = newstat;
+		}
 
-  @Override
-  public void replaceStatement(Statement oldstat, Statement newstat) {
+		super.replaceStatement(oldstat, newstat);
+	}
 
-    if (body == oldstat) {
-      body = newstat;
-    }
+	public void removeExc() {
+		Statement exc = stats.get(2);
+		SequenceHelper.destroyStatementContent(exc, true);
 
-    super.replaceStatement(oldstat, newstat);
-  }
+		stats.removeWithKey(exc.id);
+	}
 
-  public void removeExc() {
-    Statement exc = stats.get(2);
-    SequenceHelper.destroyStatementContent(exc, true);
+	@Override
+	public Statement getSimpleCopy() {
+		return new SynchronizedStatement();
+	}
 
-    stats.removeWithKey(exc.id);
-  }
+	@Override
+	public void initSimpleCopy() {
+		first = stats.get(0);
+		body = stats.get(1);
+	}
 
-  @Override
-  public Statement getSimpleCopy() {
-    return new SynchronizedStatement();
-  }
+	// *****************************************************************************
+	// getter and setter methods
+	// *****************************************************************************
 
-  @Override
-  public void initSimpleCopy() {
-    first = stats.get(0);
-    body = stats.get(1);
-  }
+	public Statement getBody() {
+		return body;
+	}
 
-  // *****************************************************************************
-  // getter and setter methods
-  // *****************************************************************************
-
-  public Statement getBody() {
-    return body;
-  }
-
-  public List<Exprent> getHeadexprentList() {
-    return headexprent;
-  }
+	public List<Exprent> getHeadexprentList() {
+		return headexprent;
+	}
 }

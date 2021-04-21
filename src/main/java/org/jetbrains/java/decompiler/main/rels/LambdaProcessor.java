@@ -1,5 +1,12 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
+// found in the LICENSE file.
 package org.jetbrains.java.decompiler.main.rels;
+
+import java.io.IOException;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.jetbrains.java.decompiler.code.CodeConstants;
 import org.jetbrains.java.decompiler.code.Instruction;
@@ -17,110 +24,126 @@ import org.jetbrains.java.decompiler.struct.consts.PrimitiveConstant;
 import org.jetbrains.java.decompiler.struct.gen.MethodDescriptor;
 import org.jetbrains.java.decompiler.util.InterpreterUtil;
 
-import java.io.IOException;
-import java.util.*;
-
 public class LambdaProcessor {
-  @SuppressWarnings("SpellCheckingInspection") private static final String JAVAC_LAMBDA_CLASS = "java/lang/invoke/LambdaMetafactory";
-  @SuppressWarnings("SpellCheckingInspection") private static final String JAVAC_LAMBDA_METHOD = "metafactory";
-  @SuppressWarnings("SpellCheckingInspection") private static final String JAVAC_LAMBDA_ALT_METHOD = "altMetafactory";
 
-  public void processClass(ClassNode node) throws IOException {
-    for (ClassNode child : node.nested) {
-      processClass(child);
-    }
+	@SuppressWarnings("SpellCheckingInspection") private static final String JAVAC_LAMBDA_CLASS = "java/lang/invoke" +
+			"/LambdaMetafactory";
+	@SuppressWarnings("SpellCheckingInspection") private static final String JAVAC_LAMBDA_METHOD = "metafactory";
+	@SuppressWarnings("SpellCheckingInspection") private static final String JAVAC_LAMBDA_ALT_METHOD =
+			"altMetafactory";
 
-    ClassesProcessor clProcessor = DecompilerContext.getClassProcessor();
-    StructClass cl = node.classStruct;
+	public void processClass(ClassNode node) throws IOException {
+		for (ClassNode child : node.nested) {
+			processClass(child);
+		}
 
-    if (cl.getBytecodeVersion() < CodeConstants.BYTECODE_JAVA_8) { // lambda beginning with Java 8
-      return;
-    }
+		ClassesProcessor clProcessor = DecompilerContext.getClassProcessor();
+		StructClass cl = node.classStruct;
 
-    StructBootstrapMethodsAttribute bootstrap =
-      cl.getAttribute(StructGeneralAttribute.ATTRIBUTE_BOOTSTRAP_METHODS);
-    if (bootstrap == null || bootstrap.getMethodsNumber() == 0) {
-      return; // no bootstrap constants in pool
-    }
+		if (cl.getBytecodeVersion() < CodeConstants.BYTECODE_JAVA_8)
+		{ // lambda beginning with Java 8
+			return;
+		}
 
-    BitSet lambda_methods = new BitSet();
+		StructBootstrapMethodsAttribute bootstrap =
+				cl.getAttribute(StructGeneralAttribute.ATTRIBUTE_BOOTSTRAP_METHODS);
+		if (bootstrap == null || bootstrap.getMethodsNumber() == 0) {
+			return; // no bootstrap constants in pool
+		}
 
-    // find lambda bootstrap constants
-    for (int i = 0; i < bootstrap.getMethodsNumber(); ++i) {
-      LinkConstant method_ref = bootstrap.getMethodReference(i); // method handle
+		BitSet lambda_methods = new BitSet();
 
-      // FIXME: extend for Eclipse etc. at some point
-      if (JAVAC_LAMBDA_CLASS.equals(method_ref.classname) &&
-          (JAVAC_LAMBDA_METHOD.equals(method_ref.elementname) || JAVAC_LAMBDA_ALT_METHOD.equals(method_ref.elementname))) {
-        lambda_methods.set(i);
-      }
-    }
+		// find lambda bootstrap constants
+		for (int i = 0; i < bootstrap.getMethodsNumber(); ++i)
+		{
+			LinkConstant method_ref = bootstrap.getMethodReference(i); // method handle
 
-    if (lambda_methods.isEmpty()) {
-      return; // no lambda bootstrap constant found
-    }
+			// FIXME: extend for Eclipse etc. at some point
+			if (JAVAC_LAMBDA_CLASS.equals(method_ref.classname) &&
+					(JAVAC_LAMBDA_METHOD.equals(method_ref.elementname) || JAVAC_LAMBDA_ALT_METHOD.equals(method_ref.elementname))) {
+				lambda_methods.set(i);
+			}
+		}
 
-    Map<String, String> mapMethodsLambda = new HashMap<>();
+		if (lambda_methods.isEmpty()) {
+			return; // no lambda bootstrap constant found
+		}
 
-    // iterate over code and find invocations of bootstrap methods. Replace them with anonymous classes.
-    for (StructMethod mt : cl.getMethods()) {
-      mt.expandData();
+		Map<String, String> mapMethodsLambda = new HashMap<>();
 
-      InstructionSequence seq = mt.getInstructionSequence();
-      if (seq != null && seq.length() > 0) {
-        int len = seq.length();
+		// iterate over code and find invocations of bootstrap methods. Replace them with anonymous classes.
+		for (StructMethod mt : cl.getMethods())
+		{
+			mt.expandData();
 
-        for (int i = 0; i < len; ++i) {
-          Instruction instr = seq.getInstr(i);
+			InstructionSequence seq = mt.getInstructionSequence();
+			if (seq != null && seq.length() > 0)
+			{
+				int len = seq.length();
 
-          if (instr.opcode == CodeConstants.opc_invokedynamic) {
-            LinkConstant invoke_dynamic = cl.getPool().getLinkConstant(instr.operand(0));
+				for (int i = 0; i < len; ++i)
+				{
+					Instruction instr = seq.getInstr(i);
 
-            if (lambda_methods.get(invoke_dynamic.index1)) { // lambda invocation found
+					if (instr.opcode == CodeConstants.opc_invokedynamic)
+					{
+						LinkConstant invoke_dynamic = cl.getPool().getLinkConstant(instr.operand(0));
 
-              List<PooledConstant> bootstrap_arguments = bootstrap.getMethodArguments(invoke_dynamic.index1);
-              MethodDescriptor md = MethodDescriptor.parseDescriptor(invoke_dynamic.descriptor);
+						if (lambda_methods.get(invoke_dynamic.index1))
+						{ // lambda invocation found
 
-              String lambda_class_name = md.ret.value;
-              String lambda_method_name = invoke_dynamic.elementname;
-              String lambda_method_descriptor = ((PrimitiveConstant)bootstrap_arguments.get(2)).getString(); // method type
+							List<PooledConstant> bootstrap_arguments =
+									bootstrap.getMethodArguments(invoke_dynamic.index1);
+							MethodDescriptor md = MethodDescriptor.parseDescriptor(invoke_dynamic.descriptor);
 
-              LinkConstant content_method_handle = (LinkConstant)bootstrap_arguments.get(1);
+							String lambda_class_name = md.ret.value;
+							String lambda_method_name = invoke_dynamic.elementname;
+							String lambda_method_descriptor =
+									((PrimitiveConstant) bootstrap_arguments.get(2)).getString(); // method type
 
-              ClassNode node_lambda = new ClassNode(content_method_handle.classname, content_method_handle.elementname,
-                                                    content_method_handle.descriptor, content_method_handle.index1,
-                                                    lambda_class_name, lambda_method_name, lambda_method_descriptor, cl);
-              node_lambda.simpleName = cl.qualifiedName + "##Lambda_" + invoke_dynamic.index1 + "_" + invoke_dynamic.index2;
-              node_lambda.enclosingMethod = InterpreterUtil.makeUniqueKey(mt.getName(), mt.getDescriptor());
+							LinkConstant content_method_handle = (LinkConstant) bootstrap_arguments.get(1);
 
-              node.nested.add(node_lambda);
-              node_lambda.parent = node;
+							ClassNode node_lambda = new ClassNode(content_method_handle.classname,
+									content_method_handle.elementname,
+									content_method_handle.descriptor, content_method_handle.index1,
+									lambda_class_name, lambda_method_name, lambda_method_descriptor, cl);
+							node_lambda.simpleName =
+									cl.qualifiedName + "##Lambda_" + invoke_dynamic.index1 + "_" + invoke_dynamic.index2;
+							node_lambda.enclosingMethod = InterpreterUtil.makeUniqueKey(mt.getName(),
+									mt.getDescriptor());
 
-              clProcessor.getMapRootClasses().put(node_lambda.simpleName, node_lambda);
-              if (!node_lambda.lambdaInformation.is_method_reference) {
-                mapMethodsLambda.put(node_lambda.lambdaInformation.content_method_key, node_lambda.simpleName);
-              }
-            }
-          }
-        }
-      }
+							node.nested.add(node_lambda);
+							node_lambda.parent = node;
 
-      mt.releaseResources();
-    }
+							clProcessor.getMapRootClasses().put(node_lambda.simpleName, node_lambda);
+							if (!node_lambda.lambdaInformation.is_method_reference) {
+								mapMethodsLambda.put(node_lambda.lambdaInformation.content_method_key,
+										node_lambda.simpleName);
+							}
+						}
+					}
+				}
+			}
 
-    // build class hierarchy on lambda
-    for (ClassNode nd : node.nested) {
-      if (nd.type == ClassNode.CLASS_LAMBDA) {
-        String parent_class_name = mapMethodsLambda.get(nd.enclosingMethod);
-        if (parent_class_name != null) {
-          ClassNode parent_class = clProcessor.getMapRootClasses().get(parent_class_name);
+			mt.releaseResources();
+		}
 
-          parent_class.nested.add(nd);
-          nd.parent = parent_class;
-        }
-      }
-    }
+		// build class hierarchy on lambda
+		for (ClassNode nd : node.nested)
+		{
+			if (nd.type == ClassNode.CLASS_LAMBDA)
+			{
+				String parent_class_name = mapMethodsLambda.get(nd.enclosingMethod);
+				if (parent_class_name != null)
+				{
+					ClassNode parent_class = clProcessor.getMapRootClasses().get(parent_class_name);
 
-    // FIXME: mixed hierarchy?
-  }
+					parent_class.nested.add(nd);
+					nd.parent = parent_class;
+				}
+			}
+		}
+
+		// FIXME: mixed hierarchy?
+	}
 }

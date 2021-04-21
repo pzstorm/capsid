@@ -1,88 +1,90 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
+// found in the LICENSE file.
 package org.jetbrains.java.decompiler.code.cfg;
-
-import org.jetbrains.java.decompiler.main.DecompilerContext;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jetbrains.java.decompiler.main.DecompilerContext;
+
 public class ExceptionRangeCFG {
-  private final List<BasicBlock> protectedRange; // FIXME: replace with set
-  private BasicBlock handler;
-  private List<String> exceptionTypes;
 
-  public ExceptionRangeCFG(List<BasicBlock> protectedRange, BasicBlock handler, List<String> exceptionType) {
-    this.protectedRange = protectedRange;
-    this.handler = handler;
+	private final List<BasicBlock> protectedRange; // FIXME: replace with set
+	private BasicBlock handler;
+	private List<String> exceptionTypes;
 
-    if (exceptionType != null) {
-      this.exceptionTypes = new ArrayList<>(exceptionType);
-    }
-  }
+	public ExceptionRangeCFG(List<BasicBlock> protectedRange, BasicBlock handler, List<String> exceptionType) {
+		this.protectedRange = protectedRange;
+		this.handler = handler;
 
-  public boolean isCircular() {
-    return protectedRange.contains(handler);
-  }
+		if (exceptionType != null) {
+			this.exceptionTypes = new ArrayList<>(exceptionType);
+		}
+	}
 
-  @Override
-  public String toString() {
-    String new_line_separator = DecompilerContext.getNewLineSeparator();
-    StringBuilder buf = new StringBuilder();
+	public boolean isCircular() {
+		return protectedRange.contains(handler);
+	}
 
-    buf.append("exceptionType:");
+	@Override
+	public String toString() {
+		String new_line_separator = DecompilerContext.getNewLineSeparator();
+		StringBuilder buf = new StringBuilder();
 
-    if (exceptionTypes == null) {
-      buf.append(" null");
-    }
-    else {
-      for (String exception_type : exceptionTypes) {
-        buf.append(" ").append(exception_type);
-      }
-    }
+		buf.append("exceptionType:");
 
-    buf.append(new_line_separator);
+		if (exceptionTypes == null) {
+			buf.append(" null");
+		}
+		else {
+			for (String exception_type : exceptionTypes) {
+				buf.append(" ").append(exception_type);
+			}
+		}
 
-    buf.append("handler: ").append(handler.id).append(new_line_separator);
-    buf.append("range: ");
-    for (BasicBlock block : protectedRange) {
-      buf.append(block.id).append(" ");
-    }
-    buf.append(new_line_separator);
+		buf.append(new_line_separator);
 
-    return buf.toString();
-  }
+		buf.append("handler: ").append(handler.id).append(new_line_separator);
+		buf.append("range: ");
+		for (BasicBlock block : protectedRange) {
+			buf.append(block.id).append(" ");
+		}
+		buf.append(new_line_separator);
 
-  public BasicBlock getHandler() {
-    return handler;
-  }
+		return buf.toString();
+	}
 
-  public void setHandler(BasicBlock handler) {
-    this.handler = handler;
-  }
+	public BasicBlock getHandler() {
+		return handler;
+	}
 
-  public List<BasicBlock> getProtectedRange() {
-    return protectedRange;
-  }
+	public void setHandler(BasicBlock handler) {
+		this.handler = handler;
+	}
 
-  public List<String> getExceptionTypes() {
-    return this.exceptionTypes;
-  }
+	public List<BasicBlock> getProtectedRange() {
+		return protectedRange;
+	}
 
-  public void addExceptionType(String exceptionType) {
-    if (this.exceptionTypes == null) {
-      return;
-    }
+	public List<String> getExceptionTypes() {
+		return this.exceptionTypes;
+	}
 
-    if (exceptionType == null) {
-      this.exceptionTypes = null;
-    }
-    else {
-      this.exceptionTypes.add(exceptionType);
-    }
-  }
+	public void addExceptionType(String exceptionType) {
+		if (this.exceptionTypes == null) {
+			return;
+		}
 
-  public String getUniqueExceptionsString() {
-    return exceptionTypes != null ? exceptionTypes.stream().distinct().collect(Collectors.joining(":")) : null;
-  }
+		if (exceptionType == null) {
+			this.exceptionTypes = null;
+		}
+		else {
+			this.exceptionTypes.add(exceptionType);
+		}
+	}
+
+	public String getUniqueExceptionsString() {
+		return exceptionTypes != null ? exceptionTypes.stream().distinct().collect(Collectors.joining(":")) : null;
+	}
 }

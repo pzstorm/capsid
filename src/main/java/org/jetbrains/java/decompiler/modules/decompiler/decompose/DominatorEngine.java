@@ -1,114 +1,121 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
+// found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler.decompose;
+
+import java.util.List;
 
 import org.jetbrains.java.decompiler.modules.decompiler.StatEdge;
 import org.jetbrains.java.decompiler.modules.decompiler.stats.Statement;
 import org.jetbrains.java.decompiler.util.VBStyleCollection;
 
-import java.util.List;
-
 public class DominatorEngine {
 
-  private final Statement statement;
+	private final Statement statement;
 
-  private final VBStyleCollection<Integer, Integer> colOrderedIDoms = new VBStyleCollection<>();
+	private final VBStyleCollection<Integer, Integer> colOrderedIDoms = new VBStyleCollection<>();
 
+	public DominatorEngine(Statement statement) {
+		this.statement = statement;
+	}
 
-  public DominatorEngine(Statement statement) {
-    this.statement = statement;
-  }
+	private static Integer getCommonIDom(Integer key1, Integer key2,
+										 VBStyleCollection<Integer, Integer> orderedIDoms) {
 
-  public void initialize() {
-    calcIDoms();
-  }
+		if (key1 == null) {
+			return key2;
+		}
+		else if (key2 == null) {
+			return key1;
+		}
 
-  private void orderStatements() {
+		int index1 = orderedIDoms.getIndexByKey(key1);
+		int index2 = orderedIDoms.getIndexByKey(key2);
 
-    for (Statement stat : statement.getReversePostOrderList()) {
-      colOrderedIDoms.addWithKey(null, stat.id);
-    }
-  }
+		while (index1 != index2)
+		{
+			if (index1 > index2)
+			{
+				key1 = orderedIDoms.getWithKey(key1);
+				index1 = orderedIDoms.getIndexByKey(key1);
+			}
+			else {
+				key2 = orderedIDoms.getWithKey(key2);
+				index2 = orderedIDoms.getIndexByKey(key2);
+			}
+		}
 
-  private static Integer getCommonIDom(Integer key1, Integer key2, VBStyleCollection<Integer, Integer> orderedIDoms) {
+		return key1;
+	}
 
-    if (key1 == null) {
-      return key2;
-    }
-    else if (key2 == null) {
-      return key1;
-    }
+	public void initialize() {
+		calcIDoms();
+	}
 
-    int index1 = orderedIDoms.getIndexByKey(key1);
-    int index2 = orderedIDoms.getIndexByKey(key2);
+	private void orderStatements() {
 
-    while (index1 != index2) {
-      if (index1 > index2) {
-        key1 = orderedIDoms.getWithKey(key1);
-        index1 = orderedIDoms.getIndexByKey(key1);
-      }
-      else {
-        key2 = orderedIDoms.getWithKey(key2);
-        index2 = orderedIDoms.getIndexByKey(key2);
-      }
-    }
+		for (Statement stat : statement.getReversePostOrderList()) {
+			colOrderedIDoms.addWithKey(null, stat.id);
+		}
+	}
 
-    return key1;
-  }
+	private void calcIDoms() {
 
-  private void calcIDoms() {
+		orderStatements();
 
-    orderStatements();
+		colOrderedIDoms.putWithKey(statement.getFirst().id, statement.getFirst().id);
 
-    colOrderedIDoms.putWithKey(statement.getFirst().id, statement.getFirst().id);
+		// exclude first statement
+		List<Integer> lstIds = colOrderedIDoms.getLstKeys().subList(1, colOrderedIDoms.getLstKeys().size());
 
-    // exclude first statement
-    List<Integer> lstIds = colOrderedIDoms.getLstKeys().subList(1, colOrderedIDoms.getLstKeys().size());
+		while (true)
+		{
 
-    while (true) {
+			boolean changed = false;
 
-      boolean changed = false;
+			for (Integer id : lstIds)
+			{
 
-      for (Integer id : lstIds) {
+				Statement stat = statement.getStats().getWithKey(id);
+				Integer idom = null;
 
-        Statement stat = statement.getStats().getWithKey(id);
-        Integer idom = null;
+				for (StatEdge edge : stat.getAllPredecessorEdges())
+				{
+					if (colOrderedIDoms.getWithKey(edge.getSource().id) != null) {
+						idom = getCommonIDom(idom, edge.getSource().id, colOrderedIDoms);
+					}
+				}
 
-        for (StatEdge edge : stat.getAllPredecessorEdges()) {
-          if (colOrderedIDoms.getWithKey(edge.getSource().id) != null) {
-            idom = getCommonIDom(idom, edge.getSource().id, colOrderedIDoms);
-          }
-        }
+				Integer oldidom = colOrderedIDoms.putWithKey(idom, id);
+				if (!idom.equals(oldidom)) {
+					changed = true;
+				}
+			}
 
-        Integer oldidom = colOrderedIDoms.putWithKey(idom, id);
-        if (!idom.equals(oldidom)) {
-          changed = true;
-        }
-      }
+			if (!changed) {
+				break;
+			}
+		}
+	}
 
-      if (!changed) {
-        break;
-      }
-    }
-  }
+	public VBStyleCollection<Integer, Integer> getOrderedIDoms() {
+		return colOrderedIDoms;
+	}
 
-  public VBStyleCollection<Integer, Integer> getOrderedIDoms() {
-    return colOrderedIDoms;
-  }
+	public boolean isDominator(Integer node, Integer dom) {
 
-  public boolean isDominator(Integer node, Integer dom) {
+		while (!node.equals(dom))
+		{
 
-    while (!node.equals(dom)) {
+			Integer idom = colOrderedIDoms.getWithKey(node);
 
-      Integer idom = colOrderedIDoms.getWithKey(node);
+			if (idom.equals(node)) {
+				return false; // root node
+			}
+			else {
+				node = idom;
+			}
+		}
 
-      if (idom.equals(node)) {
-        return false; // root node
-      }
-      else {
-        node = idom;
-      }
-    }
-
-    return true;
-  }
+		return true;
+	}
 }
