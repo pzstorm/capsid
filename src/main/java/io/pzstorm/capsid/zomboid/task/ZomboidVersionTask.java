@@ -18,10 +18,11 @@
 package io.pzstorm.capsid.zomboid.task;
 
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.tasks.JavaExec;
@@ -33,7 +34,8 @@ import com.google.common.collect.ImmutableList;
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.Configurations;
-import io.pzstorm.capsid.zomboid.ZomboidTasks;
+import io.pzstorm.capsid.property.VersionProperties;
+import io.pzstorm.capsid.util.SemanticVersion;
 
 /**
  * This task saves and prints Project Zomboid game version.
@@ -49,11 +51,10 @@ public class ZomboidVersionTask extends JavaExec implements CapsidTask {
 		setArgs(ImmutableList.of("version"));
 
 		setStandardOutput(new ByteArrayOutputStream());
-		dependsOn(ZomboidTasks.ZOMBOID_CLASSES.name);
 	}
 
 	@TaskAction
-	void execute() throws UnsupportedEncodingException {
+	void execute() throws IOException {
 
 		// get command output from stream
 		ByteArrayOutputStream stream = (ByteArrayOutputStream) getStandardOutput();
@@ -61,13 +62,27 @@ public class ZomboidVersionTask extends JavaExec implements CapsidTask {
 		List<String> versionText = Splitter.onPattern("\r\n|\r|\n").splitToList(streamText);
 
 		// ZomboidDoc version
-		CapsidPlugin.LOGGER.lifecycle(versionText.get(0));
+		String zDocVersion = versionText.get(0).substring(13);
+		CapsidPlugin.LOGGER.lifecycle("zdoc version " + zDocVersion);
 
 		// get version number and classifier (ex. 41.50-IWBUMS)
 		ExtraPropertiesExtension ext = getProject().getExtensions().getExtraProperties();
-		String gameVersion = versionText.get(1).substring(12).replaceAll(" ", "").trim();
-		ext.set("mod.pzversion", gameVersion);
+		String sGameVersion = versionText.get(1).substring(12).replaceAll(" ", "").trim();
+		ext.set("mod.pzversion", sGameVersion);
 
-		CapsidPlugin.LOGGER.lifecycle("game version " + gameVersion);
+		CapsidPlugin.LOGGER.lifecycle("game version " + sGameVersion);
+
+		SemanticVersion lastZDocVersion = VersionProperties.LAST_ZDOC_VERSION.findProperty(getProject());
+		if (lastZDocVersion == null) {
+			throw new InvalidUserDataException("Missing 'lastZDocVersion' property");
+		}
+		if (SemanticVersion.COMPARATOR.compare(lastZDocVersion, new SemanticVersion(zDocVersion)) != 0)
+		{
+			CapsidPlugin.LOGGER.lifecycle("\nzDoc version updated from " + lastZDocVersion);
+			ext.set(VersionProperties.LAST_ZDOC_VERSION.name, zDocVersion);
+
+			// write latest detected versions to file
+			VersionProperties.get().writeToFile(getProject());
+		}
 	}
 }
