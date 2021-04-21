@@ -44,11 +44,6 @@ public class VersionProperties extends CapsidProperties {
 	 */
 	public static final CapsidProperty<SemanticVersion> LAST_ZDOC_VERSION;
 
-	/**
-	 * This property will be {@code true} if {@link #LAST_ZDOC_VERSION} recently changed.
-	 */
-	public static final CapsidProperty<Boolean> HAS_ZDOC_VERSION_CHANGED;
-
 	private static final VersionProperties INSTANCE = new VersionProperties();
 	private static final @Unmodifiable Set<CapsidProperty<?>> PROPERTIES;
 
@@ -58,12 +53,7 @@ public class VersionProperties extends CapsidProperties {
 				.withDefaultValue(new SemanticVersion("0.0.0"))
 				.build();
 
-		HAS_ZDOC_VERSION_CHANGED = new CapsidProperty.Builder<>("zDocVersionChanged", Boolean.class)
-				.withComment("This property will be true if zDoc version recently changed.")
-				.withDefaultValue(false)
-				.build();
-
-		PROPERTIES = ImmutableSet.of(LAST_ZDOC_VERSION, HAS_ZDOC_VERSION_CHANGED);
+		PROPERTIES = ImmutableSet.of(LAST_ZDOC_VERSION);
 	}
 
 	private VersionProperties() {
