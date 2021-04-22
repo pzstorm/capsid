@@ -1,7 +1,7 @@
 import io.pzstorm.capsid.dist.GenerateChangelogOptions
 
 plugins {
-	id 'io.pzstorm.capsid' version '0.1.0'
+	id 'io.pzstorm.capsid' version '0.2.0'
 }
 
 repositories {
