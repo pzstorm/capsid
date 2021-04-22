@@ -86,3 +86,10 @@ publishToMavenLocal {
 tasks.withType(Javadoc) {
 	options.addStringOption('Xdoclint:none', '-quiet')
 }
+
+compileJava {
+	options.errorprone {
+		// exclude de-compiler code from being checked by error prone
+		excludedPaths = '.*/src/main/java/org/jetbrains/.*'
+	}
+}
