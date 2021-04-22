@@ -1,5 +1,3 @@
-import io.pzstorm.capsid.dist.GenerateChangelogOptions
-
 plugins {
 	id 'io.pzstorm.capsid' version '0.2.0'
 }
@@ -13,9 +11,6 @@ capsid {
 			"media/lua", "media/luaexamples",
 			"media/newuitests", "media/launcher"
 	)
-//	generateChangelogOptions = [
-//			(GenerateChangelogOptions.ISSUES_WITHOUT_LABELS): 'false'
-//	]
-//	setRepositoryOwner('cocolabs')
-//	setRepositoryName('pz-zdoc')
+	setRepositoryOwner('pzstorm')
+	setRepositoryName('capsid')
 }
