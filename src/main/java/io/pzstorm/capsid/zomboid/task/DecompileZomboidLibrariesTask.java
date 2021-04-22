@@ -28,6 +28,7 @@ public class DecompileZomboidLibrariesTask extends DecompileJavaTask {
 
 	@Inject
 	public DecompileZomboidLibrariesTask() {
-		super(ProjectProperty.ZOMBOID_LIBRARIES.getSupplier(), ProjectProperty.ZOMBOID_LIBRARY_SOURCES_DIR.getSupplier());
+		super(ProjectProperty.ZOMBOID_LIBRARIES.getSupplier(),
+				ProjectProperty.ZOMBOID_LIBRARY_SOURCES_DIR.getSupplier());
 	}
 }

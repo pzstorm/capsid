@@ -60,7 +60,8 @@ public class ClassesProcessor implements CodeConstants {
 		}
 		else if (cl.superClass == null)
 		{ // neither interface nor super class defined
-			String message = "Inconsistent anonymous class definition: '" + cl.qualifiedName + "'. Neither interface " +
+			String message = "Inconsistent anonymous class definition: '" + cl.qualifiedName + "'. Neither interface" +
+					" " +
 					"nor super class defined.";
 			DecompilerContext.getLogger().writeMessage(message, IFernflowerLogger.Severity.WARN);
 			return false;
@@ -128,14 +129,15 @@ public class ClassesProcessor implements CodeConstants {
 			{
 				String message =
 						"Could not read method while checking anonymous class definition: '" + enclosingCl.qualifiedName + "', '" +
-						InterpreterUtil.makeUniqueKey(mt.getName(), mt.getDescriptor()) + "'";
+								InterpreterUtil.makeUniqueKey(mt.getName(), mt.getDescriptor()) + "'";
 				DecompilerContext.getLogger().writeMessage(message, IFernflowerLogger.Severity.WARN);
 				return false;
 			}
 
 			if (refCounter > 1 || refNotNew)
 			{
-				String message = "Inconsistent references to the class '" + cl.qualifiedName + "' which is supposed to" +
+				String message = "Inconsistent references to the class '" + cl.qualifiedName + "' which is supposed " +
+						"to" +
 						" be anonymous";
 				DecompilerContext.getLogger().writeMessage(message, IFernflowerLogger.Severity.WARN);
 				return false;

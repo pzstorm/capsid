@@ -49,6 +49,7 @@ public class DecompileJavaTask extends DefaultTask implements CapsidTask {
 	final ProjectPropertiesSupplier<File> destination;
 	private final Map<String, Object> parameters;
 
+	//@formatter:off
 	@Inject
 	DecompileJavaTask(ProjectPropertiesSupplier<?> source,
 					  ProjectPropertiesSupplier<File> destination,
@@ -72,7 +73,7 @@ public class DecompileJavaTask extends DefaultTask implements CapsidTask {
 				.put(IFernflowerPreferences.MAX_PROCESSING_METHOD, "60")
 				.build()
 		);
-	}
+	}//@formatter:on
 
 	@Override
 	public void configure(String group, String description, Project project) {
@@ -131,7 +132,7 @@ public class DecompileJavaTask extends DefaultTask implements CapsidTask {
 	Path getSourcePathFromObject(Object object) {
 
 		if (object instanceof File) {
-			return ((File)object).toPath();
+			return ((File) object).toPath();
 		}
 		else if (object instanceof Path) {
 			return (Path) object;

@@ -661,10 +661,10 @@ public class SimplifyExprentsHelper {
 
 							data.add(new ExitExprent(ifExit.getExitType(),
 									new FunctionExprent(FunctionExprent.FUNCTION_IIF,
-									Arrays.asList(
-											statement.getHeadexprent().getCondition(),
-											ifExit.getValue(),
-											elseExit.getValue()), ifHeadExprBytecode), ifExit.getRetType(),
+											Arrays.asList(
+													statement.getHeadexprent().getCondition(),
+													ifExit.getValue(),
+													elseExit.getValue()), ifHeadExprBytecode), ifExit.getRetType(),
 									ifHeadExprBytecode));
 							statement.setExprents(data);
 

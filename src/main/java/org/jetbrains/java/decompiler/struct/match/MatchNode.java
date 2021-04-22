@@ -16,6 +16,7 @@ public class MatchNode {
 	private final int type;
 	private final Map<MatchProperties, RuleValue> rules = new HashMap<>();
 	private final List<MatchNode> children = new ArrayList<>();
+
 	public MatchNode(int type) {
 		this.type = type;
 	}

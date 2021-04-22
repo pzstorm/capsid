@@ -933,7 +933,7 @@ public class NestedClassProcessor {
 					ConstExprent constExpr = (ConstExprent) expr;
 					res =
 							(VarType.VARTYPE_CLASS.equals(constExpr.getConstType()) && classname.equals(constExpr.getValue()) ||
-							classType.equals(constExpr.getConstType()));
+									classType.equals(constExpr.getConstType()));
 					break;
 				case Exprent.EXPRENT_FIELD:
 					res = classname.equals(((FieldExprent) expr).getClassname());

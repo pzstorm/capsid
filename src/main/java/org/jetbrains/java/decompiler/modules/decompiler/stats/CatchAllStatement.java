@@ -171,8 +171,8 @@ public final class CatchAllStatement extends Statement {
 		{
 			cas.monitor =
 					new VarExprent(DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.VAR_COUNTER),
-					VarType.VARTYPE_INT,
-					DecompilerContext.getVarProcessor());
+							VarType.VARTYPE_INT,
+							DecompilerContext.getVarProcessor());
 		}
 
 		if (!this.vars.isEmpty())

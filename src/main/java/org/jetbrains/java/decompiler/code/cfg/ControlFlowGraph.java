@@ -291,7 +291,8 @@ public class ControlFlowGraph implements CodeConstants {
 
 				if (range == null)
 				{
-					buf.append(">>>>>>>>(exception) Block ").append(handler.id).append("\t").append("ERROR: range not " +
+					buf.append(">>>>>>>>(exception) Block ").append(handler.id).append("\t").append("ERROR: range not" +
+							" " +
 							"found!")
 							.append(new_line_separator);
 				}

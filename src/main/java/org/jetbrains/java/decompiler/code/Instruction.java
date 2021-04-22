@@ -11,6 +11,7 @@ public class Instruction implements CodeConstants {
 	public final boolean wide;
 	public final int bytecodeVersion;
 	protected final int[] operands;
+
 	public Instruction(int opcode, int group, boolean wide, int bytecodeVersion, int[] operands) {
 		this.opcode = opcode;
 		this.group = group;

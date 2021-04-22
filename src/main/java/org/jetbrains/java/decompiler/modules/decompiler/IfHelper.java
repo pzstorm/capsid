@@ -462,7 +462,7 @@ public final class IfHelper {
 
 		elsedirect =
 				!last.getAllSuccessorEdges().isEmpty() && last.getAllSuccessorEdges().get(0).getType() == StatEdge.TYPE_FINALLYEXIT ||
-				hasDirectEndEdge(last, from);
+						hasDirectEndEdge(last, from);
 
 		if (!noelsestat && existsPath(ifstat, ifstat.getAllSuccessorEdges().get(0).getDestination())) {
 			return false;

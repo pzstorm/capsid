@@ -618,8 +618,8 @@ public class ClassWriter {
 			{
 				boolean hide =
 						fd.isSynthetic() && DecompilerContext.getOption(IFernflowerPreferences.REMOVE_SYNTHETIC) ||
-						wrapper.getHiddenMembers().contains(InterpreterUtil.makeUniqueKey(fd.getName(),
-								fd.getDescriptor()));
+								wrapper.getHiddenMembers().contains(InterpreterUtil.makeUniqueKey(fd.getName(),
+										fd.getDescriptor()));
 				if (hide) continue;
 
 				if (components != null && fd.getAccessFlags() == (CodeConstants.ACC_FINAL | CodeConstants.ACC_PRIVATE) &&
@@ -668,9 +668,9 @@ public class ClassWriter {
 			{
 				boolean hide =
 						mt.isSynthetic() && DecompilerContext.getOption(IFernflowerPreferences.REMOVE_SYNTHETIC) ||
-						mt.hasModifier(CodeConstants.ACC_BRIDGE) && DecompilerContext.getOption(IFernflowerPreferences.REMOVE_BRIDGE) ||
-						wrapper.getHiddenMembers().contains(InterpreterUtil.makeUniqueKey(mt.getName(),
-								mt.getDescriptor()));
+								mt.hasModifier(CodeConstants.ACC_BRIDGE) && DecompilerContext.getOption(IFernflowerPreferences.REMOVE_BRIDGE) ||
+								wrapper.getHiddenMembers().contains(InterpreterUtil.makeUniqueKey(mt.getName(),
+										mt.getDescriptor()));
 				if (hide) continue;
 
 				int position = buffer.length();
@@ -703,7 +703,7 @@ public class ClassWriter {
 					boolean isSynthetic = (inner.access & CodeConstants.ACC_SYNTHETIC) != 0 || innerCl.isSynthetic();
 					boolean hide =
 							isSynthetic && DecompilerContext.getOption(IFernflowerPreferences.REMOVE_SYNTHETIC) ||
-							wrapper.getHiddenMembers().contains(innerCl.qualifiedName);
+									wrapper.getHiddenMembers().contains(innerCl.qualifiedName);
 					if (hide) continue;
 
 					if (hasContent)
