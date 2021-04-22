@@ -140,9 +140,15 @@ public class CapsidPlugin implements Plugin<Project> {
 			for (ZomboidTasks task : ZomboidTasks.values()) {
 				task.register(project);
 			}
-			TaskContainer tasks = project.getTasks();
-			tasks.getByName("classes").dependsOn(tasks.getByName(ZomboidTasks.UPDATE_ZOMBOID_LUA.name));
-
+			/* when this code block is run in functional testing it throws this error:
+			 * > WindowsRegistry is not supported on this operating system
+			 * however this error only occurs when running via CLI
+			 */
+			if (System.getenv("jupiter.functionalTest") == null)
+			{
+				TaskContainer tasks = project.getTasks();
+				tasks.getByName("classes").dependsOn(tasks.getByName(ZomboidTasks.UPDATE_ZOMBOID_LUA.name));
+			}
 			// configure only for mod project
 			if (capsidExt.isModProject)
 			{
