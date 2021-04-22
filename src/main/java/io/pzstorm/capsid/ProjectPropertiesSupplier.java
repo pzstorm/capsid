@@ -24,7 +24,7 @@ import org.gradle.api.Project;
  *
  * @param <T> type of property.
  */
-interface ProjectPropertiesSupplier<T> {
+public interface ProjectPropertiesSupplier<T> {
 
 	/**
 	 * Returns property with type for given {@code Project}.

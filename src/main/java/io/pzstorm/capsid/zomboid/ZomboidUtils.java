@@ -18,9 +18,6 @@
 package io.pzstorm.capsid.zomboid;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,32 +25,13 @@ import org.gradle.api.GradleException;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 
-import com.google.common.io.Files;
-
 import io.pzstorm.capsid.Configurations;
-import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.util.SemanticVersion;
 
 /**
  * This class contains helper methods used by {@link ZomboidTasks}.
  */
 public class ZomboidUtils {
-
-	/**
-	 * Returns {@code File} that stores zomboid version data.
-	 *
-	 * @param project {@code Project} requesting the file instance.
-	 *
-	 * @throws IOException If an I/O error occurred while creating file.
-	 */
-	public static File getZomboidVersionFile(Project project) throws IOException {
-
-		File versionFile = ProjectProperty.ZDOC_VERSION_FILE.get(project);
-		if (!versionFile.exists() && !versionFile.createNewFile()) {
-			throw new IOException("Unable to create 'zdoc.version' file");
-		}
-		return versionFile;
-	}
 
 	/**
 	 * Returns the ZomboidDoc dependency version used by given project.
@@ -77,20 +55,5 @@ public class ZomboidUtils {
 			throw new GradleException("Unexpected ZomboidDoc dependency name: " + dependencyName);
 		}
 		return new SemanticVersion(matcher.group(1));
-	}
-
-	/**
-	 * Returns last used ZomboidDoc version used by given {@code Project}.
-	 *
-	 * @return last used ZomboidDoc version or version {@code 0.0.0} if file is empty.
-	 */
-	public static SemanticVersion getLastZomboidDocVersion(Project project) throws IOException {
-
-		File versionFile = getZomboidVersionFile(project);
-		List<String> content = Files.readLines(versionFile, StandardCharsets.UTF_8);
-		if (!content.isEmpty()) {
-			return new SemanticVersion(content.get(0));
-		}
-		return new SemanticVersion("0.0.0");
 	}
 }

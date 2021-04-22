@@ -22,7 +22,7 @@ apply plugin: 'com.diffplug.spotless'
 apply from: "https://gist.githubusercontent.com/yooksi/${spotlessGistID}/raw/spotless.gradle"
 apply from: 'test.gradle'
 
-version '0.1.0'
+version '0.2.0'
 group 'io.pzstorm.capsid'
 
 repositories {
@@ -85,4 +85,11 @@ publishToMavenLocal {
 // https://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
 tasks.withType(Javadoc) {
 	options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+compileJava {
+	options.errorprone {
+		// exclude de-compiler code from being checked by error prone
+		excludedPaths = '.*/src/main/java/org/jetbrains/.*'
+	}
 }

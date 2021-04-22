@@ -41,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import io.pzstorm.capsid.dist.DistributionTasks;
 import io.pzstorm.capsid.mod.ModTasks;
+import io.pzstorm.capsid.property.VersionProperties;
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.SetupTasks;
 import io.pzstorm.capsid.util.UnixPath;
@@ -124,67 +125,81 @@ public class CapsidPlugin implements Plugin<Project> {
 		for (Configurations configuration : Configurations.values()) {
 			configuration.register(configurations);
 		}
-		// register all zomboid tasks
-		for (ZomboidTasks task : ZomboidTasks.values()) {
-			task.register(project);
+		// register project dependencies
+		DependencyHandler dependencies = project.getDependencies();
+		for (Dependencies dependency : Dependencies.values()) {
+			dependency.register(project, dependencies);
 		}
-		TaskContainer tasks = project.getTasks();
-		tasks.getByName("classes").dependsOn(tasks.getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
-
 		// plugin extension will be configured in evaluation phase
 		project.afterEvaluate(p ->
 		{
-			// register all mod tasks
-			for (ModTasks task : ModTasks.values()) {
-				task.createOrRegister(project);
-			}
-			// register project dependencies
-			DependencyHandler dependencies = project.getDependencies();
-			for (Dependencies dependency : Dependencies.values()) {
-				dependency.register(project, dependencies);
-			}
-			// set default excluded directories if map is not user configured
-			if (capsidExt.getExcludedResourceDirs().isEmpty())
-			{
-				capsidExt.excludeResourceDirs(
-						"media/lua", "media/luaexamples",
-						"media/newuitests", "media/launcher"
-				);
-			}
-			File mediaDir = new File(gameDir, "media");
-			File[] mediaFiles = mediaDir.listFiles(pathname ->
-					pathname.isDirectory() && !capsidExt.isExcludedResource("media/" + pathname.getName())
-			);
-			if (mediaFiles != null && mediaFiles.length > 0)
-			{
-				Set<File> resourceSrcDirs = new HashSet<>();
-				for (File file : mediaFiles)
-				{
-					String projectDir = project.getProjectDir().toPath().toString();
-					resourceSrcDirs.add(Paths.get(projectDir, "media", file.getName()).toFile());
-				}
-				// set media resource source directories
-				media.getResources().setSrcDirs(resourceSrcDirs);
-			}
-			else LOGGER.warn("WARN: Unable to find files in media directory: " + mediaDir.getPath());
+			// load version properties
+			VersionProperties.get().load(project);
 
-			// register all distribution tasks
-			for (DistributionTasks task : DistributionTasks.values()) {
+			// register all zomboid tasks
+			for (ZomboidTasks task : ZomboidTasks.values()) {
 				task.register(project);
 			}
-			// declare main project distribution
-			DistributionContainer distributions = extensions.getByType(DistributionContainer.class);
-			Distribution distribution = distributions.getByName("main");
-			distribution.contents(copy ->
+			/* when this code block is run in functional testing it throws this error:
+			 * > WindowsRegistry is not supported on this operating system
+			 * however this error only occurs when running via CLI
+			 */
+			if (System.getenv("jupiter.functionalTest") == null)
 			{
-				copy.from(ProjectProperty.MEDIA_CLASSES_DIR.get(project),
-						ProjectProperty.MEDIA_RESOURCES_DIR.get(project)
+				TaskContainer tasks = project.getTasks();
+				tasks.getByName("classes").dependsOn(tasks.getByName(ZomboidTasks.UPDATE_ZOMBOID_LUA.name));
+			}
+			// configure only for mod project
+			if (capsidExt.isModProject)
+			{
+				// register all mod tasks
+				for (ModTasks task : ModTasks.values()) {
+					task.createOrRegister(project);
+				}
+
+				// set default excluded directories if map is not user configured
+				if (capsidExt.getExcludedResourceDirs().isEmpty())
+				{
+					capsidExt.excludeResourceDirs(
+							"media/lua", "media/luaexamples",
+							"media/newuitests", "media/launcher"
+					);
+				}
+				File mediaDir = new File(gameDir, "media");
+				File[] mediaFiles = mediaDir.listFiles(pathname ->
+						pathname.isDirectory() && !capsidExt.isExcludedResource("media/" + pathname.getName())
 				);
-				copy.into("media");
-			});
-			project.getTasks().getByName("assembleDist").dependsOn(
-					DistributionTasks.MEDIA_CLASSES.name, DistributionTasks.PROCESS_RESOURCES.name
-			);
+				if (mediaFiles != null && mediaFiles.length > 0)
+				{
+					Set<File> resourceSrcDirs = new HashSet<>();
+					for (File file : mediaFiles)
+					{
+						String projectDir = project.getProjectDir().toPath().toString();
+						resourceSrcDirs.add(Paths.get(projectDir, "media", file.getName()).toFile());
+					}
+					// set media resource source directories
+					media.getResources().setSrcDirs(resourceSrcDirs);
+				}
+				else LOGGER.warn("WARN: Unable to find files in media directory: " + mediaDir.getPath());
+
+				// register all distribution tasks
+				for (DistributionTasks task : DistributionTasks.values()) {
+					task.register(project);
+				}
+				// declare main project distribution
+				DistributionContainer distributions = extensions.getByType(DistributionContainer.class);
+				Distribution distribution = distributions.getByName("main");
+				distribution.contents(copy ->
+				{
+					copy.from(ProjectProperty.MEDIA_CLASSES_DIR.get(project),
+							ProjectProperty.MEDIA_RESOURCES_DIR.get(project)
+					);
+					copy.into("media");
+				});
+				project.getTasks().getByName("assembleDist").dependsOn(
+						DistributionTasks.MEDIA_CLASSES.name, DistributionTasks.PROCESS_RESOURCES.name
+				);
+			}
 		});
 	}
 }

@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 
 import io.pzstorm.capsid.PluginUnitTest;
 
@@ -95,7 +96,39 @@ class SemanticVersionTest extends PluginUnitTest {
 	}
 
 	@Test
+	void shouldCorrectlyCompareUsingEquals() {
+
+		SemanticVersion A = new SemanticVersion("0.1.0");
+		SemanticVersion B = new SemanticVersion("0.2.0");
+		SemanticVersion C = new SemanticVersion("0.3.0");
+		SemanticVersion D = new SemanticVersion("0.2.0");
+
+		Assertions.assertNotEquals(A, B);
+		Assertions.assertNotEquals(B, C);
+		Assertions.assertNotEquals(C, D);
+
+		Assertions.assertEquals(B, D);
+	}
+
+	@Test
+	void shouldCorrectlyCompareUsingHashCode() {
+
+		Set<SemanticVersion> semanticVersions = Sets.newHashSet(
+				new SemanticVersion("0.1.0"),
+				new SemanticVersion("0.2.0"),
+				new SemanticVersion("0.3.0")
+		);
+		Assertions.assertTrue(semanticVersions.contains(new SemanticVersion("0.1.0")));
+		Assertions.assertTrue(semanticVersions.contains(new SemanticVersion("0.2.0")));
+		Assertions.assertTrue(semanticVersions.contains(new SemanticVersion("0.3.0")));
+
+		Assertions.assertFalse(semanticVersions.contains(new SemanticVersion("0.4.0")));
+	}
+
+	@Test
 	void shouldConvertSemanticVersionToString() {
+
 		Assertions.assertEquals("3.1.0", new SemanticVersion("3.1.0").toString());
+		Assertions.assertEquals("2.0.0-beta", new SemanticVersion("2.0.0-beta").toString());
 	}
 }

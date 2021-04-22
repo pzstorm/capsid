@@ -41,8 +41,8 @@ class CreateModSearchScopesFunctionalTest extends PluginFunctionalTest {
 			ModSearchScope.MOD_MEDIA, "mod_media.xml"
 	);
 	private static final ImmutableMap<ModSearchScope, String[]> SEARCH_SCOPES_SUBPROJECT = ImmutableMap.of(
-			ModSearchScope.MOD_LUA, new String[] { "mod_lua.xml", "mod_lua_subproject.xml" },
-			ModSearchScope.MOD_MEDIA, new String[] { "mod_media.xml", "mod_media_subproject.xml" }
+			ModSearchScope.MOD_LUA, new String[]{ "mod_lua.xml", "mod_lua_subproject.xml" },
+			ModSearchScope.MOD_MEDIA, new String[]{ "mod_media.xml", "mod_media_subproject.xml" }
 	);
 
 	CreateModSearchScopesFunctionalTest() {
@@ -78,7 +78,7 @@ class CreateModSearchScopesFunctionalTest extends PluginFunctionalTest {
 		File subProjectDir = new File(projectDir, "subproject");
 		Assertions.assertTrue(subProjectDir.mkdir());
 
-		writeToProjectFile("settings.gradle", new String[] {
+		writeToProjectFile("settings.gradle", new String[]{
 				"include 'subproject'"
 		});
 		File copyDestination = new File(subProjectDir, "build.gradle");

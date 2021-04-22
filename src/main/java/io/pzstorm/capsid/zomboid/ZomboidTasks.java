@@ -30,6 +30,9 @@ public enum ZomboidTasks {
 	DECOMPILE_ZOMBOID(DecompileZomboidTask.class, "decompileZomboid",
 			"Decompile Project Zomboid classes."
 	),
+	DECOMPILE_ZOMBOID_LIBRARY(DecompileZomboidLibrariesTask.class, "decompileZomboidLibraries",
+			"Decompile Project Zomboid library classes"
+	),
 	ZOMBOID_JAR(ZomboidJarTask.class, "zomboidJar",
 			"Assembles a jar archive containing game classes."
 	),

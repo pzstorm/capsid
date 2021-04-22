@@ -29,6 +29,7 @@ import org.gradle.api.InvalidUserDataException;
  */
 public class SemanticVersion {
 
+	public static final Comparator COMPARATOR = new Comparator();
 	private static final Pattern SEM_VER = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)(-(.*))?$");
 
 	public final Integer major, minor, patch;
@@ -55,7 +56,32 @@ public class SemanticVersion {
 
 	@Override
 	public String toString() {
-		return String.format("%d.%d.%d%s", major, minor, patch, classifier);
+
+		String sClassifier = !classifier.isEmpty() ? '-' + classifier : classifier;
+		return String.format("%d.%d.%d%s", major, minor, patch, sClassifier);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof SemanticVersion)) {
+			return false;
+		}
+		SemanticVersion that = (SemanticVersion) o;
+		if (new Comparator().compare(this, that) != 0) {
+			return false;
+		}
+		return classifier.equals(that.classifier);
+	}
+
+	@Override
+	public int hashCode() {
+
+		int result = 31 * major.hashCode() + minor.hashCode();
+		return 31 * (31 * result + patch.hashCode()) + classifier.hashCode();
 	}
 
 	public static class Comparator implements java.util.Comparator<SemanticVersion> {

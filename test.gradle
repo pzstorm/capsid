@@ -29,6 +29,7 @@ def integrationTest = tasks.register('integrationTest', Test) {
 
 tasks.register('functionalTest', Test) {
 	it.useJUnitPlatform()
+	it.environment 'jupiter.functionalTest', 'true'
 	it.testLogging.events "passed", "skipped", "failed"
 	it.testClassesDirs = sourceSets.functionalTest.output.classesDirs
 	it.classpath = sourceSets.functionalTest.runtimeClasspath

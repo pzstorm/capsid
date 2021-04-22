@@ -131,6 +131,11 @@ public class CapsidProperty<T> {
 			T result = (T) property;
 			return validator != null ? validator.validate(result) : result;
 		}
+		if (type.equals(Boolean.class))
+		{
+			T result = (T) Boolean.valueOf(property.equals("true"));
+			return validator != null ? validator.validate(result) : result;
+		}
 		if (type.equals(SemanticVersion.class))
 		{
 			T result = (T) new SemanticVersion(property);

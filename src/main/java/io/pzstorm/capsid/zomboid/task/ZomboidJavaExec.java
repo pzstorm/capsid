@@ -17,22 +17,13 @@
  */
 package io.pzstorm.capsid.zomboid.task;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import org.gradle.api.GradleException;
-import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.JavaExec;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.TaskContainer;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.Configurations;
 import io.pzstorm.capsid.zomboid.ZomboidTasks;
-import io.pzstorm.capsid.zomboid.ZomboidUtils;
 
 public class ZomboidJavaExec extends JavaExec implements CapsidTask {
 
@@ -43,23 +34,10 @@ public class ZomboidJavaExec extends JavaExec implements CapsidTask {
 		setMain("io.cocolabs.pz.zdoc.Main");
 		classpath(Configurations.ZOMBOID_DOC.resolve(project));
 
-		dependsOn(project.getTasks().getByName(ZomboidTasks.ZOMBOID_CLASSES.name));
-	}
-
-	/**
-	 * @throws IOException if an I/O error occurred while handling version file.
-	 * @throws GradleException if unable to find dependency or dependency has unexpected name.
-	 * @throws InvalidUserDataException if constructed semantic version is malformed.
-	 */
-	@TaskAction
-	void execute() throws IOException {
-
-		Project project = getProject();
-
-		// write semantic version to file
-		Path zomboidVersionFile = ZomboidUtils.getZomboidVersionFile(project).toPath();
-		try (Writer writer = Files.newBufferedWriter(zomboidVersionFile, StandardCharsets.UTF_8)) {
-			writer.write(ZomboidUtils.getZomboidDocVersion(project).toString());
-		}
+		TaskContainer tasks = project.getTasks();
+		dependsOn(
+				tasks.getByName(ZomboidTasks.ZOMBOID_CLASSES.name),
+				tasks.getByName(ZomboidTasks.ZOMBOID_VERSION.name)
+		);
 	}
 }

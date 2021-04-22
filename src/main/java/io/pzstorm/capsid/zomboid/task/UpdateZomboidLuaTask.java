@@ -17,62 +17,41 @@
  */
 package io.pzstorm.capsid.zomboid.task;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.Objects;
 
 import org.gradle.api.DefaultTask;
-import org.gradle.api.GradleException;
-import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.TaskContainer;
 
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.property.VersionProperties;
 import io.pzstorm.capsid.util.SemanticVersion;
 import io.pzstorm.capsid.zomboid.ZomboidTasks;
 import io.pzstorm.capsid.zomboid.ZomboidUtils;
 
+/**
+ * This task runs {@code ZomboidDoc} to update compiled Lua library.
+ */
 public class UpdateZomboidLuaTask extends DefaultTask implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {
 		CapsidTask.super.configure(group, description, project);
 
-		try {
-			int compareResult = new SemanticVersion.Comparator().compare(
-					ZomboidUtils.getZomboidDocVersion(project),
-					ZomboidUtils.getLastZomboidDocVersion(project)
-			);
-			// current version is higher then last version
-			onlyIf(t -> compareResult < 0);
+		SemanticVersion lastZomboidDocVer = VersionProperties.LAST_ZDOC_VERSION.findProperty(project);
+		int compareResult = new SemanticVersion.Comparator().compare(
+				ZomboidUtils.getZomboidDocVersion(project), Objects.requireNonNull(lastZomboidDocVer)
+		);
+		// skip task if semantic version could not be resolved
+		onlyIf(t -> !lastZomboidDocVer.equals(new SemanticVersion("0.0.0")) && compareResult != 0);
 
-			// current version is higher then last version
-			if (compareResult < 0) {
-				dependsOn(project.getTasks().getByName(ZomboidTasks.ANNOTATE_ZOMBOID_LUA.name),
-						project.getTasks().getByName(ZomboidTasks.COMPILE_ZOMBOID_LUA.name));
-			}
-		}
-		catch (IOException e) {
-			throw new GradleException("I/O exception occurred when updating Lua", e);
-		}
-	}
+		TaskContainer tasks = project.getTasks();
+		dependsOn(tasks.getByName(ZomboidTasks.ZOMBOID_VERSION.name));
 
-	/**
-	 * @throws IOException if an I/O error occurred while handling version file.
-	 * @throws GradleException if unable to find dependency or dependency has unexpected name.
-	 * @throws InvalidUserDataException if constructed semantic version is malformed.
-	 */
-	@TaskAction
-	void execute() throws IOException {
-
-		Project project = getProject();
-
-		// write semantic version to file
-		Path zomboidVersionFile = ZomboidUtils.getZomboidVersionFile(project).toPath();
-		try (Writer writer = Files.newBufferedWriter(zomboidVersionFile, StandardCharsets.UTF_8)) {
-			writer.write(ZomboidUtils.getZomboidDocVersion(project).toString());
+		// ZomboidDoc version has changed
+		if (compareResult != 0) {
+			dependsOn(tasks.getByName(ZomboidTasks.ANNOTATE_ZOMBOID_LUA.name),
+					tasks.getByName(ZomboidTasks.COMPILE_ZOMBOID_LUA.name));
 		}
 	}
 }

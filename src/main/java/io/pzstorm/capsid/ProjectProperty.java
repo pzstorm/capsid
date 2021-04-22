@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.Set;
 
 import org.gradle.api.Project;
+import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -29,38 +30,56 @@ import com.google.common.collect.ImmutableSet;
 public class ProjectProperty<T> {
 
 	/**
+	 * Libraries used by Project Zomboid during runtime.
+	 */
+	public static final ProjectProperty<ConfigurableFileTree> ZOMBOID_LIBRARIES;
+
+	/**
+	 * Directory where library sources are decompiled into.
+	 */
+	public static final ProjectProperty<File> ZOMBOID_LIBRARY_SOURCES_DIR;
+
+	/**
 	 * Directory containing Project Zomboid classes.
 	 */
 	public static final ProjectProperty<File> ZOMBOID_CLASSES_DIR;
+
 	/**
 	 * Directory containing Project Zomboid sources.
 	 */
 	public static final ProjectProperty<File> ZOMBOID_SOURCES_DIR;
+
 	/**
 	 * Directory containing Lua library compiled with ZomboidDoc.
 	 */
 	public static final ProjectProperty<File> ZDOC_LUA_DIR;
-	/**
-	 * File containing last ZomboidDoc version text.
-	 */
-	public static final ProjectProperty<File> ZDOC_VERSION_FILE;
+
 	/**
 	 * File where mod properties are stored.
 	 */
 	public static final ProjectProperty<File> MOD_INFO_FILE;
+
 	/**
 	 * Directory containing built classes for {@code media} module.
 	 */
 	public static final ProjectProperty<File> MEDIA_CLASSES_DIR;
+
 	/**
 	 * Directory containing resources for {@code media} module.
 	 */
 	public static final ProjectProperty<File> MEDIA_RESOURCES_DIR;
+
 	@Unmodifiable
 	static final Set<ProjectProperty<?>> PROPERTIES;
 
 	static
 	{
+		ZOMBOID_LIBRARIES = new ProjectProperty<>("zomboidLibraries", project ->
+				project.fileTree(CapsidPlugin.getGameDirProperty(project), t -> t.include("*.jar"))
+		);
+		ZOMBOID_LIBRARY_SOURCES_DIR = new ProjectProperty<>("zomboidLibrariesSourcesDir", project ->
+				project.file(project.getBuildDir() + "/generated/sources/libraries")
+		);
 		ZOMBOID_CLASSES_DIR = new ProjectProperty<>("zomboidClassesDir", project ->
 				project.file(project.getBuildDir() + "/classes/zomboid")
 		);
@@ -69,9 +88,6 @@ public class ProjectProperty<T> {
 		);
 		ZDOC_LUA_DIR = new ProjectProperty<>("zDocLuaDir", project ->
 				project.file(project.getBuildDir().getPath() + "/generated/sources/zdoc")
-		);
-		ZDOC_VERSION_FILE = new ProjectProperty<>("zDocVersionFile", project ->
-				project.file("zdoc.version")
 		);
 		MOD_INFO_FILE = new ProjectProperty<>("modInfoFile", project ->
 				project.file("mod.info")
@@ -84,8 +100,7 @@ public class ProjectProperty<T> {
 		);
 		PROPERTIES = ImmutableSet.of(
 				ZOMBOID_CLASSES_DIR, ZOMBOID_SOURCES_DIR, ZDOC_LUA_DIR,
-				ZDOC_VERSION_FILE, MOD_INFO_FILE,
-				MEDIA_CLASSES_DIR, MEDIA_RESOURCES_DIR
+				MOD_INFO_FILE, MEDIA_CLASSES_DIR, MEDIA_RESOURCES_DIR
 		);
 	}
 
@@ -113,5 +128,12 @@ public class ProjectProperty<T> {
 	 */
 	public T get(Project project) {
 		return propertySupplier.getProjectProperty(project);
+	}
+
+	/**
+	 * Returns {@code Supplier} used to resolve the project property.
+	 */
+	public ProjectPropertiesSupplier<T> getSupplier() {
+		return propertySupplier;
 	}
 }
