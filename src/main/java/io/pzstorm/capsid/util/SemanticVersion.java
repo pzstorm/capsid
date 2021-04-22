@@ -67,7 +67,7 @@ public class SemanticVersion {
 		if (this == o) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (!(o instanceof SemanticVersion)) {
 			return false;
 		}
 		SemanticVersion that = (SemanticVersion) o;
