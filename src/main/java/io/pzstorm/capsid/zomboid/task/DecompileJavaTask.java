@@ -60,7 +60,6 @@ public class DecompileJavaTask extends DefaultTask implements CapsidTask {
 		this.parameters = parameters;
 	}
 
-	@Inject
 	DecompileJavaTask(ProjectPropertiesSupplier<?> source, ProjectPropertiesSupplier<File> destination) {
 		// default parameters used by IDEA compiler
 		this(source, destination, ImmutableMap.<String, Object>builder()
