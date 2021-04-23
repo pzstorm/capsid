@@ -54,8 +54,8 @@ public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 		CapsidPluginExtension capsidExt = CapsidPlugin.getCapsidPluginExtension();
 
-		String repoOwner = capsidExt.getRepositoryOwner();
-		String repoName = capsidExt.getRepositoryName();
+		String repoOwner = capsidExt.getProjectRepositoryOwner();
+		String repoName = capsidExt.getProjectRepositoryName();
 
 		// first check if repository data has been defined by user
 		if (!Strings.isNullOrEmpty(repoOwner)) {

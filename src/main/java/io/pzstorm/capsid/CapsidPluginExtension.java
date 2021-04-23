@@ -87,7 +87,7 @@ public class CapsidPluginExtension {
 	 * @return value of configure property or an empty {@code String}
 	 * 		if property has not been configured by user.
 	 */
-	public String getRepositoryOwner() {
+	public String getProjectRepositoryOwner() {
 		return repositoryOwner;
 	}
 
@@ -106,7 +106,7 @@ public class CapsidPluginExtension {
 	 * @return value of configure property or an empty {@code String}
 	 * 		if property has not been configured by user.
 	 */
-	public String getRepositoryName() {
+	public String getProjectRepositoryName() {
 		return repositoryName;
 	}
 
