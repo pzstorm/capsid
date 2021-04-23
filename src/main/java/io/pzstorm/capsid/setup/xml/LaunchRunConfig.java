@@ -17,8 +17,11 @@
  */
 package io.pzstorm.capsid.setup.xml;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.w3c.dom.Element;
@@ -46,13 +49,19 @@ public class LaunchRunConfig extends XMLDocument {
 			"Debug Zomboid (local)", "zombie.gameStates.MainScreenState",
 			new VmParameter.Builder().withDebug(true).withSteamIntegration(false).build()
 	);
+	private final Map<String, Path> logs;
 	private final VmParameter vmParameters;
 	private final String mainClass;
 
-	public LaunchRunConfig(String name, String mainClass, VmParameter vmParameters) {
+	public LaunchRunConfig(String name, String mainClass, VmParameter vmParameters, Map<String, Path> logs) {
 		super(name, Paths.get(".idea/runConfigurations"));
 		this.vmParameters = vmParameters;
 		this.mainClass = mainClass;
+		this.logs = logs;
+	}
+
+	public LaunchRunConfig(String name, String mainClass, VmParameter vmParameters) {
+		this(name, mainClass, vmParameters, ImmutableMap.of());
 	}
 
 	/**
@@ -79,7 +88,16 @@ public class LaunchRunConfig extends XMLDocument {
 		configuration.setAttribute("factoryName", "Application");
 		component.appendChild(configuration);
 
-		// <option name="MAIN_CLASS_NAME" value="zombie.gameStates.MainScreenState" />
+		// <log_file alias="Main" path="Main/location" />
+		for (Map.Entry<String, Path> log : logs.entrySet())
+		{
+			Element logFile = document.createElement("log_file");
+
+			logFile.setAttribute("alias", log.getKey());
+			logFile.setAttribute("path", log.getValue().toString());
+			configuration.appendChild(logFile);
+		}
+		// <option name="MAIN_CLASS_NAME" value="<mainClass>" />
 		Element optionClass = document.createElement("option");
 
 		optionClass.setAttribute("name", "MAIN_CLASS_NAME");
