@@ -92,15 +92,6 @@ public class CapsidPluginExtension {
 	}
 
 	/**
-	 * Set the owner of Github repository where the project is hosted.
-	 *
-	 * @see GenerateChangelogTask
-	 */
-	public void setRepositoryOwner(String owner) {
-		repositoryOwner = owner;
-	}
-
-	/**
 	 * Returns the name of the Github repository where the project is hosted.
 	 *
 	 * @return value of configure property or an empty {@code String}
@@ -111,11 +102,16 @@ public class CapsidPluginExtension {
 	}
 
 	/**
-	 * Set the name of the Github repository where the project is hosted.
+	 * Set the owner and name of the Github repository where the project is hosted.
 	 *
+	 * @param owner name of the Github repository owner that hosts the project.
+	 * @param name name of the Github repository that hosts the project.
+	 * 
 	 * @see GenerateChangelogTask
 	 */
-	public void setRepositoryName(String name) {
+	public void setProjectRepository(String owner, String name) {
+
+		repositoryOwner = owner;
 		repositoryName = name;
 	}
 

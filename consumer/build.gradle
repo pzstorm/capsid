@@ -11,6 +11,5 @@ capsid {
 			"media/lua", "media/luaexamples",
 			"media/newuitests", "media/launcher"
 	)
-	setRepositoryOwner('pzstorm')
-	setRepositoryName('capsid')
+	setProjectRepository('pzstorm', 'capsid')
 }

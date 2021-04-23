@@ -91,8 +91,7 @@ Before generating a changelog you need to do the following:
 - Set Github repository owner and name through Capsid plugin extension:
 
   ```groovy
-  setRepositoryOwner('repo-owner')
-  setRepositoryName('repo-name')
+  setProjectRepository('repo-owner', 'repo-name')
   ```
 
   If the named properties are not configured by user, Capsid will try to read the repository owner and name information from `url` property in `mod.info` file assuming it is a valid Github URL.
