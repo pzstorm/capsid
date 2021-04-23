@@ -27,6 +27,7 @@ import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.VmParameter;
 import io.pzstorm.capsid.util.UnixPath;
 
+@SuppressWarnings("WeakerAccess")
 public class LaunchRunConfig extends XMLDocument {
 
 	public static final LaunchRunConfig RUN_ZOMBOID = new LaunchRunConfig(
