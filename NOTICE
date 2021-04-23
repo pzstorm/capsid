@@ -1,0 +1,25 @@
+Storm Capsid
+Copyright (C) 2021 Matthew Cain
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This product depends on a number of libraries with separate
+copyright notices and license terms. Your use of the source code
+for these subcomponents is subject to the terms and conditions of
+the subcomponent's license, as noted in the LICENSE.txt file.
+
+This application uses the following libraries
+licensed under the Apache 2.0 license:
+
+- Google Guava
+  (https://github.com/google/guava/)
+
+- Jetbrains Fernflower
+  (https://github.com/fesh0r/fernflower)
+
+The Apache 2.0 license can be obtained from
+http://www.apache.org/licenses/LICENSE-2.0
+
