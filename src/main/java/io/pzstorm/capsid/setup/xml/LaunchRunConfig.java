@@ -30,27 +30,28 @@ import io.pzstorm.capsid.util.UnixPath;
 public class LaunchRunConfig extends XMLDocument {
 
 	public static final LaunchRunConfig RUN_ZOMBOID = new LaunchRunConfig(
-			"Run Zomboid",
+			"Run Zomboid", "zombie.gameStates.MainScreenState",
 			new VmParameter.Builder().build()
 	);
 	public static final LaunchRunConfig RUN_ZOMBOID_LOCAL = new LaunchRunConfig(
-			"Run Zomboid (local)",
+			"Run Zomboid (local)", "zombie.gameStates.MainScreenState",
 			new VmParameter.Builder().withSteamIntegration(false).build()
 	);
 	public static final LaunchRunConfig DEBUG_ZOMBOID = new LaunchRunConfig(
-			"Debug Zomboid",
+			"Debug Zomboid", "zombie.gameStates.MainScreenState",
 			new VmParameter.Builder().withDebug(true).build()
 	);
 	public static final LaunchRunConfig DEBUG_ZOMBOID_LOCAL = new LaunchRunConfig(
-			"Debug Zomboid (local)",
+			"Debug Zomboid (local)", "zombie.gameStates.MainScreenState",
 			new VmParameter.Builder().withDebug(true).withSteamIntegration(false).build()
 	);
-
 	private final VmParameter vmParameters;
+	private final String mainClass;
 
-	private LaunchRunConfig(String name, VmParameter vmParameters) {
+	public LaunchRunConfig(String name, String mainClass, VmParameter vmParameters) {
 		super(name, Paths.get(".idea/runConfigurations"));
 		this.vmParameters = vmParameters;
+		this.mainClass = mainClass;
 	}
 
 	/**
@@ -81,7 +82,7 @@ public class LaunchRunConfig extends XMLDocument {
 		Element optionClass = document.createElement("option");
 
 		optionClass.setAttribute("name", "MAIN_CLASS_NAME");
-		optionClass.setAttribute("value", "zombie.gameStates.MainScreenState");
+		optionClass.setAttribute("value", mainClass);
 		configuration.appendChild(optionClass);
 
 		// <module name="<rootProjectName>.main" />",
