@@ -49,7 +49,9 @@ public class UpdateZomboidLuaTask extends DefaultTask implements CapsidTask {
 		dependsOn(tasks.getByName(ZomboidTasks.ZOMBOID_VERSION.name));
 
 		// ZomboidDoc version has changed
-		if (compareResult != 0) {
+		if (compareResult != 0)
+		{
+			finalizedBy(project.getTasks().getByName(ZomboidTasks.ZOMBOID_LUA_JAR.name));
 			dependsOn(tasks.getByName(ZomboidTasks.ANNOTATE_ZOMBOID_LUA.name),
 					tasks.getByName(ZomboidTasks.COMPILE_ZOMBOID_LUA.name));
 		}
