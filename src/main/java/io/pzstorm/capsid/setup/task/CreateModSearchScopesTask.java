@@ -42,5 +42,7 @@ public class CreateModSearchScopesTask extends DefaultTask implements CapsidTask
 
 		ModSearchScope.MOD_LUA.configure(project).writeToFile();
 		ModSearchScope.MOD_MEDIA.configure(project).writeToFile();
+		ModSearchScope.PZ_JAVA.configure(project).writeToFile();
+		ModSearchScope.PZ_LUA.configure(project).writeToFile();
 	}
 }

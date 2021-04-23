@@ -26,6 +26,12 @@ import org.w3c.dom.Element;
 
 public class ModSearchScope extends XMLDocument {
 
+	public static final ModSearchScope PZ_JAVA = new ModSearchScope(
+			"pz-java", "lib:zombie..*||lib:se..*||lib:fmod..*", true
+	);
+	public static final ModSearchScope PZ_LUA = new ModSearchScope(
+			"pz-lua", "lib:media.lua..*", true
+	);
 	public static final ModSearchScope MOD_LUA = new ModSearchScope(
 			"mod-lua", "file[%s.media]:*.lua", false
 	);
