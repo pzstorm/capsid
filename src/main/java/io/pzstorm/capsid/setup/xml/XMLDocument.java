@@ -46,10 +46,10 @@ public abstract class XMLDocument {
 
 	final String name;
 	final Document document;
-	private final Path dirPath;
+	final Path dirPath;
 
 	/** Instance of {@code Project} that owns this document. */
-	private Project project;
+	Project project;
 
 	/**
 	 * @param name name of the document
@@ -95,7 +95,7 @@ public abstract class XMLDocument {
 	 * Returns translated config name to filename. The translation process is similar to
 	 * what IDEA is doing when it is naming {@code XML} configuration files.
 	 */
-	private String translateConfigNameToFilename() {
+	String translateConfigNameToFilename() {
 
 		// replace dashed with underscores and whitespaces with underscores
 		return name.replace('-', '_').replaceAll("\\s", "_")
@@ -110,7 +110,7 @@ public abstract class XMLDocument {
 	 *
 	 * @throws IOException if unable to create directory structure or resulting file.
 	 */
-	private File getAsFile(boolean create) throws IOException {
+	File getAsFile(boolean create) throws IOException {
 
 		// translate config name to filename (similar to what IDEA is doing)
 		String filename = translateConfigNameToFilename();
