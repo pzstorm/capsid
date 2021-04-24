@@ -27,7 +27,7 @@ spotless.java {
 }
 apply from: 'test.gradle'
 
-version '0.2.0'
+version '0.3.0'
 group 'io.pzstorm.capsid'
 
 repositories {
