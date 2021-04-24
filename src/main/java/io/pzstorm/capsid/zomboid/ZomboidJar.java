@@ -17,43 +17,38 @@
  */
 package io.pzstorm.capsid.zomboid;
 
-import java.util.Objects;
-
 import javax.annotation.Nullable;
 
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.jvm.tasks.Jar;
 import org.gradle.util.GUtil;
 
 import groovy.lang.Closure;
+import io.pzstorm.capsid.mod.ModProperties;
 
 @NonNullApi
 public class ZomboidJar extends Jar {
 
-	private static final String GAME_VERSION_PROPERTY = "mod.pzversion";
-
 	protected ZomboidJar() {
 
 		Project project = getProject();
-		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
-		if (ext.has(GAME_VERSION_PROPERTY))
+		getArchiveFileName().set(project.provider(() ->
 		{
-			getArchiveFileName().set(project.provider(() ->
-			{
-				String name = GUtil.elvis(getArchiveBaseName().getOrNull(), "");
-				name = name + maybe(name, getArchiveAppendix().getOrNull());
+			String name = GUtil.elvis(getArchiveBaseName().getOrNull(), "");
+			name = name + maybe(name, getArchiveAppendix().getOrNull());
 
-				Object pGameVersion = Objects.requireNonNull(ext.get(GAME_VERSION_PROPERTY));
-				name = name + maybe(name, pGameVersion.toString().trim());
-				name = name + maybe(name, getArchiveClassifier().getOrNull());
+			// omit version from name when no pz version property found
+			String pzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
+			if (pzVersion != null) {
+				name = name + maybe(name, pzVersion);
+			}
+			name = name + maybe(name, getArchiveClassifier().getOrNull());
 
-				String extension = this.getArchiveExtension().getOrNull();
-				return name + (GUtil.isTrue(extension) ? "." + extension : "");
-			}));
-		}
+			String extension = this.getArchiveExtension().getOrNull();
+			return name + (GUtil.isTrue(extension) ? "." + extension : "");
+		}));
 	}
 
 	private static String maybe(@Nullable String prefix, @Nullable String value) {
@@ -62,7 +57,6 @@ public class ZomboidJar extends Jar {
 
 	@Override
 	public Task configure(Closure closure) {
-
 		Project project = getProject();
 
 		dependsOn(project.getTasks().named("zomboidVersion"));

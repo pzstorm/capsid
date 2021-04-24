@@ -108,6 +108,7 @@ public class ProjectProperty<T> {
 	private final ProjectPropertiesSupplier<T> propertySupplier;
 
 	private ProjectProperty(String name, ProjectPropertiesSupplier<T> supplier) {
+
 		this.propertyName = name;
 		this.propertySupplier = supplier;
 	}

@@ -41,8 +41,8 @@ public interface PropertyValidator<T> {
 	 * Validate the given property.
 	 *
 	 * @param property property to validate.
-	 * @return the given property.
 	 *
+	 * @return the given property.
 	 * @throws InvalidCapsidPropertyException if property is invalid.
 	 */
 	@Contract(pure = true, value = "_ -> param1")

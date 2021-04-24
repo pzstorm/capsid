@@ -45,6 +45,7 @@ public class ShowModMetadataTask extends DefaultTask implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {
+
 		CapsidTask.super.configure(group, description, project);
 		onlyIf(t -> ProjectProperty.MOD_INFO_FILE.get(project).exists());
 	}

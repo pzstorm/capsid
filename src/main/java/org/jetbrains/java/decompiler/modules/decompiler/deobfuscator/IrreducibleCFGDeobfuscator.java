@@ -1,252 +1,229 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
-// found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler.deobfuscator;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.jetbrains.java.decompiler.modules.decompiler.StatEdge;
 import org.jetbrains.java.decompiler.modules.decompiler.stats.BasicBlockStatement;
 import org.jetbrains.java.decompiler.modules.decompiler.stats.Statement;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+
 public final class IrreducibleCFGDeobfuscator {
 
-	public static boolean isStatementIrreducible(Statement statement) {
 
-		class Node {
+  public static boolean isStatementIrreducible(Statement statement) {
 
-			public final Integer id;
-			public final Set<Node> preds = new HashSet<>();
-			public final Set<Node> succs = new HashSet<>();
+    class Node {
+      public final Integer id;
+      public final Set<Node> preds = new HashSet<>();
+      public final Set<Node> succs = new HashSet<>();
 
-			Node(Integer id) {
-				this.id = id;
-			}
-		}
+      Node(Integer id) {
+        this.id = id;
+      }
+    }
 
-		HashMap<Integer, Node> mapNodes = new HashMap<>();
+    HashMap<Integer, Node> mapNodes = new HashMap<>();
 
-		// checking exceptions and creating nodes
-		for (Statement stat : statement.getStats())
-		{
-			if (!stat.getSuccessorEdges(StatEdge.TYPE_EXCEPTION).isEmpty()) {
-				return false;
-			}
+    // checking exceptions and creating nodes
+    for (Statement stat : statement.getStats()) {
+      if (!stat.getSuccessorEdges(StatEdge.TYPE_EXCEPTION).isEmpty()) {
+        return false;
+      }
 
-			mapNodes.put(stat.id, new Node(stat.id));
-		}
+      mapNodes.put(stat.id, new Node(stat.id));
+    }
 
-		// connecting nodes
-		for (Statement stat : statement.getStats())
-		{
-			Node node = mapNodes.get(stat.id);
+    // connecting nodes
+    for (Statement stat : statement.getStats()) {
+      Node node = mapNodes.get(stat.id);
 
-			for (Statement succ : stat.getNeighbours(StatEdge.TYPE_REGULAR, Statement.DIRECTION_FORWARD))
-			{
-				Node nodeSucc = mapNodes.get(succ.id);
+      for (Statement succ : stat.getNeighbours(StatEdge.TYPE_REGULAR, Statement.DIRECTION_FORWARD)) {
+        Node nodeSucc = mapNodes.get(succ.id);
 
-				node.succs.add(nodeSucc);
-				nodeSucc.preds.add(node);
-			}
-		}
+        node.succs.add(nodeSucc);
+        nodeSucc.preds.add(node);
+      }
+    }
 
-		// transforming and reducing the graph
-		while (true)
-		{
-			int ttype = 0;
-			Node node = null;
+    // transforming and reducing the graph
+    while (true) {
+      int ttype = 0;
+      Node node = null;
 
-			for (Node nd : mapNodes.values())
-			{
-				if (nd.succs.contains(nd))
-				{ // T1
-					ttype = 1;
-				}
-				else if (nd.preds.size() == 1)
-				{ // T2
-					ttype = 2;
-				}
+      for (Node nd : mapNodes.values()) {
+        if (nd.succs.contains(nd)) { // T1
+          ttype = 1;
+        }
+        else if (nd.preds.size() == 1) { // T2
+          ttype = 2;
+        }
 
-				if (ttype != 0)
-				{
-					node = nd;
-					break;
-				}
-			}
+        if (ttype != 0) {
+          node = nd;
+          break;
+        }
+      }
 
-			if (node != null)
-			{
-				if (ttype == 1)
-				{
-					node.succs.remove(node);
-					node.preds.remove(node);
-				}
-				else {
-					Node pred = node.preds.iterator().next();
+      if (node != null) {
+        if (ttype == 1) {
+          node.succs.remove(node);
+          node.preds.remove(node);
+        }
+        else {
+          Node pred = node.preds.iterator().next();
 
-					pred.succs.addAll(node.succs);
-					pred.succs.remove(node);
+          pred.succs.addAll(node.succs);
+          pred.succs.remove(node);
 
-					for (Node succ : node.succs)
-					{
-						succ.preds.remove(node);
-						succ.preds.add(pred);
-					}
+          for (Node succ : node.succs) {
+            succ.preds.remove(node);
+            succ.preds.add(pred);
+          }
 
-					mapNodes.remove(node.id);
-				}
-			}
-			else { // no transformation applicable
-				return mapNodes.size() > 1; // reducible iff one node remains
-			}
-		}
-	}
+          mapNodes.remove(node.id);
+        }
+      }
+      else { // no transformation applicable
+        return mapNodes.size() > 1; // reducible iff one node remains
+      }
+    }
+  }
 
-	private static Statement getCandidateForSplitting(Statement statement) {
 
-		Statement candidateForSplitting = null;
-		int sizeCandidateForSplitting = Integer.MAX_VALUE;
-		int succsCandidateForSplitting = Integer.MAX_VALUE;
+  private static Statement getCandidateForSplitting(Statement statement) {
 
-		for (Statement stat : statement.getStats())
-		{
+    Statement candidateForSplitting = null;
+    int sizeCandidateForSplitting = Integer.MAX_VALUE;
+    int succsCandidateForSplitting = Integer.MAX_VALUE;
 
-			Set<Statement> setPreds = stat.getNeighboursSet(StatEdge.TYPE_REGULAR, Statement.DIRECTION_BACKWARD);
+    for (Statement stat : statement.getStats()) {
 
-			if (setPreds.size() > 1)
-			{
-				int succCount = stat.getNeighboursSet(StatEdge.TYPE_REGULAR, Statement.DIRECTION_FORWARD).size();
-				if (succCount <= succsCandidateForSplitting)
-				{
-					int size = getStatementSize(stat) * (setPreds.size() - 1);
+      Set<Statement> setPreds = stat.getNeighboursSet(StatEdge.TYPE_REGULAR, Statement.DIRECTION_BACKWARD);
 
-					if (succCount < succsCandidateForSplitting ||
-							size < sizeCandidateForSplitting)
-					{
-						candidateForSplitting = stat;
-						sizeCandidateForSplitting = size;
-						succsCandidateForSplitting = succCount;
-					}
-				}
-			}
-		}
+      if (setPreds.size() > 1) {
+        int succCount = stat.getNeighboursSet(StatEdge.TYPE_REGULAR, Statement.DIRECTION_FORWARD).size();
+        if (succCount <= succsCandidateForSplitting) {
+          int size = getStatementSize(stat) * (setPreds.size() - 1);
 
-		return candidateForSplitting;
-	}
+          if (succCount < succsCandidateForSplitting ||
+              size < sizeCandidateForSplitting) {
+            candidateForSplitting = stat;
+            sizeCandidateForSplitting = size;
+            succsCandidateForSplitting = succCount;
+          }
+        }
+      }
+    }
 
-	public static boolean splitIrreducibleNode(Statement statement) {
+    return candidateForSplitting;
+  }
 
-		Statement splitnode = getCandidateForSplitting(statement);
-		if (splitnode == null) {
-			return false;
-		}
+  public static boolean splitIrreducibleNode(Statement statement) {
 
-		StatEdge enteredge = splitnode.getPredecessorEdges(StatEdge.TYPE_REGULAR).iterator().next();
+    Statement splitnode = getCandidateForSplitting(statement);
+    if (splitnode == null) {
+      return false;
+    }
 
-		// copy the smallest statement
-		Statement splitcopy = copyStatement(splitnode, null, new HashMap<>());
-		initCopiedStatement(splitcopy);
+    StatEdge enteredge = splitnode.getPredecessorEdges(StatEdge.TYPE_REGULAR).iterator().next();
 
-		// insert the copy
-		splitcopy.setParent(statement);
-		statement.getStats().addWithKey(splitcopy, splitcopy.id);
+    // copy the smallest statement
+    Statement splitcopy = copyStatement(splitnode, null, new HashMap<>());
+    initCopiedStatement(splitcopy);
 
-		// switch input edges
-		for (StatEdge prededge : splitnode.getPredecessorEdges(Statement.STATEDGE_DIRECT_ALL))
-		{
-			if (prededge.getSource() == enteredge.getSource() ||
-					prededge.closure == enteredge.getSource())
-			{
-				splitnode.removePredecessor(prededge);
-				prededge.getSource().changeEdgeNode(Statement.DIRECTION_FORWARD, prededge, splitcopy);
-				splitcopy.addPredecessor(prededge);
-			}
-		}
+    // insert the copy
+    splitcopy.setParent(statement);
+    statement.getStats().addWithKey(splitcopy, splitcopy.id);
 
-		// connect successors
-		for (StatEdge succ : splitnode.getSuccessorEdges(Statement.STATEDGE_DIRECT_ALL)) {
-			splitcopy.addSuccessor(new StatEdge(succ.getType(), splitcopy, succ.getDestination(), succ.closure));
-		}
+    // switch input edges
+    for (StatEdge prededge : splitnode.getPredecessorEdges(Statement.STATEDGE_DIRECT_ALL)) {
+      if (prededge.getSource() == enteredge.getSource() ||
+          prededge.closure == enteredge.getSource()) {
+        splitnode.removePredecessor(prededge);
+        prededge.getSource().changeEdgeNode(Statement.DIRECTION_FORWARD, prededge, splitcopy);
+        splitcopy.addPredecessor(prededge);
+      }
+    }
 
-		return true;
-	}
+    // connect successors
+    for (StatEdge succ : splitnode.getSuccessorEdges(Statement.STATEDGE_DIRECT_ALL)) {
+      splitcopy.addSuccessor(new StatEdge(succ.getType(), splitcopy, succ.getDestination(), succ.closure));
+    }
 
-	private static int getStatementSize(Statement statement) {
+    return true;
+  }
 
-		int res;
+  private static int getStatementSize(Statement statement) {
 
-		if (statement.type == Statement.TYPE_BASICBLOCK) {
-			res = ((BasicBlockStatement) statement).getBlock().getSeq().length();
-		}
-		else {
-			res = statement.getStats().stream().mapToInt(IrreducibleCFGDeobfuscator::getStatementSize).sum();
-		}
+    int res;
 
-		return res;
-	}
+    if (statement.type == Statement.TYPE_BASICBLOCK) {
+      res = ((BasicBlockStatement)statement).getBlock().getSeq().length();
+    }
+    else {
+      res = statement.getStats().stream().mapToInt(IrreducibleCFGDeobfuscator::getStatementSize).sum();
+    }
 
-	private static Statement copyStatement(Statement from, Statement to,
-										   HashMap<Statement, Statement> mapAltToCopies) {
+    return res;
+  }
 
-		if (to == null)
-		{
-			// first outer invocation
-			to = from.getSimpleCopy();
-			mapAltToCopies.put(from, to);
-		}
+  private static Statement copyStatement(Statement from, Statement to, HashMap<Statement, Statement> mapAltToCopies) {
 
-		// copy statements
-		for (Statement st : from.getStats())
-		{
-			Statement stcopy = st.getSimpleCopy();
+    if (to == null) {
+      // first outer invocation
+      to = from.getSimpleCopy();
+      mapAltToCopies.put(from, to);
+    }
 
-			to.getStats().addWithKey(stcopy, stcopy.id);
-			mapAltToCopies.put(st, stcopy);
-		}
+    // copy statements
+    for (Statement st : from.getStats()) {
+      Statement stcopy = st.getSimpleCopy();
 
-		// copy edges
-		for (int i = 0; i < from.getStats().size(); i++)
-		{
-			Statement stold = from.getStats().get(i);
-			Statement stnew = to.getStats().get(i);
+      to.getStats().addWithKey(stcopy, stcopy.id);
+      mapAltToCopies.put(st, stcopy);
+    }
 
-			for (StatEdge edgeold : stold.getSuccessorEdges(Statement.STATEDGE_DIRECT_ALL))
-			{
-				// type cannot be TYPE_EXCEPTION (checked in isIrreducibleTriangle)
-				StatEdge edgenew = new StatEdge(edgeold.getType(), stnew,
-						mapAltToCopies.containsKey(edgeold.getDestination())
-								? mapAltToCopies.get(edgeold.getDestination())
-								: edgeold.getDestination(),
-						mapAltToCopies.containsKey(edgeold.closure)
-								? mapAltToCopies.get(edgeold.closure)
-								: edgeold.closure);
+    // copy edges
+    for (int i = 0; i < from.getStats().size(); i++) {
+      Statement stold = from.getStats().get(i);
+      Statement stnew = to.getStats().get(i);
 
-				stnew.addSuccessor(edgenew);
-			}
-		}
+      for (StatEdge edgeold : stold.getSuccessorEdges(Statement.STATEDGE_DIRECT_ALL)) {
+        // type cannot be TYPE_EXCEPTION (checked in isIrreducibleTriangle)
+        StatEdge edgenew = new StatEdge(edgeold.getType(), stnew,
+                                        mapAltToCopies.containsKey(edgeold.getDestination())
+                                        ? mapAltToCopies.get(edgeold.getDestination())
+                                        : edgeold.getDestination(),
+                                        mapAltToCopies.containsKey(edgeold.closure)
+                                        ? mapAltToCopies.get(edgeold.closure)
+                                        : edgeold.closure);
 
-		// recurse statements
-		for (int i = 0; i < from.getStats().size(); i++)
-		{
-			Statement stold = from.getStats().get(i);
-			Statement stnew = to.getStats().get(i);
+        stnew.addSuccessor(edgenew);
+      }
+    }
 
-			copyStatement(stold, stnew, mapAltToCopies);
-		}
+    // recurse statements
+    for (int i = 0; i < from.getStats().size(); i++) {
+      Statement stold = from.getStats().get(i);
+      Statement stnew = to.getStats().get(i);
 
-		return to;
-	}
+      copyStatement(stold, stnew, mapAltToCopies);
+    }
 
-	private static void initCopiedStatement(Statement statement) {
+    return to;
+  }
 
-		statement.initSimpleCopy();
-		statement.setCopied(true);
+  private static void initCopiedStatement(Statement statement) {
 
-		for (Statement st : statement.getStats())
-		{
-			st.setParent(statement);
-			initCopiedStatement(st);
-		}
-	}
+    statement.initSimpleCopy();
+    statement.setCopied(true);
+
+    for (Statement st : statement.getStats()) {
+      st.setParent(statement);
+      initCopiedStatement(st);
+    }
+  }
 }

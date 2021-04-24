@@ -45,6 +45,7 @@ public class VmParameter {
 	public final int xmx;
 
 	private VmParameter(Builder builder) {
+
 		this.isDebug = builder.isDebug;
 		this.steamIntegration = builder.steamIntegration;
 		this.zNetLog = builder.zNetLog;
@@ -67,6 +68,7 @@ public class VmParameter {
 	 *
 	 * @param name name of the option to format.
 	 * @param flag whether to enable or disable the option.
+	 *
 	 * @return formatted advanced JVM runtime option string.
 	 *
 	 * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html">
@@ -88,6 +90,7 @@ public class VmParameter {
 				isDebug ? 1 : 0, steamIntegration ? 1 : 0, zNetLog, String.join(" ", expOptions), xms, xmx);
 	}
 
+	//@formatter:off
 	public static class Builder {
 
 		private boolean isDebug = false;
@@ -171,5 +174,5 @@ public class VmParameter {
 		public VmParameter build() {
 			return new VmParameter(this);
 		}
-	}
+	}//@formatter:on
 }

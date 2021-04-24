@@ -28,7 +28,6 @@ class ZomboidScriptIntegrationTest extends PluginIntegrationTest {
 
 	@Test
 	void shouldCreateZomboidClassesAndSourcesDirectoryProperties() {
-
 		ExtraPropertiesExtension ext = getProject(true).getExtensions().getExtraProperties();
 
 		Assertions.assertTrue(ext.has("zomboidClassesDir"));
@@ -37,7 +36,6 @@ class ZomboidScriptIntegrationTest extends PluginIntegrationTest {
 
 	@Test
 	void shouldCreateProjectZomboidConfigurations() {
-
 		ConfigurationContainer configurations = getProject(true).getConfigurations();
 
 		Assertions.assertDoesNotThrow(() -> configurations.getByName("zomboidRuntimeOnly"));

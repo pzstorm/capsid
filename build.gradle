@@ -20,9 +20,14 @@ plugins {
 }
 apply plugin: 'com.diffplug.spotless'
 apply from: "https://gist.githubusercontent.com/yooksi/${spotlessGistID}/raw/spotless.gradle"
+
+// exclude decompiler code from formatting
+spotless.java {
+	it.targetExclude '**/org/jetbrains/**/*'
+}
 apply from: 'test.gradle'
 
-version '0.2.0'
+version '0.3.0'
 group 'io.pzstorm.capsid'
 
 repositories {
@@ -92,4 +97,9 @@ compileJava {
 		// exclude de-compiler code from being checked by error prone
 		excludedPaths = '.*/src/main/java/org/jetbrains/.*'
 	}
+}
+
+jar {
+	archiveBaseName.set('pzstorm-capsid')
+	from 'LICENSE', 'NOTICE'
 }

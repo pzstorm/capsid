@@ -38,7 +38,9 @@ class CreateModSearchScopesFunctionalTest extends PluginFunctionalTest {
 
 	private static final ImmutableMap<ModSearchScope, String> SEARCH_SCOPES = ImmutableMap.of(
 			ModSearchScope.MOD_LUA, "mod_lua.xml",
-			ModSearchScope.MOD_MEDIA, "mod_media.xml"
+			ModSearchScope.MOD_MEDIA, "mod_media.xml",
+			ModSearchScope.PZ_JAVA, "pz_java.xml",
+			ModSearchScope.PZ_LUA, "pz_lua.xml"
 	);
 	private static final ImmutableMap<ModSearchScope, String[]> SEARCH_SCOPES_SUBPROJECT = ImmutableMap.of(
 			ModSearchScope.MOD_LUA, new String[]{ "mod_lua.xml", "mod_lua_subproject.xml" },

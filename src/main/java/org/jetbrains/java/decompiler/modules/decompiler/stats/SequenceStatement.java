@@ -1,9 +1,5 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
-// found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler.stats;
-
-import java.util.Arrays;
-import java.util.List;
 
 import org.jetbrains.java.decompiler.main.collectors.BytecodeMappingTracer;
 import org.jetbrains.java.decompiler.modules.decompiler.DecHelper;
@@ -11,124 +7,122 @@ import org.jetbrains.java.decompiler.modules.decompiler.ExprProcessor;
 import org.jetbrains.java.decompiler.modules.decompiler.StatEdge;
 import org.jetbrains.java.decompiler.util.TextBuffer;
 
+import java.util.Arrays;
+import java.util.List;
+
+
 public class SequenceStatement extends Statement {
 
-	// *****************************************************************************
-	// constructors
-	// *****************************************************************************
 
-	private SequenceStatement() {
-		type = Statement.TYPE_SEQUENCE;
-	}
+  // *****************************************************************************
+  // constructors
+  // *****************************************************************************
 
-	public SequenceStatement(List<? extends Statement> lst) {
+  private SequenceStatement() {
+    type = Statement.TYPE_SEQUENCE;
+  }
 
-		this();
+  public SequenceStatement(List<? extends Statement> lst) {
 
-		lastBasicType = lst.get(lst.size() - 1).getLastBasicType();
+    this();
 
-		for (Statement st : lst) {
-			stats.addWithKey(st, st.id);
-		}
+    lastBasicType = lst.get(lst.size() - 1).getLastBasicType();
 
-		first = stats.get(0);
-	}
+    for (Statement st : lst) {
+      stats.addWithKey(st, st.id);
+    }
 
-	private SequenceStatement(Statement head, Statement tail) {
+    first = stats.get(0);
+  }
 
-		this(Arrays.asList(head, tail));
+  private SequenceStatement(Statement head, Statement tail) {
 
-		List<StatEdge> lstSuccs = tail.getSuccessorEdges(STATEDGE_DIRECT_ALL);
-		if (!lstSuccs.isEmpty())
-		{
-			StatEdge edge = lstSuccs.get(0);
+    this(Arrays.asList(head, tail));
 
-			if (edge.getType() == StatEdge.TYPE_REGULAR && edge.getDestination() != head) {
-				post = edge.getDestination();
-			}
-		}
-	}
+    List<StatEdge> lstSuccs = tail.getSuccessorEdges(STATEDGE_DIRECT_ALL);
+    if (!lstSuccs.isEmpty()) {
+      StatEdge edge = lstSuccs.get(0);
 
-	// *****************************************************************************
-	// public methods
-	// *****************************************************************************
+      if (edge.getType() == StatEdge.TYPE_REGULAR && edge.getDestination() != head) {
+        post = edge.getDestination();
+      }
+    }
+  }
 
-	public static Statement isHead2Block(Statement head) {
 
-		if (head.getLastBasicType() != Statement.LASTBASICTYPE_GENERAL) {
-			return null;
-		}
+  // *****************************************************************************
+  // public methods
+  // *****************************************************************************
 
-		// at most one outgoing edge
-		StatEdge edge = null;
-		List<StatEdge> lstSuccs = head.getSuccessorEdges(STATEDGE_DIRECT_ALL);
-		if (!lstSuccs.isEmpty()) {
-			edge = lstSuccs.get(0);
-		}
+  public static Statement isHead2Block(Statement head) {
 
-		if (edge != null && edge.getType() == StatEdge.TYPE_REGULAR)
-		{
-			Statement stat = edge.getDestination();
+    if (head.getLastBasicType() != Statement.LASTBASICTYPE_GENERAL) {
+      return null;
+    }
 
-			if (stat != head && stat.getPredecessorEdges(StatEdge.TYPE_REGULAR).size() == 1
-					&& !stat.isMonitorEnter())
-			{
+    // at most one outgoing edge
+    StatEdge edge = null;
+    List<StatEdge> lstSuccs = head.getSuccessorEdges(STATEDGE_DIRECT_ALL);
+    if (!lstSuccs.isEmpty()) {
+      edge = lstSuccs.get(0);
+    }
 
-				if (stat.getLastBasicType() == Statement.LASTBASICTYPE_GENERAL)
-				{
-					if (DecHelper.checkStatementExceptions(Arrays.asList(head, stat))) {
-						return new SequenceStatement(head, stat);
-					}
-				}
-			}
-		}
+    if (edge != null && edge.getType() == StatEdge.TYPE_REGULAR) {
+      Statement stat = edge.getDestination();
 
-		return null;
-	}
+      if (stat != head && stat.getPredecessorEdges(StatEdge.TYPE_REGULAR).size() == 1
+          && !stat.isMonitorEnter()) {
 
-	@Override
-	public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
-		TextBuffer buf = new TextBuffer();
-		boolean islabeled = isLabeled();
+        if (stat.getLastBasicType() == Statement.LASTBASICTYPE_GENERAL) {
+          if (DecHelper.checkStatementExceptions(Arrays.asList(head, stat))) {
+            return new SequenceStatement(head, stat);
+          }
+        }
+      }
+    }
 
-		buf.append(ExprProcessor.listToJava(varDefinitions, indent, tracer));
+    return null;
+  }
 
-		if (islabeled)
-		{
-			buf.appendIndent(indent++).append("label").append(this.id.toString()).append(": {").appendLineSeparator();
-			tracer.incrementCurrentSourceLine();
-		}
+  @Override
+  public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
+    TextBuffer buf = new TextBuffer();
+    boolean islabeled = isLabeled();
 
-		boolean notempty = false;
+    buf.append(ExprProcessor.listToJava(varDefinitions, indent, tracer));
 
-		for (int i = 0; i < stats.size(); i++)
-		{
+    if (islabeled) {
+      buf.appendIndent(indent++).append("label").append(this.id.toString()).append(": {").appendLineSeparator();
+      tracer.incrementCurrentSourceLine();
+    }
 
-			Statement st = stats.get(i);
+    boolean notempty = false;
 
-			if (i > 0 && notempty)
-			{
-				buf.appendLineSeparator();
-				tracer.incrementCurrentSourceLine();
-			}
+    for (int i = 0; i < stats.size(); i++) {
 
-			TextBuffer str = ExprProcessor.jmpWrapper(st, indent, false, tracer);
-			buf.append(str);
+      Statement st = stats.get(i);
 
-			notempty = !str.containsOnlyWhitespaces();
-		}
+      if (i > 0 && notempty) {
+        buf.appendLineSeparator();
+        tracer.incrementCurrentSourceLine();
+      }
 
-		if (islabeled)
-		{
-			buf.appendIndent(indent - 1).append("}").appendLineSeparator();
-			tracer.incrementCurrentSourceLine();
-		}
+      TextBuffer str = ExprProcessor.jmpWrapper(st, indent, false, tracer);
+      buf.append(str);
 
-		return buf;
-	}
+      notempty = !str.containsOnlyWhitespaces();
+    }
 
-	@Override
-	public Statement getSimpleCopy() {
-		return new SequenceStatement();
-	}
+    if (islabeled) {
+      buf.appendIndent(indent-1).append("}").appendLineSeparator();
+      tracer.incrementCurrentSourceLine();
+    }
+
+    return buf;
+  }
+
+  @Override
+  public Statement getSimpleCopy() {
+    return new SequenceStatement();
+  }
 }

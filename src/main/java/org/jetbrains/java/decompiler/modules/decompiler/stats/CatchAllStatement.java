@@ -1,11 +1,5 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
-// found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler.stats;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 import org.jetbrains.java.decompiler.code.CodeConstants;
 import org.jetbrains.java.decompiler.main.DecompilerContext;
@@ -18,204 +12,202 @@ import org.jetbrains.java.decompiler.modules.decompiler.exps.VarExprent;
 import org.jetbrains.java.decompiler.struct.gen.VarType;
 import org.jetbrains.java.decompiler.util.TextBuffer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 public final class CatchAllStatement extends Statement {
 
-	private final List<VarExprent> vars = new ArrayList<>();
-	private Statement handler;
-	private boolean isFinally;
-	private VarExprent monitor;
+  private Statement handler;
 
-	// *****************************************************************************
-	// constructors
-	// *****************************************************************************
+  private boolean isFinally;
 
-	private CatchAllStatement() {
-		type = Statement.TYPE_CATCHALL;
-	}
+  private VarExprent monitor;
 
-	private CatchAllStatement(Statement head, Statement handler) {
+  private final List<VarExprent> vars = new ArrayList<>();
 
-		this();
+  // *****************************************************************************
+  // constructors
+  // *****************************************************************************
 
-		first = head;
-		stats.addWithKey(head, head.id);
+  private CatchAllStatement() {
+    type = Statement.TYPE_CATCHALL;
+  }
 
-		this.handler = handler;
-		stats.addWithKey(handler, handler.id);
+  private CatchAllStatement(Statement head, Statement handler) {
 
-		List<StatEdge> lstSuccs = head.getSuccessorEdges(STATEDGE_DIRECT_ALL);
-		if (!lstSuccs.isEmpty())
-		{
-			StatEdge edge = lstSuccs.get(0);
-			if (edge.getType() == StatEdge.TYPE_REGULAR) {
-				post = edge.getDestination();
-			}
-		}
+    this();
 
-		vars.add(new VarExprent(DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.VAR_COUNTER),
-				new VarType(CodeConstants.TYPE_OBJECT, 0, "java/lang/Throwable"),
-				DecompilerContext.getVarProcessor()));
-	}
+    first = head;
+    stats.addWithKey(head, head.id);
 
-	// *****************************************************************************
-	// public methods
-	// *****************************************************************************
+    this.handler = handler;
+    stats.addWithKey(handler, handler.id);
 
-	public static Statement isHead(Statement head) {
-		if (head.getLastBasicType() != Statement.LASTBASICTYPE_GENERAL) {
-			return null;
-		}
+    List<StatEdge> lstSuccs = head.getSuccessorEdges(STATEDGE_DIRECT_ALL);
+    if (!lstSuccs.isEmpty()) {
+      StatEdge edge = lstSuccs.get(0);
+      if (edge.getType() == StatEdge.TYPE_REGULAR) {
+        post = edge.getDestination();
+      }
+    }
 
-		Set<Statement> setHandlers = DecHelper.getUniquePredExceptions(head);
-		if (setHandlers.size() != 1) {
-			return null;
-		}
+    vars.add(new VarExprent(DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.VAR_COUNTER),
+                            new VarType(CodeConstants.TYPE_OBJECT, 0, "java/lang/Throwable"),
+                            DecompilerContext.getVarProcessor()));
+  }
 
-		for (StatEdge edge : head.getSuccessorEdges(StatEdge.TYPE_EXCEPTION))
-		{
-			Statement exc = edge.getDestination();
 
-			if (edge.getExceptions() == null && exc.getLastBasicType() == LASTBASICTYPE_GENERAL && setHandlers.contains(exc))
-			{
-				List<StatEdge> lstSuccs = exc.getSuccessorEdges(STATEDGE_DIRECT_ALL);
-				if (lstSuccs.isEmpty() || lstSuccs.get(0).getType() != StatEdge.TYPE_REGULAR)
-				{
+  // *****************************************************************************
+  // public methods
+  // *****************************************************************************
 
-					if (head.isMonitorEnter() || exc.isMonitorEnter()) {
-						return null;
-					}
+  public static Statement isHead(Statement head) {
+    if (head.getLastBasicType() != Statement.LASTBASICTYPE_GENERAL) {
+      return null;
+    }
 
-					if (DecHelper.checkStatementExceptions(Arrays.asList(head, exc))) {
-						return new CatchAllStatement(head, exc);
-					}
-				}
-			}
-		}
+    Set<Statement> setHandlers = DecHelper.getUniquePredExceptions(head);
+    if (setHandlers.size() != 1) {
+      return null;
+    }
 
-		return null;
-	}
+    for (StatEdge edge : head.getSuccessorEdges(StatEdge.TYPE_EXCEPTION)) {
+      Statement exc = edge.getDestination();
 
-	@Override
-	public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
-		String new_line_separator = DecompilerContext.getNewLineSeparator();
+      if (edge.getExceptions() == null && exc.getLastBasicType() == LASTBASICTYPE_GENERAL && setHandlers.contains(exc)) {
+        List<StatEdge> lstSuccs = exc.getSuccessorEdges(STATEDGE_DIRECT_ALL);
+        if (lstSuccs.isEmpty() || lstSuccs.get(0).getType() != StatEdge.TYPE_REGULAR) {
 
-		TextBuffer buf = new TextBuffer();
+          if (head.isMonitorEnter() || exc.isMonitorEnter()) {
+            return null;
+          }
 
-		buf.append(ExprProcessor.listToJava(varDefinitions, indent, tracer));
+          if (DecHelper.checkStatementExceptions(Arrays.asList(head, exc))) {
+            return new CatchAllStatement(head, exc);
+          }
+        }
+      }
+    }
 
-		boolean labeled = isLabeled();
-		if (labeled)
-		{
-			buf.appendIndent(indent).append("label").append(this.id.toString()).append(":").appendLineSeparator();
-			tracer.incrementCurrentSourceLine();
-		}
+    return null;
+  }
 
-		List<StatEdge> lstSuccs = first.getSuccessorEdges(STATEDGE_DIRECT_ALL);
-		if (first.type == TYPE_TRYCATCH && first.varDefinitions.isEmpty() && isFinally &&
-				!labeled && !first.isLabeled() && (lstSuccs.isEmpty() || !lstSuccs.get(0).explicit))
-		{
-			TextBuffer content = ExprProcessor.jmpWrapper(first, indent, true, tracer);
-			content.setLength(content.length() - new_line_separator.length());
-			tracer.incrementCurrentSourceLine(-1);
-			buf.append(content);
-		}
-		else {
-			buf.appendIndent(indent).append("try {").appendLineSeparator();
-			tracer.incrementCurrentSourceLine();
-			buf.append(ExprProcessor.jmpWrapper(first, indent + 1, true, tracer));
-			buf.appendIndent(indent).append("}");
-		}
+  @Override
+  public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
+    String new_line_separator = DecompilerContext.getNewLineSeparator();
 
-		buf.append(isFinally ? " finally" :
-				" catch (" + vars.get(0).toJava(indent, tracer) + ")").append(" {").appendLineSeparator();
-		tracer.incrementCurrentSourceLine();
+    TextBuffer buf = new TextBuffer();
 
-		if (monitor != null)
-		{
-			buf.appendIndent(indent + 1).append("if (").append(monitor.toJava(indent, tracer)).append(") {").appendLineSeparator();
-			tracer.incrementCurrentSourceLine();
-		}
+    buf.append(ExprProcessor.listToJava(varDefinitions, indent, tracer));
 
-		buf.append(ExprProcessor.jmpWrapper(handler, indent + 1 + (monitor != null ? 1 : 0), true, tracer));
+    boolean labeled = isLabeled();
+    if (labeled) {
+      buf.appendIndent(indent).append("label").append(this.id.toString()).append(":").appendLineSeparator();
+      tracer.incrementCurrentSourceLine();
+    }
 
-		if (monitor != null)
-		{
-			buf.appendIndent(indent + 1).append("}").appendLineSeparator();
-			tracer.incrementCurrentSourceLine();
-		}
+    List<StatEdge> lstSuccs = first.getSuccessorEdges(STATEDGE_DIRECT_ALL);
+    if (first.type == TYPE_TRYCATCH && first.varDefinitions.isEmpty() && isFinally &&
+        !labeled && !first.isLabeled() && (lstSuccs.isEmpty() || !lstSuccs.get(0).explicit)) {
+      TextBuffer content = ExprProcessor.jmpWrapper(first, indent, true, tracer);
+      content.setLength(content.length() - new_line_separator.length());
+      tracer.incrementCurrentSourceLine(-1);
+      buf.append(content);
+    }
+    else {
+      buf.appendIndent(indent).append("try {").appendLineSeparator();
+      tracer.incrementCurrentSourceLine();
+      buf.append(ExprProcessor.jmpWrapper(first, indent + 1, true, tracer));
+      buf.appendIndent(indent).append("}");
+    }
 
-		buf.appendIndent(indent).append("}").appendLineSeparator();
-		tracer.incrementCurrentSourceLine();
+    buf.append(isFinally ? " finally" :
+               " catch (" + vars.get(0).toJava(indent, tracer) + ")").append(" {").appendLineSeparator();
+    tracer.incrementCurrentSourceLine();
 
-		return buf;
-	}
+    if (monitor != null) {
+      buf.appendIndent(indent+1).append("if (").append(monitor.toJava(indent, tracer)).append(") {").appendLineSeparator();
+      tracer.incrementCurrentSourceLine();
+    }
 
-	@Override
-	public void replaceStatement(Statement oldstat, Statement newstat) {
+    buf.append(ExprProcessor.jmpWrapper(handler, indent + 1 + (monitor != null ? 1 : 0), true, tracer));
 
-		if (handler == oldstat) {
-			handler = newstat;
-		}
+    if (monitor != null) {
+      buf.appendIndent(indent + 1).append("}").appendLineSeparator();
+      tracer.incrementCurrentSourceLine();
+    }
 
-		super.replaceStatement(oldstat, newstat);
-	}
+    buf.appendIndent(indent).append("}").appendLineSeparator();
+    tracer.incrementCurrentSourceLine();
 
-	@Override
-	public Statement getSimpleCopy() {
+    return buf;
+  }
 
-		CatchAllStatement cas = new CatchAllStatement();
+  @Override
+  public void replaceStatement(Statement oldstat, Statement newstat) {
 
-		cas.isFinally = this.isFinally;
+    if (handler == oldstat) {
+      handler = newstat;
+    }
 
-		if (this.monitor != null)
-		{
-			cas.monitor =
-					new VarExprent(DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.VAR_COUNTER),
-							VarType.VARTYPE_INT,
-							DecompilerContext.getVarProcessor());
-		}
+    super.replaceStatement(oldstat, newstat);
+  }
 
-		if (!this.vars.isEmpty())
-		{
-			cas.vars.add(new VarExprent(DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.VAR_COUNTER),
-					new VarType(CodeConstants.TYPE_OBJECT, 0, "java/lang/Throwable"),
-					DecompilerContext.getVarProcessor()));
-		}
+  @Override
+  public Statement getSimpleCopy() {
 
-		return cas;
-	}
+    CatchAllStatement cas = new CatchAllStatement();
 
-	@Override
-	public void initSimpleCopy() {
-		first = stats.get(0);
-		handler = stats.get(1);
-	}
+    cas.isFinally = this.isFinally;
 
-	// *****************************************************************************
-	// getter and setter methods
-	// *****************************************************************************
+    if (this.monitor != null) {
+      cas.monitor = new VarExprent(DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.VAR_COUNTER),
+                                   VarType.VARTYPE_INT,
+                                   DecompilerContext.getVarProcessor());
+    }
 
-	public Statement getHandler() {
-		return handler;
-	}
+    if (!this.vars.isEmpty()) {
+      cas.vars.add(new VarExprent(DecompilerContext.getCounterContainer().getCounterAndIncrement(CounterContainer.VAR_COUNTER),
+                              new VarType(CodeConstants.TYPE_OBJECT, 0, "java/lang/Throwable"),
+                              DecompilerContext.getVarProcessor()));
+    }
 
-	public boolean isFinally() {
-		return isFinally;
-	}
+    return cas;
+  }
 
-	public void setFinally(boolean isFinally) {
-		this.isFinally = isFinally;
-	}
+  @Override
+  public void initSimpleCopy() {
+    first = stats.get(0);
+    handler = stats.get(1);
+  }
 
-	public VarExprent getMonitor() {
-		return monitor;
-	}
+  // *****************************************************************************
+  // getter and setter methods
+  // *****************************************************************************
 
-	public void setMonitor(VarExprent monitor) {
-		this.monitor = monitor;
-	}
+  public Statement getHandler() {
+    return handler;
+  }
 
-	public List<VarExprent> getVars() {
-		return vars;
-	}
+  public boolean isFinally() {
+    return isFinally;
+  }
+
+  public void setFinally(boolean isFinally) {
+    this.isFinally = isFinally;
+  }
+
+  public VarExprent getMonitor() {
+    return monitor;
+  }
+
+  public void setMonitor(VarExprent monitor) {
+    this.monitor = monitor;
+  }
+
+  public List<VarExprent> getVars() {
+    return vars;
+  }
 }

@@ -30,6 +30,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 import com.google.common.base.Splitter;
 
 import io.pzstorm.capsid.ProjectProperty;
+import io.pzstorm.capsid.zomboid.ZomboidTasks;
 
 /**
  * Decompile game classes with FernFlower using default IDEA settings.
@@ -49,7 +50,15 @@ public class DecompileZomboidTask extends DecompileJavaTask {
 
 	@Inject
 	public DecompileZomboidTask() {
-		super(ProjectProperty.ZOMBOID_CLASSES_DIR.getSupplier(), ProjectProperty.ZOMBOID_SOURCES_DIR.getSupplier());
+		super(ProjectProperty.ZOMBOID_CLASSES_DIR.getSupplier(),
+				ProjectProperty.ZOMBOID_SOURCES_DIR.getSupplier());
+	}
+
+	@Override
+	public void configure(String group, String description, Project project) {
+		super.configure(group, description, project);
+
+		finalizedBy(project.getTasks().getByName(ZomboidTasks.ZOMBOID_SOURCES_JAR.name));
 	}
 
 	@Override

@@ -54,8 +54,8 @@ public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 		CapsidPluginExtension capsidExt = CapsidPlugin.getCapsidPluginExtension();
 
-		String repoOwner = capsidExt.getRepositoryOwner();
-		String repoName = capsidExt.getRepositoryName();
+		String repoOwner = capsidExt.getProjectRepositoryOwner();
+		String repoName = capsidExt.getProjectRepositoryName();
 
 		// first check if repository data has been defined by user
 		if (!Strings.isNullOrEmpty(repoOwner)) {
@@ -92,9 +92,9 @@ public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 						StringBuilder sb = new StringBuilder();
 						char[] charArray = new URL(sUrl).getPath().toCharArray();
 
-						int beforeLastIndex = charArray.length - 1;
+						int a = charArray.length - 1;
 						int startIndex = charArray[0] != '/' ? 0 : 1;
-						int endIndex = charArray[beforeLastIndex] != '/' ? charArray.length : beforeLastIndex;
+						int endIndex = charArray[a] != '/' ? charArray.length : a;
 
 						// remove slashes from first and last string index
 						for (int i = startIndex; i < endIndex; i++) {

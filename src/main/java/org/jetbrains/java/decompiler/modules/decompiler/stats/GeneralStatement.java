@@ -1,58 +1,58 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
-// found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler.stats;
-
-import java.util.Collection;
-import java.util.HashSet;
 
 import org.jetbrains.java.decompiler.main.collectors.BytecodeMappingTracer;
 import org.jetbrains.java.decompiler.util.TextBuffer;
 
+import java.util.Collection;
+import java.util.HashSet;
+
+
 public class GeneralStatement extends Statement {
 
-	// *****************************************************************************
-	// constructors
-	// *****************************************************************************
+  // *****************************************************************************
+  // constructors
+  // *****************************************************************************
 
-	private GeneralStatement() {
-		type = Statement.TYPE_GENERAL;
-	}
+  private GeneralStatement() {
+    type = Statement.TYPE_GENERAL;
+  }
 
-	public GeneralStatement(Statement head, Collection<? extends Statement> statements, Statement post) {
+  public GeneralStatement(Statement head, Collection<? extends Statement> statements, Statement post) {
 
-		this();
+    this();
 
-		first = head;
-		stats.addWithKey(head, head.id);
+    first = head;
+    stats.addWithKey(head, head.id);
 
-		HashSet<Statement> set = new HashSet<>(statements);
-		set.remove(head);
+    HashSet<Statement> set = new HashSet<>(statements);
+    set.remove(head);
 
-		for (Statement st : set) {
-			stats.addWithKey(st, st.id);
-		}
+    for (Statement st : set) {
+      stats.addWithKey(st, st.id);
+    }
 
-		this.post = post;
-	}
+    this.post = post;
+  }
 
-	// *****************************************************************************
-	// public methods
-	// *****************************************************************************
+  // *****************************************************************************
+  // public methods
+  // *****************************************************************************
 
-	@Override
-	public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
-		TextBuffer buf = new TextBuffer();
+  @Override
+  public TextBuffer toJava(int indent, BytecodeMappingTracer tracer) {
+    TextBuffer buf = new TextBuffer();
 
-		if (isLabeled()) {
-			buf.appendIndent(indent).append("label").append(this.id.toString()).append(":").appendLineSeparator();
-		}
+    if (isLabeled()) {
+      buf.appendIndent(indent).append("label").append(this.id.toString()).append(":").appendLineSeparator();
+    }
 
-		buf.appendIndent(indent).append("abstract statement {").appendLineSeparator();
-		for (Statement stat : stats) {
-			buf.append(stat.toJava(indent + 1, tracer));
-		}
-		buf.appendIndent(indent).append("}");
+    buf.appendIndent(indent).append("abstract statement {").appendLineSeparator();
+    for (Statement stat : stats) {
+      buf.append(stat.toJava(indent + 1, tracer));
+    }
+    buf.appendIndent(indent).append("}");
 
-		return buf;
-	}
+    return buf;
+  }
 }

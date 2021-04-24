@@ -1,168 +1,156 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
-// found in the LICENSE file.
+// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler.decompose;
-
-import java.util.*;
-import java.util.Map.Entry;
 
 import org.jetbrains.java.decompiler.modules.decompiler.StatEdge;
 import org.jetbrains.java.decompiler.modules.decompiler.stats.Statement;
 import org.jetbrains.java.decompiler.util.VBStyleCollection;
 
+import java.util.*;
+import java.util.Map.Entry;
+
 public class DominatorTreeExceptionFilter {
 
-	private final Statement statement;
+  private final Statement statement;
 
-	// idom, nodes
-	private final Map<Integer, Set<Integer>> mapTreeBranches = new HashMap<>();
+  // idom, nodes
+  private final Map<Integer, Set<Integer>> mapTreeBranches = new HashMap<>();
 
-	// handler, range nodes
-	private final Map<Integer, Set<Integer>> mapExceptionRanges = new HashMap<>();
-	// statement, handler, exit nodes
-	private final Map<Integer, Map<Integer, Integer>> mapExceptionRangeUniqueExit = new HashMap<>();
-	// handler, head dom
-	private Map<Integer, Integer> mapExceptionDoms = new HashMap<>();
-	private DominatorEngine domEngine;
+  // handler, range nodes
+  private final Map<Integer, Set<Integer>> mapExceptionRanges = new HashMap<>();
 
-	public DominatorTreeExceptionFilter(Statement statement) {
-		this.statement = statement;
-	}
+  // handler, head dom
+  private Map<Integer, Integer> mapExceptionDoms = new HashMap<>();
 
-	public void initialize() {
-		domEngine = new DominatorEngine(statement);
-		domEngine.initialize();
+  // statement, handler, exit nodes
+  private final Map<Integer, Map<Integer, Integer>> mapExceptionRangeUniqueExit = new HashMap<>();
 
-		buildDominatorTree();
+  private DominatorEngine domEngine;
 
-		buildExceptionRanges();
+  public DominatorTreeExceptionFilter(Statement statement) {
+    this.statement = statement;
+  }
 
-		buildFilter(statement.getFirst().id);
+  public void initialize() {
+    domEngine = new DominatorEngine(statement);
+    domEngine.initialize();
 
-		// free resources
-		mapTreeBranches.clear();
-		mapExceptionRanges.clear();
-	}
+    buildDominatorTree();
 
-	public boolean acceptStatementPair(Integer head, Integer exit) {
-		Map<Integer, Integer> filter = mapExceptionRangeUniqueExit.get(head);
-		for (Entry<Integer, Integer> entry : filter.entrySet())
-		{
-			if (!head.equals(mapExceptionDoms.get(entry.getKey())))
-			{
-				Integer filterExit = entry.getValue();
-				if (filterExit == -1 || !filterExit.equals(exit)) {
-					return false;
-				}
-			}
-		}
+    buildExceptionRanges();
 
-		return true;
-	}
+    buildFilter(statement.getFirst().id);
 
-	private void buildDominatorTree() {
-		VBStyleCollection<Integer, Integer> orderedIDoms = domEngine.getOrderedIDoms();
+    // free resources
+    mapTreeBranches.clear();
+    mapExceptionRanges.clear();
+  }
 
-		List<Integer> lstKeys = orderedIDoms.getLstKeys();
-		for (int index = lstKeys.size() - 1; index >= 0; index--)
-		{
-			Integer key = lstKeys.get(index);
-			Integer idom = orderedIDoms.get(index);
-			mapTreeBranches.computeIfAbsent(idom, k -> new HashSet<>()).add(key);
-		}
+  public boolean acceptStatementPair(Integer head, Integer exit) {
+    Map<Integer, Integer> filter = mapExceptionRangeUniqueExit.get(head);
+    for (Entry<Integer, Integer> entry : filter.entrySet()) {
+      if (!head.equals(mapExceptionDoms.get(entry.getKey()))) {
+        Integer filterExit = entry.getValue();
+        if (filterExit == -1 || !filterExit.equals(exit)) {
+          return false;
+        }
+      }
+    }
 
-		Integer firstid = statement.getFirst().id;
-		mapTreeBranches.get(firstid).remove(firstid);
-	}
+    return true;
+  }
 
-	private void buildExceptionRanges() {
-		for (Statement stat : statement.getStats())
-		{
-			List<Statement> lstPreds = stat.getNeighbours(StatEdge.TYPE_EXCEPTION, Statement.DIRECTION_BACKWARD);
-			if (!lstPreds.isEmpty())
-			{
+  private void buildDominatorTree() {
+    VBStyleCollection<Integer, Integer> orderedIDoms = domEngine.getOrderedIDoms();
 
-				Set<Integer> set = new HashSet<>();
+    List<Integer> lstKeys = orderedIDoms.getLstKeys();
+    for (int index = lstKeys.size() - 1; index >= 0; index--) {
+      Integer key = lstKeys.get(index);
+      Integer idom = orderedIDoms.get(index);
+      mapTreeBranches.computeIfAbsent(idom, k -> new HashSet<>()).add(key);
+    }
 
-				for (Statement st : lstPreds) {
-					set.add(st.id);
-				}
+    Integer firstid = statement.getFirst().id;
+    mapTreeBranches.get(firstid).remove(firstid);
+  }
 
-				mapExceptionRanges.put(stat.id, set);
-			}
-		}
+  private void buildExceptionRanges() {
+    for (Statement stat : statement.getStats()) {
+      List<Statement> lstPreds = stat.getNeighbours(StatEdge.TYPE_EXCEPTION, Statement.DIRECTION_BACKWARD);
+      if (!lstPreds.isEmpty()) {
 
-		mapExceptionDoms = buildExceptionDoms(statement.getFirst().id);
-	}
+        Set<Integer> set = new HashSet<>();
 
-	private Map<Integer, Integer> buildExceptionDoms(Integer id) {
-		Map<Integer, Integer> map = new HashMap<>();
+        for (Statement st : lstPreds) {
+          set.add(st.id);
+        }
 
-		Set<Integer> children = mapTreeBranches.get(id);
-		if (children != null)
-		{
-			for (Integer childid : children)
-			{
-				Map<Integer, Integer> mapChild = buildExceptionDoms(childid);
-				for (Integer handler : mapChild.keySet()) {
-					map.put(handler, map.containsKey(handler) ? id : mapChild.get(handler));
-				}
-			}
-		}
+        mapExceptionRanges.put(stat.id, set);
+      }
+    }
 
-		for (Entry<Integer, Set<Integer>> entry : mapExceptionRanges.entrySet())
-		{
-			if (entry.getValue().contains(id)) {
-				map.put(entry.getKey(), id);
-			}
-		}
+    mapExceptionDoms = buildExceptionDoms(statement.getFirst().id);
+  }
 
-		return map;
-	}
+  private Map<Integer, Integer> buildExceptionDoms(Integer id) {
+    Map<Integer, Integer> map = new HashMap<>();
 
-	private void buildFilter(Integer id) {
-		Map<Integer, Integer> map = new HashMap<>();
+    Set<Integer> children = mapTreeBranches.get(id);
+    if (children != null) {
+      for (Integer childid : children) {
+        Map<Integer, Integer> mapChild = buildExceptionDoms(childid);
+        for (Integer handler : mapChild.keySet()) {
+          map.put(handler, map.containsKey(handler) ? id : mapChild.get(handler));
+        }
+      }
+    }
 
-		Set<Integer> children = mapTreeBranches.get(id);
-		if (children != null)
-		{
-			for (Integer childid : children)
-			{
-				buildFilter(childid);
+    for (Entry<Integer, Set<Integer>> entry : mapExceptionRanges.entrySet()) {
+      if (entry.getValue().contains(id)) {
+        map.put(entry.getKey(), id);
+      }
+    }
 
-				Map<Integer, Integer> mapChild = mapExceptionRangeUniqueExit.get(childid);
-				for (Entry<Integer, Set<Integer>> entry : mapExceptionRanges.entrySet())
-				{
-					Integer handler = entry.getKey();
-					Set<Integer> range = entry.getValue();
+    return map;
+  }
 
-					if (range.contains(id))
-					{
+  private void buildFilter(Integer id) {
+    Map<Integer, Integer> map = new HashMap<>();
 
-						Integer exit;
+    Set<Integer> children = mapTreeBranches.get(id);
+    if (children != null) {
+      for (Integer childid : children) {
+        buildFilter(childid);
 
-						if (!range.contains(childid)) {
-							exit = childid;
-						}
-						else {
-							// after replacing 'new Integer(-1)' with '-1' Eclipse throws a NullPointerException on
-							// the following line
-							// could be a bug in Eclipse or some obscure specification glitch, FIXME: needs further
-							//  investigation
-							exit = map.containsKey(handler) ? new Integer(-1) : mapChild.get(handler);
-						}
+        Map<Integer, Integer> mapChild = mapExceptionRangeUniqueExit.get(childid);
+        for (Entry<Integer, Set<Integer>> entry : mapExceptionRanges.entrySet()) {
+          Integer handler = entry.getKey();
+          Set<Integer> range = entry.getValue();
 
-						if (exit != null) {
-							map.put(handler, exit);
-						}
-					}
-				}
-			}
-		}
+          if (range.contains(id)) {
 
-		mapExceptionRangeUniqueExit.put(id, map);
-	}
+            Integer exit;
 
-	public DominatorEngine getDomEngine() {
-		return domEngine;
-	}
+            if (!range.contains(childid)) {
+              exit = childid;
+            }
+            else {
+              // after replacing 'new Integer(-1)' with '-1' Eclipse throws a NullPointerException on the following line
+              // could be a bug in Eclipse or some obscure specification glitch, FIXME: needs further investigation
+              exit = map.containsKey(handler) ? new Integer(-1) : mapChild.get(handler);
+            }
+
+            if (exit != null) {
+              map.put(handler, exit);
+            }
+          }
+        }
+      }
+    }
+
+    mapExceptionRangeUniqueExit.put(id, map);
+  }
+
+  public DominatorEngine getDomEngine() {
+    return domEngine;
+  }
 }

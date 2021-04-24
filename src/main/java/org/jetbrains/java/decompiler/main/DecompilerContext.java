@@ -1,9 +1,5 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
-// found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.java.decompiler.main;
-
-import java.util.Map;
-import java.util.Objects;
 
 import org.jetbrains.java.decompiler.main.collectors.BytecodeSourceMapper;
 import org.jetbrains.java.decompiler.main.collectors.CounterContainer;
@@ -14,116 +10,120 @@ import org.jetbrains.java.decompiler.modules.decompiler.vars.VarProcessor;
 import org.jetbrains.java.decompiler.modules.renamer.PoolInterceptor;
 import org.jetbrains.java.decompiler.struct.StructContext;
 
+import java.util.Map;
+import java.util.Objects;
+
 public class DecompilerContext {
+  public static final String CURRENT_CLASS = "CURRENT_CLASS";
+  public static final String CURRENT_CLASS_WRAPPER = "CURRENT_CLASS_WRAPPER";
+  public static final String CURRENT_CLASS_NODE = "CURRENT_CLASS_NODE";
+  public static final String CURRENT_METHOD_WRAPPER = "CURRENT_METHOD_WRAPPER";
 
-	public static final String CURRENT_CLASS = "CURRENT_CLASS";
-	public static final String CURRENT_CLASS_WRAPPER = "CURRENT_CLASS_WRAPPER";
-	public static final String CURRENT_CLASS_NODE = "CURRENT_CLASS_NODE";
-	public static final String CURRENT_METHOD_WRAPPER = "CURRENT_METHOD_WRAPPER";
-	private static final ThreadLocal<DecompilerContext> currentContext = new ThreadLocal<>();
-	private final Map<String, Object> properties;
-	private final IFernflowerLogger logger;
-	private final StructContext structContext;
-	private final ClassesProcessor classProcessor;
-	private final PoolInterceptor poolInterceptor;
-	private ImportCollector importCollector;
-	private VarProcessor varProcessor;
-	private CounterContainer counterContainer;
-	private BytecodeSourceMapper bytecodeSourceMapper;
+  private final Map<String, Object> properties;
+  private final IFernflowerLogger logger;
+  private final StructContext structContext;
+  private final ClassesProcessor classProcessor;
+  private final PoolInterceptor poolInterceptor;
+  private ImportCollector importCollector;
+  private VarProcessor varProcessor;
+  private CounterContainer counterContainer;
+  private BytecodeSourceMapper bytecodeSourceMapper;
 
-	// *****************************************************************************
-	// context setup and update
-	// *****************************************************************************
+  public DecompilerContext(Map<String, Object> properties,
+                           IFernflowerLogger logger,
+                           StructContext structContext,
+                           ClassesProcessor classProcessor,
+                           PoolInterceptor interceptor) {
+    Objects.requireNonNull(properties);
+    Objects.requireNonNull(logger);
+    Objects.requireNonNull(structContext);
+    Objects.requireNonNull(classProcessor);
 
-	public DecompilerContext(Map<String, Object> properties,
-							 IFernflowerLogger logger,
-							 StructContext structContext,
-							 ClassesProcessor classProcessor,
-							 PoolInterceptor interceptor) {
-		Objects.requireNonNull(properties);
-		Objects.requireNonNull(logger);
-		Objects.requireNonNull(structContext);
-		Objects.requireNonNull(classProcessor);
+    this.properties = properties;
+    this.logger = logger;
+    this.structContext = structContext;
+    this.classProcessor = classProcessor;
+    this.poolInterceptor = interceptor;
+    this.counterContainer = new CounterContainer();
+  }
 
-		this.properties = properties;
-		this.logger = logger;
-		this.structContext = structContext;
-		this.classProcessor = classProcessor;
-		this.poolInterceptor = interceptor;
-		this.counterContainer = new CounterContainer();
-	}
+  // *****************************************************************************
+  // context setup and update
+  // *****************************************************************************
 
-	public static DecompilerContext getCurrentContext() {
-		return currentContext.get();
-	}
+  private static final ThreadLocal<DecompilerContext> currentContext = new ThreadLocal<>();
 
-	public static void setCurrentContext(DecompilerContext context) {
-		currentContext.set(context);
-	}
+  public static DecompilerContext getCurrentContext() {
+    return currentContext.get();
+  }
 
-	public static void setProperty(String key, Object value) {
-		getCurrentContext().properties.put(key, value);
-	}
+  public static void setCurrentContext(DecompilerContext context) {
+    currentContext.set(context);
+  }
 
-	public static void startClass(ImportCollector importCollector) {
-		DecompilerContext context = getCurrentContext();
-		context.importCollector = importCollector;
-		context.counterContainer = new CounterContainer();
-		context.bytecodeSourceMapper = new BytecodeSourceMapper();
-	}
+  public static void setProperty(String key, Object value) {
+    getCurrentContext().properties.put(key, value);
+  }
 
-	public static void startMethod(VarProcessor varProcessor) {
-		DecompilerContext context = getCurrentContext();
-		context.varProcessor = varProcessor;
-		context.counterContainer = new CounterContainer();
-	}
+  public static void startClass(ImportCollector importCollector) {
+    DecompilerContext context = getCurrentContext();
+    context.importCollector = importCollector;
+    context.counterContainer = new CounterContainer();
+    context.bytecodeSourceMapper = new BytecodeSourceMapper();
+  }
 
-	// *****************************************************************************
-	// context access
-	// *****************************************************************************
+  public static void startMethod(VarProcessor varProcessor) {
+    DecompilerContext context = getCurrentContext();
+    context.varProcessor = varProcessor;
+    context.counterContainer = new CounterContainer();
+  }
 
-	public static Object getProperty(String key) {
-		return getCurrentContext().properties.get(key);
-	}
+  // *****************************************************************************
+  // context access
+  // *****************************************************************************
 
-	public static boolean getOption(String key) {
-		return "1".equals(getProperty(key));
-	}
+  public static Object getProperty(String key) {
+    return getCurrentContext().properties.get(key);
+  }
 
-	public static String getNewLineSeparator() {
-		return getOption(IFernflowerPreferences.NEW_LINE_SEPARATOR) ?
-				IFernflowerPreferences.LINE_SEPARATOR_UNX : IFernflowerPreferences.LINE_SEPARATOR_WIN;
-	}
+  public static boolean getOption(String key) {
+    return "1".equals(getProperty(key));
+  }
 
-	public static IFernflowerLogger getLogger() {
-		return getCurrentContext().logger;
-	}
+  public static String getNewLineSeparator() {
+    return getOption(IFernflowerPreferences.NEW_LINE_SEPARATOR) ?
+           IFernflowerPreferences.LINE_SEPARATOR_UNX : IFernflowerPreferences.LINE_SEPARATOR_WIN;
+  }
 
-	public static StructContext getStructContext() {
-		return getCurrentContext().structContext;
-	}
+  public static IFernflowerLogger getLogger() {
+    return getCurrentContext().logger;
+  }
 
-	public static ClassesProcessor getClassProcessor() {
-		return getCurrentContext().classProcessor;
-	}
+  public static StructContext getStructContext() {
+    return getCurrentContext().structContext;
+  }
 
-	public static PoolInterceptor getPoolInterceptor() {
-		return getCurrentContext().poolInterceptor;
-	}
+  public static ClassesProcessor getClassProcessor() {
+    return getCurrentContext().classProcessor;
+  }
 
-	public static ImportCollector getImportCollector() {
-		return getCurrentContext().importCollector;
-	}
+  public static PoolInterceptor getPoolInterceptor() {
+    return getCurrentContext().poolInterceptor;
+  }
 
-	public static VarProcessor getVarProcessor() {
-		return getCurrentContext().varProcessor;
-	}
+  public static ImportCollector getImportCollector() {
+    return getCurrentContext().importCollector;
+  }
 
-	public static CounterContainer getCounterContainer() {
-		return getCurrentContext().counterContainer;
-	}
+  public static VarProcessor getVarProcessor() {
+    return getCurrentContext().varProcessor;
+  }
 
-	public static BytecodeSourceMapper getBytecodeSourceMapper() {
-		return getCurrentContext().bytecodeSourceMapper;
-	}
+  public static CounterContainer getCounterContainer() {
+    return getCurrentContext().counterContainer;
+  }
+
+  public static BytecodeSourceMapper getBytecodeSourceMapper() {
+    return getCurrentContext().bytecodeSourceMapper;
+  }
 }

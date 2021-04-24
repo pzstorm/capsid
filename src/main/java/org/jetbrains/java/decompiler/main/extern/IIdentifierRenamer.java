@@ -1,16 +1,15 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
-// found in the LICENSE file.
+// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.java.decompiler.main.extern;
 
 public interface IIdentifierRenamer {
 
-	boolean toBeRenamed(Type elementType, String className, String element, String descriptor);
+  enum Type {ELEMENT_CLASS, ELEMENT_FIELD, ELEMENT_METHOD}
 
-	String getNextClassName(String fullName, String shortName);
+  boolean toBeRenamed(Type elementType, String className, String element, String descriptor);
 
-	String getNextFieldName(String className, String field, String descriptor);
+  String getNextClassName(String fullName, String shortName);
 
-	String getNextMethodName(String className, String method, String descriptor);
+  String getNextFieldName(String className, String field, String descriptor);
 
-	enum Type {ELEMENT_CLASS, ELEMENT_FIELD, ELEMENT_METHOD}
+  String getNextMethodName(String className, String method, String descriptor);
 }
