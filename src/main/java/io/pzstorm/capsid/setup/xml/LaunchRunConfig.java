@@ -21,10 +21,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.w3c.dom.Element;
+
+import com.google.common.collect.ImmutableMap;
 
 import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.VmParameter;
@@ -54,6 +55,7 @@ public class LaunchRunConfig extends XMLDocument {
 	private final String mainClass;
 
 	public LaunchRunConfig(String name, String mainClass, VmParameter vmParameters, Map<String, Path> logs) {
+
 		super(name, Paths.get(".idea/runConfigurations"));
 		this.vmParameters = vmParameters;
 		this.mainClass = mainClass;
@@ -68,7 +70,6 @@ public class LaunchRunConfig extends XMLDocument {
 	 * Configure this instance of {@code ZomboidLaunchRunConfig} for given {@code Project}.
 	 *
 	 * @return an instance of this {@code ZomboidLaunchRunConfig}.
-	 *
 	 * @throws InvalidUserDataException if {@code gameDir} local property is not initialized.
 	 */
 	@Override

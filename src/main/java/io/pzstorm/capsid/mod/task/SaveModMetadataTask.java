@@ -35,6 +35,7 @@ public class SaveModMetadataTask extends DefaultTask implements CapsidTask {
 
 	@Override
 	public void configure(String group, String description, Project project) {
+
 		CapsidTask.super.configure(group, description, project);
 		dependsOn(project.getTasks().getByName(ZomboidTasks.ZOMBOID_VERSION.name));
 	}

@@ -59,7 +59,8 @@ class LocalPropertiesIntegrationTest extends PluginIntegrationTest {
 		StringBuilder sb = new StringBuilder();
 		String[] expectedFileComments = new String[]{
 				"#This file contains local properties used to configure project build",
-				"#Note: paths need to be Unix-style where segments need to be separated with forward-slashes (/)",
+				"#Note: paths need to be Unix-style where segments " +
+						"need to be separated with forward-slashes (/)",
 				"#this is for compatibility and stability purposes as backslashes don't play well."
 		};
 		sb.append(String.join("\n", expectedFileComments));

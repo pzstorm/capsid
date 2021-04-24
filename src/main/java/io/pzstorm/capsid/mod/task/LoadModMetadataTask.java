@@ -92,9 +92,9 @@ public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 						StringBuilder sb = new StringBuilder();
 						char[] charArray = new URL(sUrl).getPath().toCharArray();
 
-						int beforeLastIndex = charArray.length - 1;
+						int a = charArray.length - 1;
 						int startIndex = charArray[0] != '/' ? 0 : 1;
-						int endIndex = charArray[beforeLastIndex] != '/' ? charArray.length : beforeLastIndex;
+						int endIndex = charArray[a] != '/' ? charArray.length : a;
 
 						// remove slashes from first and last string index
 						for (int i = startIndex; i < endIndex; i++) {

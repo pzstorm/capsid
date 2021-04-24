@@ -106,7 +106,7 @@ public class CapsidPluginExtension {
 	 *
 	 * @param owner name of the Github repository owner that hosts the project.
 	 * @param name name of the Github repository that hosts the project.
-	 * 
+	 *
 	 * @see GenerateChangelogTask
 	 */
 	public void setProjectRepository(String owner, String name) {

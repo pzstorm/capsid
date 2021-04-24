@@ -29,7 +29,6 @@ class VmParameterTest extends PluginUnitTest {
 
 	@Test
 	void shouldBuildVmParameterInstanceWithDefaultValues() {
-
 		VmParameter parameters = new VmParameter.Builder().build();
 
 		Assertions.assertFalse(parameters.isDebug);

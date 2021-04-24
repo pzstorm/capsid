@@ -72,6 +72,7 @@ public abstract class XMLDocument {
 	}
 
 	XMLDocument configure(Project project) {
+
 		this.project = project;
 		return this;
 	}
@@ -143,7 +144,8 @@ public abstract class XMLDocument {
 	 * Create and configure {@link Transformer} instance to be used for writing document to file.
 	 * Note that the returned instance can be further configured as desired.
 	 *
-	 * @throws TransformerConfigurationException when it is not possible to create a {@code Transformer} instance.
+	 * @throws TransformerConfigurationException when it is not possible to create a {@code Transformer}
+	 * 		instance.
 	 */
 	Transformer createAndConfigureTransformer() throws TransformerConfigurationException {
 

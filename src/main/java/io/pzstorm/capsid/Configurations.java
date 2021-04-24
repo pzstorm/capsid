@@ -50,6 +50,7 @@ public enum Configurations {
 
 	Configurations(String name, @Nullable ImmutableSet<String> extendedTo,
 				   @Nullable ImmutableSet<String> extendsFrom) {
+
 		this.name = name;
 		this.extendedTo = extendedTo != null ? extendedTo : ImmutableSet.of();
 		this.extendsFrom = extendsFrom != null ? extendsFrom : ImmutableSet.of();
@@ -60,6 +61,7 @@ public enum Configurations {
 	 *
 	 * @param name name of the configuration to resolve.
 	 * @param configurations where to resolve the configuration from.
+	 *
 	 * @return configuration with the given name. Never returns {@code null}.
 	 */
 	private static Configuration resolve(String name, ConfigurationContainer configurations) {
@@ -79,7 +81,6 @@ public enum Configurations {
 	 * @return the registered configuration.
 	 */
 	Configuration register(ConfigurationContainer configurations) {
-
 		Configuration config = configurations.create(name);
 
 		Set<Configuration> extendsFromConfigs = new HashSet<>();

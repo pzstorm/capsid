@@ -59,7 +59,9 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 	private static void createGemfile(Project project) {
 
 		File gemFile = new File(project.getProjectDir(), "Gemfile");
-		if (gemFile.exists()) { return; }
+		if (gemFile.exists()) {
+			return;
+		}
 		try {
 			if (!gemFile.createNewFile()) {
 				throw new GradleException("Unable to create Gemfile in root directory");
@@ -107,7 +109,9 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 		}
 		optionsMap.put(GenerateChangelogOptions.TOKEN, new String[]{ token });
 
-		List<String> command = new ArrayList<>(Arrays.asList("bundle", "exec", "github_changelog_generator"));
+		List<String> command = new ArrayList<>(
+				Arrays.asList("bundle", "exec", "github_changelog_generator")
+		);
 		for (Map.Entry<GenerateChangelogOptions, Object> entry : optionsMap.entrySet())
 		{
 			String[] sValue;

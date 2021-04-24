@@ -89,10 +89,8 @@ public class CapsidProperty<T> {
 				T result = type.cast(foundProperty);
 				return validator != null ? validator.validate(result) : result;
 			}
-			else {
-				String msg = "Found capsid property is of unsupported type '%s'";
-				throw new InvalidCapsidPropertyException(String.format(msg, foundProperty.getClass().getName()));
-			}
+			else throw new InvalidCapsidPropertyException(String.format("Found capsid property " +
+						"is of unsupported type '%s'", foundProperty.getClass().getName()));
 		}
 		// try to find a matching system property first
 		String sysProperty = System.getProperty(name);
@@ -115,8 +113,8 @@ public class CapsidProperty<T> {
 	 * Convert and validate the given property to {@code Class} {@link #type}.
 	 *
 	 * @param property property to convert and validate.
-	 * @return converted property or {@code null} if property is {@code null} or empty.
 	 *
+	 * @return converted property or {@code null} if property is {@code null} or empty.
 	 * @throws InvalidCapsidPropertyException if property is of unsupported type.
 	 */
 	@SuppressWarnings("unchecked")
@@ -163,6 +161,7 @@ public class CapsidProperty<T> {
 		throw new InvalidCapsidPropertyException("Unsupported capsid property type " + type.getName());
 	}
 
+	//@formatter:off
 	public static class Builder<T> {
 
 		private final String name;
@@ -242,5 +241,5 @@ public class CapsidProperty<T> {
 		public CapsidProperty<T> build() {
 			return new CapsidProperty<>(this);
 		}
-	}
+	}//@formatter:on
 }

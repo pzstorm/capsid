@@ -58,6 +58,7 @@ public enum ZomboidTasks {
 	private final Class<? extends CapsidTask> type;
 
 	ZomboidTasks(Class<? extends CapsidTask> type, String name, String description) {
+
 		this.type = type;
 		this.name = name;
 		this.description = description;

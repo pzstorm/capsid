@@ -48,6 +48,7 @@ public enum ModTasks {
 	private final Class<? extends CapsidTask> type;
 
 	ModTasks(Class<? extends CapsidTask> type, boolean register, String name, String description) {
+
 		this.type = type;
 		this.name = name;
 		this.register = register;

@@ -39,6 +39,7 @@ public class DistributionUtils {
 	 *
 	 * @param module {@code File} representing module root directory.
 	 * @param srcDirSet {@code SourceDirectorySet} to extract paths from.
+	 *
 	 * @return {@code Map} that contains paths relative to given module.
 	 */
 	public static Map<Path, String> getPathsRelativeToModule(File module, SourceDirectorySet srcDirSet) {

@@ -92,6 +92,7 @@ public class Utils {
 	 * characters, but do include other leading and trailing whitespace
 	 *
 	 * @param file {@code File} to read the lines from.
+	 *
 	 * @return a {@code String} representing the contents of given file.
 	 *
 	 * @throws IOException if an I/O error occurred.
@@ -102,8 +103,9 @@ public class Utils {
 	}
 
 	/**
-	 * Finds the resource {@code File} with the given path. A resource is some data (images, audio, text, etc)
-	 * that can be accessed by class code in a way that is independent of the location of the code.
+	 * Finds the resource {@code File} with the given path.
+	 * A resource is some data (images, audio, text, etc) that can be accessed by
+	 * class code in a way that is independent of the location of the code.
 	 *
 	 * @param path path to resource.
 	 *

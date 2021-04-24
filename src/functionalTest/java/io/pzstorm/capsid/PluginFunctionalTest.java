@@ -52,6 +52,7 @@ public abstract class PluginFunctionalTest {
 	private CapsidGradleRunner runner;
 
 	protected PluginFunctionalTest() {
+
 		this.projectDir = generateProjectDirectory();
 		this.projectName = projectDir.getName();
 	}

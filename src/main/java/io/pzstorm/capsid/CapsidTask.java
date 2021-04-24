@@ -35,6 +35,7 @@ public interface CapsidTask extends Task {
 	 * @param project {@code Project} configuring the task.
 	 */
 	default void configure(String group, String description, Project project) {
+
 		setGroup(group);
 		setDescription(description);
 	}

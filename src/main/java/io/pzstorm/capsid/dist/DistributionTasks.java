@@ -41,6 +41,7 @@ public enum DistributionTasks {
 	private final boolean overwrite;
 
 	DistributionTasks(Class<? extends CapsidTask> type, String name, String description, boolean overwrite) {
+
 		this.type = type;
 		this.name = name;
 		this.description = description;

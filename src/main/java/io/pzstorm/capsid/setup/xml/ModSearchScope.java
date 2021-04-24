@@ -42,6 +42,7 @@ public class ModSearchScope extends XMLDocument {
 	private final boolean unique;
 
 	private ModSearchScope(String name, String pattern, boolean unique) {
+
 		super(name, Paths.get(".idea/scopes/"));
 		this.pattern = pattern;
 		this.unique = unique;

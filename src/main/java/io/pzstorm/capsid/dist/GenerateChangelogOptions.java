@@ -364,6 +364,7 @@ public enum GenerateChangelogOptions {
 	private final String shortOpt, longOpt;
 
 	GenerateChangelogOptions(String shortOpt, String longOpt) {
+
 		this.shortOpt = shortOpt;
 		this.longOpt = longOpt;
 	}
@@ -390,7 +391,8 @@ public enum GenerateChangelogOptions {
 					String format = "Invalid changelog option argument '%s', expected a boolean";
 					throw new InvalidUserDataException(String.format(format, Arrays.toString(args)));
 				}
-				option = "--" + (args[0].equals("true") ? longOpt.substring(5) : "no-" + longOpt.substring(5));
+				option = "--" + (args[0].equals("true") ?
+						longOpt.substring(5) : "no-" + longOpt.substring(5));
 			}
 			else option = "--" + longOpt;
 		}

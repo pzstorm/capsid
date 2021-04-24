@@ -46,6 +46,7 @@ public enum SetupTasks {
 	private final Class<? extends CapsidTask> type;
 
 	SetupTasks(Class<? extends CapsidTask> type, String name, String description) {
+
 		this.type = type;
 		this.name = name;
 		this.description = description;

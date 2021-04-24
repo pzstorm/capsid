@@ -73,8 +73,9 @@ class ZomboidLuaJarTaskFunctionalTest extends PluginFunctionalTest {
 		Assertions.assertTrue(archive.delete());
 
 		// assert only expected files are in directory
-		Assertions.assertEquals(expectedFiles.length, Objects.requireNonNull(destination.listFiles()).length);
-
+		Assertions.assertEquals(expectedFiles.length,
+				Objects.requireNonNull(destination.listFiles()).length
+		);
 		for (String expectedFile : expectedFiles) {
 			Assertions.assertTrue(new File(destination, expectedFile).exists());
 		}
