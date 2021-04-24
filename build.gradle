@@ -98,8 +98,5 @@ compileJava {
 		excludedPaths = '.*/src/main/java/org/jetbrains/.*'
 	}
 }
-
-jar {
-	archiveBaseName.set('pzstorm-capsid')
-	from 'LICENSE', 'NOTICE'
-}
+// include license files in artifact jar
+jar.from 'LICENSE', 'NOTICE'
