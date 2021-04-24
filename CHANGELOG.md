@@ -1,5 +1,19 @@
 # Changelog
 
+## [v0.3.0](https://github.com/pzstorm/capsid/tree/v0.3.0) (2021-04-24)
+
+[Full Changelog](https://github.com/pzstorm/capsid/compare/v0.2.0...v0.3.0)
+
+**Implemented enhancements:**
+
+- Configurable launch config log files [\#11](https://github.com/pzstorm/capsid/issues/11)
+- Configurable run config main class [\#10](https://github.com/pzstorm/capsid/issues/10)
+- Zomboid search scopes [\#6](https://github.com/pzstorm/capsid/issues/6)
+
+**Fixed bugs:**
+
+- ZomboidJar task using project version in jar name [\#9](https://github.com/pzstorm/capsid/issues/9)
+
 ## [v0.2.0](https://github.com/pzstorm/capsid/tree/v0.2.0) (2021-04-22)
 
 [Full Changelog](https://github.com/pzstorm/capsid/compare/v0.1.0...v0.2.0)
