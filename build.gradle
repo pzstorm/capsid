@@ -93,3 +93,8 @@ compileJava {
 		excludedPaths = '.*/src/main/java/org/jetbrains/.*'
 	}
 }
+
+jar {
+	archiveBaseName.set('pzstorm-storm')
+	from 'LICENSE', 'NOTICE'
+}
