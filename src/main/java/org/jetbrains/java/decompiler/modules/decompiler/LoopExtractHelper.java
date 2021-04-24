@@ -1,200 +1,185 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
-// found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
 
 import org.jetbrains.java.decompiler.modules.decompiler.stats.DoStatement;
 import org.jetbrains.java.decompiler.modules.decompiler.stats.IfStatement;
 import org.jetbrains.java.decompiler.modules.decompiler.stats.SequenceStatement;
 import org.jetbrains.java.decompiler.modules.decompiler.stats.Statement;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
+
+
 public final class LoopExtractHelper {
 
-	public static boolean extractLoops(Statement root) {
 
-		boolean res = (extractLoopsRec(root) != 0);
+  public static boolean extractLoops(Statement root) {
 
-		if (res) {
-			SequenceHelper.condenseSequences(root);
-		}
+    boolean res = (extractLoopsRec(root) != 0);
 
-		return res;
-	}
+    if (res) {
+      SequenceHelper.condenseSequences(root);
+    }
 
-	private static int extractLoopsRec(Statement stat) {
+    return res;
+  }
 
-		boolean res = false;
 
-		while (true)
-		{
+  private static int extractLoopsRec(Statement stat) {
 
-			boolean updated = false;
+    boolean res = false;
 
-			for (Statement st : stat.getStats())
-			{
-				int extr = extractLoopsRec(st);
-				res |= (extr != 0);
+    while (true) {
 
-				if (extr == 2)
-				{
-					updated = true;
-					break;
-				}
-			}
+      boolean updated = false;
 
-			if (!updated) {
-				break;
-			}
-		}
+      for (Statement st : stat.getStats()) {
+        int extr = extractLoopsRec(st);
+        res |= (extr != 0);
 
-		if (stat.type == Statement.TYPE_DO)
-		{
-			if (extractLoop((DoStatement) stat)) {
-				return 2;
-			}
-		}
+        if (extr == 2) {
+          updated = true;
+          break;
+        }
+      }
 
-		return res ? 1 : 0;
-	}
+      if (!updated) {
+        break;
+      }
+    }
 
-	private static boolean extractLoop(DoStatement stat) {
-		if (stat.getLooptype() != DoStatement.LOOP_DO) {
-			return false;
-		}
+    if (stat.type == Statement.TYPE_DO) {
+      if (extractLoop((DoStatement)stat)) {
+        return 2;
+      }
+    }
 
-		for (StatEdge edge : stat.getLabelEdges())
-		{
-			if (edge.getType() != StatEdge.TYPE_CONTINUE && edge.getDestination().type != Statement.TYPE_DUMMYEXIT) {
-				return false;
-			}
-		}
+    return res ? 1 : 0;
+  }
 
-		return extractLastIf(stat) || extractFirstIf(stat);
-	}
+  private static boolean extractLoop(DoStatement stat) {
+    if (stat.getLooptype() != DoStatement.LOOP_DO) {
+      return false;
+    }
 
-	private static boolean extractLastIf(DoStatement stat) {
+    for (StatEdge edge : stat.getLabelEdges()) {
+      if (edge.getType() != StatEdge.TYPE_CONTINUE && edge.getDestination().type != Statement.TYPE_DUMMYEXIT) {
+        return false;
+      }
+    }
 
-		// search for an if condition at the end of the loop
-		Statement last = stat.getFirst();
-		while (last.type == Statement.TYPE_SEQUENCE) {
-			last = last.getStats().getLast();
-		}
+    return extractLastIf(stat) || extractFirstIf(stat);
+  }
 
-		if (last.type == Statement.TYPE_IF)
-		{
-			IfStatement lastif = (IfStatement) last;
-			if (lastif.iftype == IfStatement.IFTYPE_IF && lastif.getIfstat() != null)
-			{
-				Statement ifstat = lastif.getIfstat();
-				StatEdge elseedge = lastif.getAllSuccessorEdges().get(0);
+  private static boolean extractLastIf(DoStatement stat) {
 
-				if (elseedge.getType() == StatEdge.TYPE_CONTINUE && elseedge.closure == stat)
-				{
+    // search for an if condition at the end of the loop
+    Statement last = stat.getFirst();
+    while (last.type == Statement.TYPE_SEQUENCE) {
+      last = last.getStats().getLast();
+    }
 
-					Set<Statement> set = stat.getNeighboursSet(StatEdge.TYPE_CONTINUE, Statement.DIRECTION_BACKWARD);
-					set.remove(last);
+    if (last.type == Statement.TYPE_IF) {
+      IfStatement lastif = (IfStatement)last;
+      if (lastif.iftype == IfStatement.IFTYPE_IF && lastif.getIfstat() != null) {
+        Statement ifstat = lastif.getIfstat();
+        StatEdge elseedge = lastif.getAllSuccessorEdges().get(0);
 
-					if (set.isEmpty())
-					{ // no direct continues in a do{}while loop
-						if (isExternStatement(stat, ifstat, ifstat))
-						{
-							extractIfBlock(stat, lastif);
-							return true;
-						}
-					}
-				}
-			}
-		}
-		return false;
-	}
+        if (elseedge.getType() == StatEdge.TYPE_CONTINUE && elseedge.closure == stat) {
 
-	private static boolean extractFirstIf(DoStatement stat) {
+          Set<Statement> set = stat.getNeighboursSet(StatEdge.TYPE_CONTINUE, Statement.DIRECTION_BACKWARD);
+          set.remove(last);
 
-		// search for an if condition at the entrance of the loop
-		Statement first = stat.getFirst();
-		while (first.type == Statement.TYPE_SEQUENCE) {
-			first = first.getFirst();
-		}
+          if (set.isEmpty()) { // no direct continues in a do{}while loop
+            if (isExternStatement(stat, ifstat, ifstat)) {
+              extractIfBlock(stat, lastif);
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
 
-		// found an if statement
-		if (first.type == Statement.TYPE_IF)
-		{
-			IfStatement firstif = (IfStatement) first;
+  private static boolean extractFirstIf(DoStatement stat) {
 
-			if (firstif.getFirst().getExprents().isEmpty())
-			{
+    // search for an if condition at the entrance of the loop
+    Statement first = stat.getFirst();
+    while (first.type == Statement.TYPE_SEQUENCE) {
+      first = first.getFirst();
+    }
 
-				if (firstif.iftype == IfStatement.IFTYPE_IF && firstif.getIfstat() != null)
-				{
-					Statement ifstat = firstif.getIfstat();
+    // found an if statement
+    if (first.type == Statement.TYPE_IF) {
+      IfStatement firstif = (IfStatement)first;
 
-					if (isExternStatement(stat, ifstat, ifstat))
-					{
-						extractIfBlock(stat, firstif);
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
+      if (firstif.getFirst().getExprents().isEmpty()) {
 
-	private static boolean isExternStatement(DoStatement loop, Statement block, Statement stat) {
+        if (firstif.iftype == IfStatement.IFTYPE_IF && firstif.getIfstat() != null) {
+          Statement ifstat = firstif.getIfstat();
 
-		for (StatEdge edge : stat.getAllSuccessorEdges())
-		{
-			if (loop.containsStatement(edge.getDestination()) &&
-					!block.containsStatement(edge.getDestination())) {
-				return false;
-			}
-		}
+          if (isExternStatement(stat, ifstat, ifstat)) {
+            extractIfBlock(stat, firstif);
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
 
-		for (Statement st : stat.getStats())
-		{
-			if (!isExternStatement(loop, block, st)) {
-				return false;
-			}
-		}
 
-		return true;
-	}
+  private static boolean isExternStatement(DoStatement loop, Statement block, Statement stat) {
 
-	private static void extractIfBlock(DoStatement loop, IfStatement ifstat) {
+    for (StatEdge edge : stat.getAllSuccessorEdges()) {
+      if (loop.containsStatement(edge.getDestination()) &&
+          !block.containsStatement(edge.getDestination())) {
+        return false;
+      }
+    }
 
-		Statement target = ifstat.getIfstat();
-		StatEdge ifedge = ifstat.getIfEdge();
+    for (Statement st : stat.getStats()) {
+      if (!isExternStatement(loop, block, st)) {
+        return false;
+      }
+    }
 
-		ifstat.setIfstat(null);
-		ifedge.getSource().changeEdgeType(Statement.DIRECTION_FORWARD, ifedge, StatEdge.TYPE_BREAK);
-		ifedge.closure = loop;
-		ifstat.getStats().removeWithKey(target.id);
+    return true;
+  }
 
-		loop.addLabeledEdge(ifedge);
 
-		SequenceStatement block = new SequenceStatement(Arrays.asList(loop, target));
-		loop.getParent().replaceStatement(loop, block);
-		block.setAllParent();
+  private static void extractIfBlock(DoStatement loop, IfStatement ifstat) {
 
-		loop.addSuccessor(new StatEdge(StatEdge.TYPE_REGULAR, loop, target));
+    Statement target = ifstat.getIfstat();
+    StatEdge ifedge = ifstat.getIfEdge();
 
-		for (StatEdge edge : new ArrayList<>(block.getLabelEdges()))
-		{
-			if (edge.getType() == StatEdge.TYPE_CONTINUE || edge == ifedge) {
-				loop.addLabeledEdge(edge);
-			}
-		}
+    ifstat.setIfstat(null);
+    ifedge.getSource().changeEdgeType(Statement.DIRECTION_FORWARD, ifedge, StatEdge.TYPE_BREAK);
+    ifedge.closure = loop;
+    ifstat.getStats().removeWithKey(target.id);
 
-		for (StatEdge edge : block.getPredecessorEdges(StatEdge.TYPE_CONTINUE))
-		{
-			if (loop.containsStatementStrict(edge.getSource()))
-			{
-				block.removePredecessor(edge);
-				edge.getSource().changeEdgeNode(Statement.DIRECTION_FORWARD, edge, loop);
-				loop.addPredecessor(edge);
-			}
-		}
-	}
+    loop.addLabeledEdge(ifedge);
+
+    SequenceStatement block = new SequenceStatement(Arrays.asList(loop, target));
+    loop.getParent().replaceStatement(loop, block);
+    block.setAllParent();
+
+    loop.addSuccessor(new StatEdge(StatEdge.TYPE_REGULAR, loop, target));
+
+    for (StatEdge edge : new ArrayList<>(block.getLabelEdges())) {
+      if (edge.getType() == StatEdge.TYPE_CONTINUE || edge == ifedge) {
+        loop.addLabeledEdge(edge);
+      }
+    }
+
+    for (StatEdge edge : block.getPredecessorEdges(StatEdge.TYPE_CONTINUE)) {
+      if (loop.containsStatementStrict(edge.getSource())) {
+        block.removePredecessor(edge);
+        edge.getSource().changeEdgeNode(Statement.DIRECTION_FORWARD, edge, loop);
+        loop.addPredecessor(edge);
+      }
+    }
+  }
 }

@@ -1,9 +1,5 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
-// found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.java.decompiler.code.cfg;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.jetbrains.java.decompiler.code.Instruction;
 import org.jetbrains.java.decompiler.code.InstructionSequence;
@@ -11,189 +7,187 @@ import org.jetbrains.java.decompiler.code.SimpleInstructionSequence;
 import org.jetbrains.java.decompiler.main.DecompilerContext;
 import org.jetbrains.java.decompiler.modules.decompiler.decompose.IGraphNode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BasicBlock implements IGraphNode {
 
-	// *****************************************************************************
-	// public fields
-	// *****************************************************************************
+  // *****************************************************************************
+  // public fields
+  // *****************************************************************************
 
-	private final List<BasicBlock> preds = new ArrayList<>();
-	private final List<BasicBlock> succs = new ArrayList<>();
+  public int id;
+  public int mark = 0;
 
-	// *****************************************************************************
-	// private fields
-	// *****************************************************************************
-	private final List<Integer> instrOldOffsets = new ArrayList<>();
-	private final List<BasicBlock> predExceptions = new ArrayList<>();
-	private final List<BasicBlock> succExceptions = new ArrayList<>();
-	public int id;
-	public int mark = 0;
-	private InstructionSequence seq = new SimpleInstructionSequence();
+  // *****************************************************************************
+  // private fields
+  // *****************************************************************************
 
-	public BasicBlock(int id) {
-		this.id = id;
-	}
+  private InstructionSequence seq = new SimpleInstructionSequence();
 
-	// *****************************************************************************
-	// public methods
-	// *****************************************************************************
+  private final List<BasicBlock> preds = new ArrayList<>();
+  private final List<BasicBlock> succs = new ArrayList<>();
+  private final List<Integer> instrOldOffsets = new ArrayList<>();
+  private final List<BasicBlock> predExceptions = new ArrayList<>();
+  private final List<BasicBlock> succExceptions = new ArrayList<>();
 
-	@Override
-	@SuppressWarnings("MethodDoesntCallSuperMethod")
-	public BasicBlock clone() {
-		BasicBlock block = new BasicBlock(id);
+  public BasicBlock(int id) {
+    this.id = id;
+  }
 
-		block.setSeq(seq.clone());
-		block.instrOldOffsets.addAll(instrOldOffsets);
+  // *****************************************************************************
+  // public methods
+  // *****************************************************************************
 
-		return block;
-	}
+  @Override
+  @SuppressWarnings("MethodDoesntCallSuperMethod")
+  public BasicBlock clone() {
+    BasicBlock block = new BasicBlock(id);
 
-	public Instruction getInstruction(int index) {
-		return seq.getInstr(index);
-	}
+    block.setSeq(seq.clone());
+    block.instrOldOffsets.addAll(instrOldOffsets);
 
-	public Instruction getLastInstruction() {
-		if (seq.isEmpty()) {
-			return null;
-		}
-		else {
-			return seq.getLastInstr();
-		}
-	}
+    return block;
+  }
 
-	public Integer getOldOffset(int index) {
-		if (index < instrOldOffsets.size()) {
-			return instrOldOffsets.get(index);
-		}
-		else {
-			return -1;
-		}
-	}
+  public Instruction getInstruction(int index) {
+    return seq.getInstr(index);
+  }
 
-	public int size() {
-		return seq.length();
-	}
+  public Instruction getLastInstruction() {
+    if (seq.isEmpty()) {
+      return null;
+    }
+    else {
+      return seq.getLastInstr();
+    }
+  }
 
-	public void addPredecessor(BasicBlock block) {
-		preds.add(block);
-	}
+  public Integer getOldOffset(int index) {
+    if(index < instrOldOffsets.size()) {
+      return instrOldOffsets.get(index);
+    } else {
+      return -1;
+    }
+  }
 
-	public void removePredecessor(BasicBlock block) {
-		while (preds.remove(block)) /**/ ;
-	}
+  public int size() {
+    return seq.length();
+  }
 
-	public void addSuccessor(BasicBlock block) {
-		succs.add(block);
-		block.addPredecessor(this);
-	}
+  public void addPredecessor(BasicBlock block) {
+    preds.add(block);
+  }
 
-	public void removeSuccessor(BasicBlock block) {
-		while (succs.remove(block)) /**/ ;
-		block.removePredecessor(this);
-	}
+  public void removePredecessor(BasicBlock block) {
+    while (preds.remove(block)) /**/;
+  }
 
-	// FIXME: unify block comparisons: id or direct equality
-	public void replaceSuccessor(BasicBlock oldBlock, BasicBlock newBlock) {
-		for (int i = 0; i < succs.size(); i++)
-		{
-			if (succs.get(i).id == oldBlock.id)
-			{
-				succs.set(i, newBlock);
-				oldBlock.removePredecessor(this);
-				newBlock.addPredecessor(this);
-			}
-		}
+  public void addSuccessor(BasicBlock block) {
+    succs.add(block);
+    block.addPredecessor(this);
+  }
 
-		for (int i = 0; i < succExceptions.size(); i++)
-		{
-			if (succExceptions.get(i).id == oldBlock.id)
-			{
-				succExceptions.set(i, newBlock);
-				oldBlock.removePredecessorException(this);
-				newBlock.addPredecessorException(this);
-			}
-		}
-	}
+  public void removeSuccessor(BasicBlock block) {
+    while (succs.remove(block)) /**/;
+    block.removePredecessor(this);
+  }
 
-	public void addPredecessorException(BasicBlock block) {
-		predExceptions.add(block);
-	}
+  // FIXME: unify block comparisons: id or direct equality
+  public void replaceSuccessor(BasicBlock oldBlock, BasicBlock newBlock) {
+    for (int i = 0; i < succs.size(); i++) {
+      if (succs.get(i).id == oldBlock.id) {
+        succs.set(i, newBlock);
+        oldBlock.removePredecessor(this);
+        newBlock.addPredecessor(this);
+      }
+    }
 
-	public void removePredecessorException(BasicBlock block) {
-		while (predExceptions.remove(block)) /**/ ;
-	}
+    for (int i = 0; i < succExceptions.size(); i++) {
+      if (succExceptions.get(i).id == oldBlock.id) {
+        succExceptions.set(i, newBlock);
+        oldBlock.removePredecessorException(this);
+        newBlock.addPredecessorException(this);
+      }
+    }
+  }
 
-	public void addSuccessorException(BasicBlock block) {
-		if (!succExceptions.contains(block))
-		{
-			succExceptions.add(block);
-			block.addPredecessorException(this);
-		}
-	}
+  public void addPredecessorException(BasicBlock block) {
+    predExceptions.add(block);
+  }
 
-	public void removeSuccessorException(BasicBlock block) {
-		while (succExceptions.remove(block)) /**/ ;
-		block.removePredecessorException(this);
-	}
+  public void removePredecessorException(BasicBlock block) {
+    while (predExceptions.remove(block)) /**/;
+  }
 
-	public String toString() {
-		return toString(0);
-	}
+  public void addSuccessorException(BasicBlock block) {
+    if (!succExceptions.contains(block)) {
+      succExceptions.add(block);
+      block.addPredecessorException(this);
+    }
+  }
 
-	public String toString(int indent) {
+  public void removeSuccessorException(BasicBlock block) {
+    while (succExceptions.remove(block)) /**/;
+    block.removePredecessorException(this);
+  }
 
-		String new_line_separator = DecompilerContext.getNewLineSeparator();
+  public String toString() {
+    return toString(0);
+  }
 
-		return id + ":" + new_line_separator + seq.toString(indent);
-	}
+  public String toString(int indent) {
 
-	public boolean isSuccessor(BasicBlock block) {
-		for (BasicBlock succ : succs)
-		{
-			if (succ.id == block.id) {
-				return true;
-			}
-		}
-		return false;
-	}
+    String new_line_separator = DecompilerContext.getNewLineSeparator();
 
-	// *****************************************************************************
-	// getter and setter methods
-	// *****************************************************************************
+    return id + ":" + new_line_separator + seq.toString(indent);
+  }
 
-	public List<Integer> getInstrOldOffsets() {
-		return instrOldOffsets;
-	}
+  public boolean isSuccessor(BasicBlock block) {
+    for (BasicBlock succ : succs) {
+      if (succ.id == block.id) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-	@Override
-	public List<? extends IGraphNode> getPredecessors() {
-		List<BasicBlock> lst = new ArrayList<>(preds);
-		lst.addAll(predExceptions);
-		return lst;
-	}
+  // *****************************************************************************
+  // getter and setter methods
+  // *****************************************************************************
 
-	public List<BasicBlock> getPreds() {
-		return preds;
-	}
+  public List<Integer> getInstrOldOffsets() {
+    return instrOldOffsets;
+  }
 
-	public InstructionSequence getSeq() {
-		return seq;
-	}
+  @Override
+  public List<? extends IGraphNode> getPredecessors() {
+    List<BasicBlock> lst = new ArrayList<>(preds);
+    lst.addAll(predExceptions);
+    return lst;
+  }
 
-	public void setSeq(InstructionSequence seq) {
-		this.seq = seq;
-	}
+  public List<BasicBlock> getPreds() {
+    return preds;
+  }
 
-	public List<BasicBlock> getSuccs() {
-		return succs;
-	}
+  public InstructionSequence getSeq() {
+    return seq;
+  }
 
-	public List<BasicBlock> getSuccExceptions() {
-		return succExceptions;
-	}
+  public void setSeq(InstructionSequence seq) {
+    this.seq = seq;
+  }
 
-	public List<BasicBlock> getPredExceptions() {
-		return predExceptions;
-	}
+  public List<BasicBlock> getSuccs() {
+    return succs;
+  }
+
+  public List<BasicBlock> getSuccExceptions() {
+    return succExceptions;
+  }
+
+  public List<BasicBlock> getPredExceptions() {
+    return predExceptions;
+  }
 }

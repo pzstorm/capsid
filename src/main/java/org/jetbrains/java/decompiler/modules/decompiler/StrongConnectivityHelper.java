@@ -1,123 +1,115 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be
-// found in the LICENSE file.
+// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.java.decompiler.modules.decompiler;
-
-import java.util.*;
 
 import org.jetbrains.java.decompiler.modules.decompiler.stats.Statement;
 import org.jetbrains.java.decompiler.util.ListStack;
 
+import java.util.*;
+
 public class StrongConnectivityHelper {
+  private final List<List<Statement>> components;
+  private final Set<Statement> setProcessed;
 
-	private final List<List<Statement>> components;
-	private final Set<Statement> setProcessed;
+  private ListStack<Statement> lstack;
+  private int ncounter;
+  private Set<Statement> tset;
+  private Map<Statement, Integer> dfsnummap;
+  private Map<Statement, Integer> lowmap;
 
-	private ListStack<Statement> lstack;
-	private int ncounter;
-	private Set<Statement> tset;
-	private Map<Statement, Integer> dfsnummap;
-	private Map<Statement, Integer> lowmap;
+  public StrongConnectivityHelper(Statement stat) {
+    components = new ArrayList<>();
+    setProcessed = new HashSet<>();
 
-	public StrongConnectivityHelper(Statement stat) {
-		components = new ArrayList<>();
-		setProcessed = new HashSet<>();
+    visitTree(stat.getFirst());
 
-		visitTree(stat.getFirst());
+    for (Statement st : stat.getStats()) {
+      if (!setProcessed.contains(st) && st.getPredecessorEdges(Statement.STATEDGE_DIRECT_ALL).isEmpty()) {
+        visitTree(st);
+      }
+    }
 
-		for (Statement st : stat.getStats())
-		{
-			if (!setProcessed.contains(st) && st.getPredecessorEdges(Statement.STATEDGE_DIRECT_ALL).isEmpty()) {
-				visitTree(st);
-			}
-		}
+    // should not find any more nodes! FIXME: ??
+    for (Statement st : stat.getStats()) {
+      if (!setProcessed.contains(st)) {
+        visitTree(st);
+      }
+    }
+  }
 
-		// should not find any more nodes! FIXME: ??
-		for (Statement st : stat.getStats())
-		{
-			if (!setProcessed.contains(st)) {
-				visitTree(st);
-			}
-		}
-	}
+  private void visitTree(Statement stat) {
+    lstack = new ListStack<>();
+    ncounter = 0;
+    tset = new HashSet<>();
+    dfsnummap = new HashMap<>();
+    lowmap = new HashMap<>();
 
-	public static boolean isExitComponent(List<? extends Statement> lst) {
-		Set<Statement> set = new HashSet<>();
-		for (Statement stat : lst) {
-			set.addAll(stat.getNeighbours(StatEdge.TYPE_REGULAR, Statement.DIRECTION_FORWARD));
-		}
-		for (Statement stat : lst) {
-			set.remove(stat);
-		}
+    visit(stat);
 
-		return (set.size() == 0);
-	}
+    setProcessed.addAll(tset);
+    setProcessed.add(stat);
+  }
 
-	public static List<Statement> getExitReps(List<? extends List<Statement>> lst) {
-		List<Statement> res = new ArrayList<>();
+  private void visit(Statement stat) {
+    lstack.push(stat);
+    dfsnummap.put(stat, ncounter);
+    lowmap.put(stat, ncounter);
+    ncounter++;
 
-		for (List<Statement> comp : lst)
-		{
-			if (isExitComponent(comp)) {
-				res.add(comp.get(0));
-			}
-		}
+    List<Statement> lstSuccs = stat.getNeighbours(StatEdge.TYPE_REGULAR, Statement.DIRECTION_FORWARD); // TODO: set?
+    lstSuccs.removeAll(setProcessed);
 
-		return res;
-	}
+    for (Statement succ : lstSuccs) {
+      int secvalue;
 
-	private void visitTree(Statement stat) {
-		lstack = new ListStack<>();
-		ncounter = 0;
-		tset = new HashSet<>();
-		dfsnummap = new HashMap<>();
-		lowmap = new HashMap<>();
+      if (tset.contains(succ)) {
+        secvalue = dfsnummap.get(succ);
+      }
+      else {
+        tset.add(succ);
+        visit(succ);
+        secvalue = lowmap.get(succ);
+      }
+      lowmap.put(stat, Math.min(lowmap.get(stat), secvalue));
+    }
 
-		visit(stat);
 
-		setProcessed.addAll(tset);
-		setProcessed.add(stat);
-	}
+    if (lowmap.get(stat).intValue() == dfsnummap.get(stat).intValue()) {
+      List<Statement> lst = new ArrayList<>();
+      Statement v;
+      do {
+        v = lstack.pop();
+        lst.add(v);
+      }
+      while (v != stat);
+      components.add(lst);
+    }
+  }
 
-	private void visit(Statement stat) {
-		lstack.push(stat);
-		dfsnummap.put(stat, ncounter);
-		lowmap.put(stat, ncounter);
-		ncounter++;
+  public static boolean isExitComponent(List<? extends Statement> lst) {
+    Set<Statement> set = new HashSet<>();
+    for (Statement stat : lst) {
+      set.addAll(stat.getNeighbours(StatEdge.TYPE_REGULAR, Statement.DIRECTION_FORWARD));
+    }
+    for (Statement stat : lst) {
+      set.remove(stat);
+    }
 
-		List<Statement> lstSuccs = stat.getNeighbours(StatEdge.TYPE_REGULAR, Statement.DIRECTION_FORWARD); // TODO:
-		// set?
-		lstSuccs.removeAll(setProcessed);
+    return (set.size() == 0);
+  }
 
-		for (Statement succ : lstSuccs)
-		{
-			int secvalue;
+  public static List<Statement> getExitReps(List<? extends List<Statement>> lst) {
+    List<Statement> res = new ArrayList<>();
 
-			if (tset.contains(succ)) {
-				secvalue = dfsnummap.get(succ);
-			}
-			else {
-				tset.add(succ);
-				visit(succ);
-				secvalue = lowmap.get(succ);
-			}
-			lowmap.put(stat, Math.min(lowmap.get(stat), secvalue));
-		}
+    for (List<Statement> comp : lst) {
+      if (isExitComponent(comp)) {
+        res.add(comp.get(0));
+      }
+    }
 
-		if (lowmap.get(stat).intValue() == dfsnummap.get(stat).intValue())
-		{
-			List<Statement> lst = new ArrayList<>();
-			Statement v;
-			do
-			{
-				v = lstack.pop();
-				lst.add(v);
-			}
-			while (v != stat);
-			components.add(lst);
-		}
-	}
+    return res;
+  }
 
-	public List<List<Statement>> getComponents() {
-		return components;
-	}
+  public List<List<Statement>> getComponents() {
+    return components;
+  }
 }
