@@ -2,6 +2,9 @@
 /shelf/
 /workspace.xml
 
+# Other files
+.name
+
 # Run configurations and scopes
 runConfigurations
 scopes
