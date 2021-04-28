@@ -17,6 +17,8 @@
  */
 package io.pzstorm.capsid.setup;
 
+import java.nio.file.Path;
+
 @SuppressWarnings("SpellCheckingInspection")
 public class VmParameter {
 
@@ -38,6 +40,12 @@ public class VmParameter {
 	/** Disables completely the use of pre-allocated exception. */
 	public final boolean omitStackTraceInFastThrow;
 
+	/** Path for native libraries to be loaded from. */
+	public final String javaLibraryPath;
+
+	/** Path for {@code LWJGL} libraries to be loaded from. */
+	public final String lwjglLibraryPath;
+
 	/** Initial memory allocation pool for Java Virtual Machine. */
 	public final int xms;
 
@@ -52,6 +60,8 @@ public class VmParameter {
 		this.useConcMarkSweepGC = builder.useConcMarkSweepGC;
 		this.createMinidumpOnCrash = builder.createMinidumpOnCrash;
 		this.omitStackTraceInFastThrow = builder.omitStackTraceInFastThrow;
+		this.javaLibraryPath = builder.javaLibraryPath;
+		this.lwjglLibraryPath = builder.lwjglLibraryPath;
 		this.xms = builder.xms;
 		this.xmx = builder.xmx;
 	}
@@ -81,13 +91,22 @@ public class VmParameter {
 	@Override
 	public String toString() {
 
-		String[] expOptions = new String[]{
+		String expOptions = String.join(" ", new String[]{
 				formatAdvancedRuntimeOption("UseConcMarkSweepGC", useConcMarkSweepGC),
 				formatAdvancedRuntimeOption("CreateMinidumpOnCrash", createMinidumpOnCrash),
 				formatAdvancedRuntimeOption("OmitStackTraceInFastThrow", omitStackTraceInFastThrow)
-		};
-		return String.format("-Ddebug=%d -Dzomboid.steam=%d -Dzomboid.znetlog=%d %s -Xms%dm -Xmx%dm",
-				isDebug ? 1 : 0, steamIntegration ? 1 : 0, zNetLog, String.join(" ", expOptions), xms, xmx);
+		});
+		String result = String.format(
+				"-Ddebug=%d -Dzomboid.steam=%d -Dzomboid.znetlog=%d %s -Xms%dm -Xmx%dm",
+				isDebug ? 1 : 0, steamIntegration ? 1 : 0, zNetLog, expOptions, xms, xmx
+		);
+		if (!javaLibraryPath.isEmpty()) {
+			result += "-Djava.library.path=" + javaLibraryPath;
+		}
+		if (!lwjglLibraryPath.isEmpty()) {
+			result += "Dorg.lwjgl.librarypath=" + lwjglLibraryPath;
+		}
+		return result;
 	}
 
 	//@formatter:off
@@ -100,6 +119,9 @@ public class VmParameter {
 		private boolean useConcMarkSweepGC = true;
 		private boolean createMinidumpOnCrash = false;
 		private boolean omitStackTraceInFastThrow = false;
+
+		private String javaLibraryPath = "";
+		private String lwjglLibraryPath = "";
 
 		private int xms = 1800;
 		private int xmx = 2048;
@@ -165,6 +187,22 @@ public class VmParameter {
 		 */
 		public Builder withMaximumMemoryAllocation(int size) {
 			this.xmx = size;
+			return this;
+		}
+
+		/**
+		 * Set path for native libraries to be loaded from.
+		 */
+		public Builder withJavaLibraryPath(Path path) {
+			this.javaLibraryPath = path.toString();
+			return this;
+		}
+
+		/**
+		 * Set path for {@code LWJGL} libraries to be loaded from.
+		 */
+		public Builder withLwjglLibraryPath(Path path) {
+			this.lwjglLibraryPath = path.toString();
 			return this;
 		}
 

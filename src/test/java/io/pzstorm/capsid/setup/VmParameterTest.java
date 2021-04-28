@@ -17,6 +17,7 @@
  */
 package io.pzstorm.capsid.setup;
 
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,6 +54,8 @@ class VmParameterTest extends PluginUnitTest {
 				.withConcurrentMarkSweepCollection(false)
 				.withMinidumpOnCrash(false)
 				.withOmittingStackTraceInFastThrow(false)
+				.withJavaLibraryPath(Paths.get("/home/libs/java"))
+				.withLwjglLibraryPath(Paths.get("/home/libs/lwjgl"))
 				.withInitialMemoryAllocation(250)
 				.withMaximumMemoryAllocation(4096)
 				.build();
@@ -64,6 +67,12 @@ class VmParameterTest extends PluginUnitTest {
 		Assertions.assertFalse(parameters.useConcMarkSweepGC);
 		Assertions.assertFalse(parameters.createMinidumpOnCrash);
 		Assertions.assertFalse(parameters.omitStackTraceInFastThrow);
+
+		String javaLibPath = Paths.get("/home/libs/java").toString();
+		Assertions.assertEquals(javaLibPath, parameters.javaLibraryPath);
+
+		String lwjglLibPath = Paths.get("/home/libs/lwjgl").toString();
+		Assertions.assertEquals(lwjglLibPath, parameters.lwjglLibraryPath);
 
 		Assertions.assertEquals(250, parameters.xms);
 		Assertions.assertEquals(4096, parameters.xmx);
