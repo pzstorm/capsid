@@ -17,7 +17,7 @@
  */
 package io.pzstorm.capsid.setup;
 
-import java.nio.file.Path;
+import org.gradle.internal.os.OperatingSystem;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class VmParameter {
@@ -40,11 +40,11 @@ public class VmParameter {
 	/** Disables completely the use of pre-allocated exception. */
 	public final boolean omitStackTraceInFastThrow;
 
-	/** Path for native libraries to be loaded from. */
-	public final String javaLibraryPath;
+	/** Paths for native libraries to be loaded from. */
+	public final String[] javaLibraryPaths;
 
-	/** Path for {@code LWJGL} libraries to be loaded from. */
-	public final String lwjglLibraryPath;
+	/** Paths for {@code LWJGL} libraries to be loaded from. */
+	public final String[] lwjglLibraryPaths;
 
 	/** Initial memory allocation pool for Java Virtual Machine. */
 	public final int xms;
@@ -60,8 +60,8 @@ public class VmParameter {
 		this.useConcMarkSweepGC = builder.useConcMarkSweepGC;
 		this.createMinidumpOnCrash = builder.createMinidumpOnCrash;
 		this.omitStackTraceInFastThrow = builder.omitStackTraceInFastThrow;
-		this.javaLibraryPath = builder.javaLibraryPath;
-		this.lwjglLibraryPath = builder.lwjglLibraryPath;
+		this.javaLibraryPaths = builder.javaLibraryPaths;
+		this.lwjglLibraryPaths = builder.lwjglLibraryPaths;
 		this.xms = builder.xms;
 		this.xmx = builder.xmx;
 	}
@@ -88,6 +88,15 @@ public class VmParameter {
 		return String.format("-XX:%c%s", flag ? '+' : '-', name);
 	}
 
+	/**
+	 * Returns delimiter to be used to separate {@code VMParamter} paths
+	 * depending on the operating system platform the user is on.
+	 * Use {@code ;} on Windows and {@code :} on other platforms.
+	 */
+	public static String getPathDelimiter() {
+		return OperatingSystem.current() == OperatingSystem.WINDOWS ? ";" : ":";
+	}
+
 	@Override
 	public String toString() {
 
@@ -96,17 +105,32 @@ public class VmParameter {
 				formatAdvancedRuntimeOption("CreateMinidumpOnCrash", createMinidumpOnCrash),
 				formatAdvancedRuntimeOption("OmitStackTraceInFastThrow", omitStackTraceInFastThrow)
 		});
-		String result = String.format(
-				"-Ddebug=%d -Dzomboid.steam=%d -Dzomboid.znetlog=%d %s -Xms%dm -Xmx%dm",
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("-Ddebug=%d -Dzomboid.steam=%d -Dzomboid.znetlog=%d %s -Xms%dm -Xmx%dm",
 				isDebug ? 1 : 0, steamIntegration ? 1 : 0, zNetLog, expOptions, xms, xmx
-		);
-		if (!javaLibraryPath.isEmpty()) {
-			result += "-Djava.library.path=" + javaLibraryPath;
+		));
+		String delimiter = getPathDelimiter();
+		if (javaLibraryPaths.length > 0)
+		{
+			sb.append(" -Djava.library.path=").append(javaLibraryPaths[0]);
+			if (javaLibraryPaths.length > 1)
+			{
+				for (int i = 1; i < javaLibraryPaths.length; i++) {
+					sb.append(delimiter).append(javaLibraryPaths[i]);
+				}
+			}
 		}
-		if (!lwjglLibraryPath.isEmpty()) {
-			result += "Dorg.lwjgl.librarypath=" + lwjglLibraryPath;
+		if (lwjglLibraryPaths.length > 0)
+		{
+			sb.append(" -Dorg.lwjgl.librarypath=").append(lwjglLibraryPaths[0]);
+			if (lwjglLibraryPaths.length > 1)
+			{
+				for (int i = 1; i < lwjglLibraryPaths.length; i++) {
+					sb.append(delimiter).append(lwjglLibraryPaths[i]);
+				}
+			}
 		}
-		return result;
+		return sb.toString();
 	}
 
 	//@formatter:off
@@ -120,8 +144,8 @@ public class VmParameter {
 		private boolean createMinidumpOnCrash = false;
 		private boolean omitStackTraceInFastThrow = false;
 
-		private String javaLibraryPath = "";
-		private String lwjglLibraryPath = "";
+		private String[] javaLibraryPaths = new String[0];
+		private String[] lwjglLibraryPaths = new String[0];
 
 		private int xms = 1800;
 		private int xmx = 2048;
@@ -191,18 +215,18 @@ public class VmParameter {
 		}
 
 		/**
-		 * Set path for native libraries to be loaded from.
+		 * Set paths for native libraries to be loaded from.
 		 */
-		public Builder withJavaLibraryPath(Path path) {
-			this.javaLibraryPath = path.toString();
+		public Builder withJavaLibraryPaths(String...paths) {
+			this.javaLibraryPaths = paths;
 			return this;
 		}
 
 		/**
 		 * Set path for {@code LWJGL} libraries to be loaded from.
 		 */
-		public Builder withLwjglLibraryPath(Path path) {
-			this.lwjglLibraryPath = path.toString();
+		public Builder withLwjglLibraryPaths(String...paths) {
+			this.lwjglLibraryPaths = paths;
 			return this;
 		}
 
