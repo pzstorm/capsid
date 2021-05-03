@@ -26,26 +26,27 @@ import java.util.Map;
 
 public class GradleRunConfig extends XMLDocument {
 
+	//@formatter:off
 	public static final GradleRunConfig SETUP_WORKSPACE = new GradleRunConfig(
 			"setupWorkspace", ImmutableMap.of(
-					OptionType.BEFORE_RUN_TASK, "createRunConfigurations",
-					OptionType.BEFORE_RUN_TASK, "createSearchScopes",
-					OptionType.BEFORE_RUN_TASK, "createDiscordIntegration",
-					OptionType.RUN_CONFIG_TASK, "decompileZomboid",
-					OptionType.RUN_CONFIG_TASK, "runZomboidDoc"
-			)
+					"createRunConfigurations", OptionType.BEFORE_RUN_TASK,
+					"createSearchScopes", OptionType.BEFORE_RUN_TASK,
+					"createDiscordIntegration", OptionType.BEFORE_RUN_TASK,
+					"decompileZomboid", OptionType.RUN_CONFIG_TASK,
+					"runZomboidDoc", OptionType.RUN_CONFIG_TASK)
 	);
 	public static final GradleRunConfig INITIALIZE_MOD = new GradleRunConfig(
 			"initializeMod", ImmutableMap.of(
-					OptionType.BEFORE_RUN_TASK, "initLocalProperties",
-					OptionType.BEFORE_RUN_TASK, "initModInfo",
-					OptionType.BEFORE_RUN_TASK, "createModStructure",
-					OptionType.BEFORE_RUN_TASK, "applyModTemplate"
+					"initLocalProperties", OptionType.BEFORE_RUN_TASK,
+					"initModMetadata", OptionType.BEFORE_RUN_TASK,
+					"createModStructure", OptionType.BEFORE_RUN_TASK,
+					"applyModTemplate", OptionType.BEFORE_RUN_TASK
 			)
-	);
-	private final Map<OptionType, String> options;
+	);//@formatter:on
+	private final Map<String, OptionType> options;
 
-	public GradleRunConfig(String name, Map<OptionType, String> options) {
+	public GradleRunConfig(String name, Map<String, OptionType> options) {
+
 		super(name, Paths.get(".idea/runConfigurations"));
 		this.options = options;
 	}
@@ -78,20 +79,20 @@ public class GradleRunConfig extends XMLDocument {
 
 		// <option name="externalProjectPath" value="$PROJECT_DIR$" />
 		Element externalProjectPath = document.createElement("option");
-		executionNameOption.setAttribute("name", "externalProjectPath");
-		executionNameOption.setAttribute("value", "$PROJECT_DIR$");
+		externalProjectPath.setAttribute("name", "externalProjectPath");
+		externalProjectPath.setAttribute("value", "$PROJECT_DIR$");
 		externalSystemSettings.appendChild(externalProjectPath);
 
 		// <option name="externalSystemIdString" value="GRADLE" />
 		Element externalSystemIdString = document.createElement("option");
-		executionNameOption.setAttribute("name", "externalSystemIdString");
-		executionNameOption.setAttribute("value", "GRADLE");
+		externalSystemIdString.setAttribute("name", "externalSystemIdString");
+		externalSystemIdString.setAttribute("value", "GRADLE");
 		externalSystemSettings.appendChild(externalSystemIdString);
 
 		// <option name="scriptParameters" value="" />
 		Element scriptParameters = document.createElement("option");
-		executionNameOption.setAttribute("name", "scriptParameters");
-		executionNameOption.setAttribute("value", "");
+		scriptParameters.setAttribute("name", "scriptParameters");
+		scriptParameters.setAttribute("value", "");
 		externalSystemSettings.appendChild(scriptParameters);
 
 		// <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
@@ -114,15 +115,15 @@ public class GradleRunConfig extends XMLDocument {
 		method.setAttribute("v", "2");
 		configuration.appendChild(method);
 
-		for (Map.Entry<OptionType, String> entry : options.entrySet())
+		for (Map.Entry<String, OptionType> entry : options.entrySet())
 		{
-			OptionType type = entry.getKey();
+			OptionType type = entry.getValue();
 			if (type == OptionType.BEFORE_RUN_TASK)
 			{
 				Element beforeRunTask = document.createElement("option");
 				beforeRunTask.setAttribute("name", type.name);
 				beforeRunTask.setAttribute("enabled", "true");
-				beforeRunTask.setAttribute("tasks", entry.getValue());
+				beforeRunTask.setAttribute("tasks", entry.getKey());
 				beforeRunTask.setAttribute("externalProjectPath", "$PROJECT_DIR$");
 				beforeRunTask.setAttribute("vmOptions", "");
 				beforeRunTask.setAttribute("scriptParameters", "");
@@ -133,7 +134,7 @@ public class GradleRunConfig extends XMLDocument {
 				Element decompileZomboid = document.createElement("option");
 				decompileZomboid.setAttribute("name", type.name);
 				decompileZomboid.setAttribute("enabled", "true");
-				decompileZomboid.setAttribute("run_configuration_name", entry.getValue());
+				decompileZomboid.setAttribute("run_configuration_name", entry.getKey());
 				decompileZomboid.setAttribute("run_configuration_type", "GradleRunConfiguration");
 				method.appendChild(decompileZomboid);
 			}
