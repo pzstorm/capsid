@@ -47,8 +47,8 @@ class CreateLaunchConfigsTaskFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldWriteToFileLaunchRunConfigurationsFromTask() throws IOException {
 
-		BuildResult result = getRunner().withArguments(SetupTasks.CREATE_LAUNCH_CONFIGS.name).build();
-		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_LAUNCH_CONFIGS.name);
+		BuildResult result = getRunner().withArguments(SetupTasks.CREATE_RUN_CONFIGS.name).build();
+		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_RUN_CONFIGS.name);
 
 		File runConfigurations = new File(getProjectDir(), ".idea/runConfigurations");
 		for (Map.Entry<LaunchRunConfig, String> entry : RUN_CONFIGS.entrySet())

@@ -33,7 +33,7 @@ import io.pzstorm.capsid.setup.xml.ModSearchScope;
  *
  * @see ModSearchScope
  */
-public class CreateModSearchScopesTask extends DefaultTask implements CapsidTask {
+public class CreateSearchScopesTask extends DefaultTask implements CapsidTask {
 
 	@TaskAction
 	void execute() throws IOException, TransformerException {

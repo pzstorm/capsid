@@ -21,8 +21,8 @@ import org.gradle.api.Project;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.setup.task.CreateDiscordIntegrationTask;
-import io.pzstorm.capsid.setup.task.CreateLaunchConfigsTask;
-import io.pzstorm.capsid.setup.task.CreateModSearchScopesTask;
+import io.pzstorm.capsid.setup.task.CreateRunConfigurationsTask;
+import io.pzstorm.capsid.setup.task.CreateSearchScopesTask;
 import io.pzstorm.capsid.setup.task.InitLocalPropertiesTask;
 
 /**
@@ -33,10 +33,10 @@ public enum SetupTasks {
 	INIT_LOCAL_PROPERTIES(InitLocalPropertiesTask.class, "initLocalProperties",
 			"Initialize local project properties."
 	),
-	CREATE_LAUNCH_CONFIGS(CreateLaunchConfigsTask.class, "createLaunchRunConfigs",
-			"Create game launch run configurations."
+	CREATE_RUN_CONFIGS(CreateRunConfigurationsTask.class, "createRunConfigurations",
+			"Create useful IDEA run configurations."
 	),
-	CREATE_SEARCH_SCOPES(CreateModSearchScopesTask.class, "createSearchScopes",
+	CREATE_SEARCH_SCOPES(CreateSearchScopesTask.class, "createSearchScopes",
 			"Create IDEA search scopes for project files."
 	),
 	CREATE_DISCORD_INTEGRATION(CreateDiscordIntegrationTask.class, "createDiscordIntegration",

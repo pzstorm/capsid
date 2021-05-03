@@ -29,11 +29,11 @@ import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.setup.xml.LaunchRunConfig;
 
 /**
- * This task will create game launch run configurations for IDEA.
+ * This task will create useful IDEA run configurations.
  *
  * @see LaunchRunConfig
  */
-public class CreateLaunchConfigsTask extends DefaultTask implements CapsidTask {
+public class CreateRunConfigurationsTask extends DefaultTask implements CapsidTask {
 
 	@TaskAction
 	void execute() throws IOException, TransformerException {
