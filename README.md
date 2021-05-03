@@ -119,8 +119,8 @@ Capsid handles this for you. Just run `assembleDist` and a distribution archive 
 ### Setup tasks
 
 - `initLocalProperties` - Initialize local project properties.
-- `createLaunchRunConfigs` - Create game launch run configurations.
-- `createModSearchScopes` - Create IDEA search scopes for mod files.
+- `createRunConfigurations` - Create useful IDEA run configurations.
+- `createSearchScopes` - Create IDEA search scopes for project files.
 - `createDiscordIntegration` - Show IDEA project in Discord via rich presence.
 
 ### Zomboid tasks
