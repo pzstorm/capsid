@@ -34,7 +34,7 @@ import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.setup.SetupTasks;
 import io.pzstorm.capsid.util.Utils;
 
-class CreateModSearchScopesFunctionalTest extends PluginFunctionalTest {
+class CreateSearchScopesFunctionalTest extends PluginFunctionalTest {
 
 	private static final ImmutableMap<ModSearchScope, String> SEARCH_SCOPES = ImmutableMap.of(
 			ModSearchScope.MOD_LUA, "mod_lua.xml",
@@ -47,7 +47,7 @@ class CreateModSearchScopesFunctionalTest extends PluginFunctionalTest {
 			ModSearchScope.MOD_MEDIA, new String[]{ "mod_media.xml", "mod_media_subproject.xml" }
 	);
 
-	CreateModSearchScopesFunctionalTest() {
+	CreateSearchScopesFunctionalTest() {
 		super("modSearchScopes");
 	}
 
