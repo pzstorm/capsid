@@ -35,7 +35,14 @@ public class GradleRunConfig extends XMLDocument {
 					OptionType.RUN_CONFIG_TASK, "runZomboidDoc"
 			)
 	);
-
+	public static final GradleRunConfig INITIALIZE_MOD = new GradleRunConfig(
+			"initializeMod", ImmutableMap.of(
+					OptionType.BEFORE_RUN_TASK, "initLocalProperties",
+					OptionType.BEFORE_RUN_TASK, "initModInfo",
+					OptionType.BEFORE_RUN_TASK, "createModStructure",
+					OptionType.BEFORE_RUN_TASK, "applyModTemplate"
+			)
+	);
 	private final Map<OptionType, String> options;
 
 	public GradleRunConfig(String name, Map<OptionType, String> options) {

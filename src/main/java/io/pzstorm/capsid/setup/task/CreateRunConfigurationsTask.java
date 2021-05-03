@@ -48,5 +48,6 @@ public class CreateRunConfigurationsTask extends DefaultTask implements CapsidTa
 		LaunchRunConfig.DEBUG_ZOMBOID_LOCAL.configure(project).writeToFile();
 
 		GradleRunConfig.SETUP_WORKSPACE.configure(project).writeToFile();
+		GradleRunConfig.INITIALIZE_MOD.configure(project).writeToFile();
 	}
 }
