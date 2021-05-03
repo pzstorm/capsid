@@ -36,8 +36,8 @@ public enum SetupTasks {
 	CREATE_LAUNCH_CONFIGS(CreateLaunchConfigsTask.class, "createLaunchRunConfigs",
 			"Create game launch run configurations."
 	),
-	CREATE_MOD_SEARCH_SCOPES(CreateModSearchScopesTask.class, "createModSearchScopes",
-			"Create IDEA search scopes for mod files."
+	CREATE_SEARCH_SCOPES(CreateModSearchScopesTask.class, "createSearchScopes",
+			"Create IDEA search scopes for project files."
 	),
 	CREATE_DISCORD_INTEGRATION(CreateDiscordIntegrationTask.class, "createDiscordIntegration",
 			"Show IDEA project in Discord via rich presence."
