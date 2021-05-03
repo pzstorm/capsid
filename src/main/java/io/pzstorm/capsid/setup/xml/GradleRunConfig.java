@@ -26,6 +26,16 @@ import java.util.Map;
 
 public class GradleRunConfig extends XMLDocument {
 
+	public static final GradleRunConfig SETUP_WORKSPACE = new GradleRunConfig(
+			"setupWorkspace", ImmutableMap.of(
+					OptionType.BEFORE_RUN_TASK, "createRunConfigurations",
+					OptionType.BEFORE_RUN_TASK, "createSearchScopes",
+					OptionType.BEFORE_RUN_TASK, "createDiscordIntegration",
+					OptionType.RUN_CONFIG_TASK, "decompileZomboid",
+					OptionType.RUN_CONFIG_TASK, "runZomboidDoc"
+			)
+	);
+
 	private final Map<OptionType, String> options;
 
 	public GradleRunConfig(String name, Map<OptionType, String> options) {
@@ -34,7 +44,7 @@ public class GradleRunConfig extends XMLDocument {
 	}
 
 	@Override
-	XMLDocument configure(Project project) {
+	public XMLDocument configure(Project project) {
 
 		// <component name="ProjectRunConfigurationManager">
 		Element component = document.createElement("component");
