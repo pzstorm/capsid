@@ -3,6 +3,7 @@
 /workspace.xml
 
 # Other files
+libraries-with-intellij-classes.xml
 .name
 
 # Run configurations and scopes
