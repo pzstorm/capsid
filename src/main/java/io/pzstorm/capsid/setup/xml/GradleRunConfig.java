@@ -40,7 +40,7 @@ public class GradleRunConfig extends XMLDocument {
 	);
 	public static final GradleRunConfig INITIALIZE_MOD = new GradleRunConfig(
 			"initializeMod", ImmutableMap.of(
-					"initLocalProperties", OptionType.BEFORE_RUN_TASK,
+					"setGameDirectory", OptionType.BEFORE_RUN_TASK,
 					"initModMetadata", OptionType.BEFORE_RUN_TASK,
 					"createModStructure", OptionType.BEFORE_RUN_TASK,
 					"applyModTemplate", OptionType.BEFORE_RUN_TASK

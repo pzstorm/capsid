@@ -34,9 +34,9 @@ import io.pzstorm.capsid.property.CapsidProperty;
 import io.pzstorm.capsid.setup.LocalProperties;
 
 /**
- * This task will initialize local properties by asking for user input.
+ * This task will initialize game directory by asking for user input.
  */
-public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
+public class setGameDirectoryTask extends DefaultTask implements CapsidTask {
 
 	@TaskAction
 	void execute() throws IOException {
