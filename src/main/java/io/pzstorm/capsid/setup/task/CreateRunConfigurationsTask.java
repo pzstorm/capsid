@@ -18,9 +18,12 @@
 package io.pzstorm.capsid.setup.task;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Objects;
 
 import javax.xml.transform.TransformerException;
 
+import io.pzstorm.capsid.setup.LocalProperties;
 import io.pzstorm.capsid.setup.SetupTasks;
 import io.pzstorm.capsid.setup.xml.GradleRunConfig;
 import org.gradle.api.DefaultTask;
@@ -29,6 +32,7 @@ import org.gradle.api.tasks.TaskAction;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.setup.xml.LaunchRunConfig;
+import org.gradle.internal.os.OperatingSystem;
 
 /**
  * This task will create useful IDEA run configurations.
@@ -49,12 +53,25 @@ public class CreateRunConfigurationsTask extends DefaultTask implements CapsidTa
 
 		Project project = getProject();
 
-		LaunchRunConfig.RUN_ZOMBOID.configure(project).writeToFile();
-		LaunchRunConfig.RUN_ZOMBOID_LOCAL.configure(project).writeToFile();
-
-		LaunchRunConfig.DEBUG_ZOMBOID.configure(project).writeToFile();
-		LaunchRunConfig.DEBUG_ZOMBOID_LOCAL.configure(project).writeToFile();
-
+		LaunchRunConfig[] launchRunConfigs = new LaunchRunConfig[] {
+				LaunchRunConfig.RUN_ZOMBOID, LaunchRunConfig.RUN_ZOMBOID_LOCAL,
+				LaunchRunConfig.DEBUG_ZOMBOID, LaunchRunConfig.DEBUG_ZOMBOID_LOCAL
+		};
+		for (LaunchRunConfig launchRunConfig : launchRunConfigs)
+		{
+			// linux platform requires additional path properties to be set
+			if (OperatingSystem.current() == OperatingSystem.LINUX)
+			{
+				Path gameDir = Objects.requireNonNull(LocalProperties.GAME_DIR.findProperty(project)).convert();
+				launchRunConfig.vmParamBuilder.withJavaLibraryPaths(
+						gameDir.toString(), gameDir.resolve("linux64").toString(),
+						gameDir.resolve("jre64/lib/amd64").toString()
+				);
+				launchRunConfig.vmParamBuilder.withLwjglLibraryPaths(gameDir.toString());
+			}
+			// configure and write to file
+			launchRunConfig.configure(project).writeToFile();
+		}
 		GradleRunConfig.SETUP_WORKSPACE.configure(project).writeToFile();
 		GradleRunConfig.INITIALIZE_MOD.configure(project).writeToFile();
 	}
