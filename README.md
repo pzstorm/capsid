@@ -39,6 +39,13 @@ plugins {
 
 ## How to use it
 
+### Setup
+
+- Run `createRunConfigurations` Gradle task. In the lower half of the screen you can find the task execution log which will ask you to *enter path to game installation directory*. This is the directory where you installed Project Zomboid. Click on the line **below** the input line and enter the path installation directory.
+- Run `setupWorkspace` IDEA run configuration. This will setup everything from creating IDEA/Discord integration to decompiling the game for you.
+- Attach decompiled sources to assembled Zomboid jar. For more information see [Setup](https://github.com/cocolabs/pz-zmod#setup) in ZomboidMod documentation.
+- Run `initializeMod` IDEA run configuration. After running this configuration you will be asked to input details about your mod such as name, description and URL. Click on the line **below** the input and enter the details asked by the task.
+
 ### Project license
 
 It is important to license your project with an appropriate open source license to ensure others have the right to copy, distribute or modify your work without being at risk of take-downs, shake-downs, or litigation.
