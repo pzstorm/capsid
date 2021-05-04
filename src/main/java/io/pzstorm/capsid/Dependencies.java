@@ -18,7 +18,6 @@
 package io.pzstorm.capsid;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,9 +48,12 @@ public enum Dependencies {
 	/**
 	 * Project Zomboid Java classes.
 	 */
-	ZOMBOID_CLASSES("zomboidImplementation", project -> ImmutableSet.of(
-			project.files(Paths.get("lib", "zomboid.jar")))
-	),
+	ZOMBOID_CLASSES("zomboidImplementation", false, project -> {
+		String modPzVersion = ModProperties.PZ_VERSION.findProperty(project);
+		return ImmutableSet.of(project.files(String.format("lib/zomboid%s.jar",
+				modPzVersion != null && !modPzVersion.isEmpty() ? "-" + modPzVersion : "")
+		));
+	}),
 
 	/**
 	 * Lua library compiler for Project Zomboid.
@@ -67,21 +69,26 @@ public enum Dependencies {
 	/**
 	 * Lua library compiled with ZomboidDoc.
 	 */
-	LUA_LIBRARY("compileOnly", project -> {
-		String modPzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
-		if (modPzVersion != null) {
-			return ImmutableSet.of(project.files(String.format("lib/zdoc-lua-%s.jar", modPzVersion)));
-		}
-		else return ImmutableSet.of();
+	LUA_LIBRARY("compileOnly", false, project -> {
+		String modPzVersion = ModProperties.PZ_VERSION.findProperty(project);
+		return ImmutableSet.of(project.files(String.format("lib/zdoc-lua%s.jar",
+				modPzVersion != null && !modPzVersion.isEmpty() ? "-" + modPzVersion : "")
+		));
 	});
 
 	final String configuration;
+	final boolean availablePreEval;
 	private final DependencyResolver resolver;
 
-	Dependencies(String configuration, DependencyResolver resolver) {
+	Dependencies(String configuration, boolean availablePreEval, DependencyResolver resolver) {
 
 		this.configuration = configuration;
+		this.availablePreEval = availablePreEval;
 		this.resolver = resolver;
+	}
+
+	Dependencies(String configuration, DependencyResolver resolver) {
+		this(configuration, true, resolver);
 	}
 
 	/**
