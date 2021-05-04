@@ -48,7 +48,7 @@ public abstract class PluginFunctionalTest {
 
 	private Project project;
 	private File projectDir;
-	private UnixPath gameDir, ideaHome;
+	private UnixPath gameDir;
 	private CapsidGradleRunner runner;
 
 	protected PluginFunctionalTest() {
@@ -111,15 +111,9 @@ public abstract class PluginFunctionalTest {
 			Files.createDirectory(createDir);
 			Assertions.assertTrue(createDir.toFile().exists());
 		}
-		ideaHome = UnixPath.get(new File(projectDir, "ideaHome"));
-		Files.createDirectory(ideaHome.convert());
-
 		// add project properties
 		//noinspection SpellCheckingInspection
-		runner.withArguments(
-				"-PgameDir=" + gameDir.toString(),
-				"-PideaHome=" + ideaHome.toString()
-		);
+		runner.withArguments("-PgameDir=" + gameDir.toString());
 	}
 
 	private Project initializeProject() {
@@ -127,7 +121,6 @@ public abstract class PluginFunctionalTest {
 		this.project = ProjectBuilder.builder().withProjectDir(projectDir).build();
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 		ext.set("gameDir", gameDir.toString());
-		ext.set("ideaHome", ideaHome.toString());
 		return project;
 	}
 
@@ -145,10 +138,6 @@ public abstract class PluginFunctionalTest {
 
 	protected UnixPath getGameDirPath() {
 		return gameDir;
-	}
-
-	protected UnixPath getIdeaHomePath() {
-		return ideaHome;
 	}
 
 	private File generateProjectDirectory() {

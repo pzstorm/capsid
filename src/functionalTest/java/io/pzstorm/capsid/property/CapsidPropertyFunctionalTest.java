@@ -60,7 +60,6 @@ class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
 
 		Map<String, String> environment = new HashMap<>();
 		environment.put("PZ_DIR_PATH", getGameDirPath().convert().toAbsolutePath().toString());
-		environment.put("IDEA_HOME", getIdeaHomePath().convert().toAbsolutePath().toString());
 		runner.withEnvironment(environment);
 
 		// runner cannot run in debug mode with environment variables
@@ -85,10 +84,6 @@ class CapsidPropertyFunctionalTest extends PluginFunctionalTest {
 	}
 
 	private void writeLocalPropertiesToFile() throws IOException {
-
-		writeToProjectFile("local.properties", new String[]{
-				String.format("gameDir=%s", getGameDirPath()),
-				String.format("ideaHome=%s", getIdeaHomePath())
-		});
+		writeToProjectFile("local.properties", new String[]{ String.format("gameDir=%s", getGameDirPath()) });
 	}
 }
