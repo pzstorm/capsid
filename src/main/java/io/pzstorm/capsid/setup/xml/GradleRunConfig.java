@@ -17,15 +17,17 @@
  */
 package io.pzstorm.capsid.setup.xml;
 
-import com.google.common.collect.ImmutableMap;
-import io.pzstorm.capsid.mod.ModTasks;
-import io.pzstorm.capsid.setup.SetupTasks;
-import io.pzstorm.capsid.zomboid.ZomboidTasks;
+import java.nio.file.Paths;
+import java.util.Map;
+
 import org.gradle.api.Project;
 import org.w3c.dom.Element;
 
-import java.nio.file.Paths;
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
+
+import io.pzstorm.capsid.mod.ModTasks;
+import io.pzstorm.capsid.setup.SetupTasks;
+import io.pzstorm.capsid.zomboid.ZomboidTasks;
 
 public class GradleRunConfig extends XMLDocument {
 
@@ -156,6 +158,7 @@ public class GradleRunConfig extends XMLDocument {
 		RUN_CONFIG_TASK("RunConfigurationTask");
 
 		private final String name;
+
 		OptionType(String name) {
 			this.name = name;
 		}

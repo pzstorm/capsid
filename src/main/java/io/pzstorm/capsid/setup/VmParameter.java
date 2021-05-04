@@ -78,7 +78,6 @@ public class VmParameter {
 	 *
 	 * @param name name of the option to format.
 	 * @param flag whether to enable or disable the option.
-	 *
 	 * @return formatted advanced JVM runtime option string.
 	 *
 	 * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html">

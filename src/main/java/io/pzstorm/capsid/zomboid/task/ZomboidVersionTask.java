@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import io.pzstorm.capsid.mod.ModProperties;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
@@ -35,6 +34,7 @@ import com.google.common.collect.ImmutableList;
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.Configurations;
+import io.pzstorm.capsid.mod.ModProperties;
 import io.pzstorm.capsid.property.VersionProperties;
 import io.pzstorm.capsid.util.SemanticVersion;
 

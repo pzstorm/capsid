@@ -19,7 +19,10 @@ package io.pzstorm.capsid;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -68,6 +71,22 @@ public class CapsidPlugin implements Plugin<Project> {
 	 */
 	public static CapsidPluginExtension getCapsidPluginExtension() {
 		return Objects.requireNonNull(capsidExt);
+	}
+
+	/**
+	 * Register <b>only</b> {@link Dependencies} not available before evaluation.
+	 *
+	 * @param project {@code Project} to register dependencies for.
+	 * @param dependencies handler to register dependencies with.
+	 */
+	private static void registerDependenciesInEvaluation(Project project, DependencyHandler dependencies) {
+
+		for (Dependencies dependency : Dependencies.values())
+		{
+			if (!dependency.availablePreEval) {
+				dependency.register(project, dependencies);
+			}
+		}
 	}
 
 	@Override
@@ -205,21 +224,5 @@ public class CapsidPlugin implements Plugin<Project> {
 			// register dependencies that are only available during evaluation
 			else registerDependenciesInEvaluation(project, dependencies);
 		});
-	}
-
-	/**
-	 * Register <b>only</b> {@link Dependencies} not available before evaluation.
-	 *
-	 * @param project {@code Project} to register dependencies for.
-	 * @param dependencies handler to register dependencies with.
-	 */
-	private static void registerDependenciesInEvaluation(Project project, DependencyHandler dependencies) {
-
-		for (Dependencies dependency : Dependencies.values())
-		{
-			if (!dependency.availablePreEval) {
-				dependency.register(project, dependencies);
-			}
-		}
 	}
 }

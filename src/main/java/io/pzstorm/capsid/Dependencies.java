@@ -96,7 +96,6 @@ public enum Dependencies {
 	 *
 	 * @param project {@code Project} to register the dependencies for.
 	 * @param dependencies handler used to register dependencies.
-	 *
 	 * @return {@code Set} of registered dependencies empty {@code Set} if none registered.
 	 */
 	Set<Dependency> register(Project project, DependencyHandler dependencies) {

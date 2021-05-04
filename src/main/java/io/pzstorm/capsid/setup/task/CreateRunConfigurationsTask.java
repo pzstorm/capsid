@@ -23,16 +23,16 @@ import java.util.Objects;
 
 import javax.xml.transform.TransformerException;
 
-import io.pzstorm.capsid.setup.LocalProperties;
-import io.pzstorm.capsid.setup.SetupTasks;
-import io.pzstorm.capsid.setup.xml.GradleRunConfig;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.internal.os.OperatingSystem;
 
 import io.pzstorm.capsid.CapsidTask;
+import io.pzstorm.capsid.setup.LocalProperties;
+import io.pzstorm.capsid.setup.SetupTasks;
+import io.pzstorm.capsid.setup.xml.GradleRunConfig;
 import io.pzstorm.capsid.setup.xml.LaunchRunConfig;
-import org.gradle.internal.os.OperatingSystem;
 
 /**
  * This task will create useful IDEA run configurations.
@@ -53,7 +53,7 @@ public class CreateRunConfigurationsTask extends DefaultTask implements CapsidTa
 
 		Project project = getProject();
 
-		LaunchRunConfig[] launchRunConfigs = new LaunchRunConfig[] {
+		LaunchRunConfig[] launchRunConfigs = new LaunchRunConfig[]{
 				LaunchRunConfig.RUN_ZOMBOID, LaunchRunConfig.RUN_ZOMBOID_LOCAL,
 				LaunchRunConfig.DEBUG_ZOMBOID, LaunchRunConfig.DEBUG_ZOMBOID_LOCAL
 		};

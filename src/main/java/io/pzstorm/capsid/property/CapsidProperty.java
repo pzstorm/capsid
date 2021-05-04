@@ -113,8 +113,8 @@ public class CapsidProperty<T> {
 	 * Convert and validate the given property to {@code Class} {@link #type}.
 	 *
 	 * @param property property to convert and validate.
-	 *
 	 * @return converted property or {@code null} if property is {@code null} or empty.
+	 *
 	 * @throws InvalidCapsidPropertyException if property is of unsupported type.
 	 */
 	@SuppressWarnings("unchecked")

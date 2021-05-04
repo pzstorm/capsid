@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import com.google.common.collect.ImmutableMap;
-import io.pzstorm.capsid.property.CapsidProperty;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.InvalidUserDataException;
@@ -42,6 +40,7 @@ import io.pzstorm.capsid.CapsidPluginExtension;
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.mod.ModProperties;
+import io.pzstorm.capsid.property.CapsidProperty;
 import io.pzstorm.capsid.property.validator.PropertyValidators;
 
 /**

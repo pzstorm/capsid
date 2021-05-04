@@ -21,13 +21,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import io.pzstorm.capsid.CapsidGradleRunner;
 import org.gradle.internal.os.OperatingSystem;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 
+import io.pzstorm.capsid.CapsidGradleRunner;
 import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.setup.SetupTasks;
 import io.pzstorm.capsid.util.Utils;

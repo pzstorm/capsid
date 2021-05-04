@@ -61,7 +61,6 @@ public enum Configurations {
 	 *
 	 * @param name name of the configuration to resolve.
 	 * @param configurations where to resolve the configuration from.
-	 *
 	 * @return configuration with the given name. Never returns {@code null}.
 	 */
 	private static Configuration resolve(String name, ConfigurationContainer configurations) {

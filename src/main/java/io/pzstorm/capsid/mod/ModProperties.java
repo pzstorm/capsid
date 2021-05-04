@@ -28,11 +28,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import io.pzstorm.capsid.CapsidPlugin;
@@ -151,6 +151,20 @@ public class ModProperties extends CapsidProperties {
 	}
 
 	/**
+	 * Returns the mapping key associated with given {@link CapsidProperty}.
+	 *
+	 * @param property {@code CapsidProperty} associated with key to return.
+	 * @return mapping key or empty {@code String} if no mapping is found.
+	 */
+	public static String getMetadataMappingKey(CapsidProperty<?> property) {
+
+		Optional<Map.Entry<String, CapsidProperty<?>>> entry = METADATA_MAPPING.entrySet()
+				.stream().filter(m -> m.getValue() == property).findFirst();
+
+		return entry.isPresent() ? entry.get().getKey() : "";
+	}
+
+	/**
 	 * Returns all registered mod properties.
 	 */
 	@Override
@@ -180,19 +194,5 @@ public class ModProperties extends CapsidProperties {
 			}
 			writer.write(sb.toString());
 		}
-	}
-
-	/**
-	 * Returns the mapping key associated with given {@link CapsidProperty}.
-	 *
-	 * @param property {@code CapsidProperty} associated with key to return.
-	 * @return mapping key or empty {@code String} if no mapping is found.
-	 */
-	public static String getMetadataMappingKey(CapsidProperty<?> property) {
-
-		Optional<Map.Entry<String, CapsidProperty<?>>> entry = METADATA_MAPPING.entrySet()
-				.stream().filter(m -> m.getValue() == property).findFirst();
-
-		return entry.isPresent() ? entry.get().getKey() : "";
 	}
 }

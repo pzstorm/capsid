@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import io.pzstorm.capsid.PluginIntegrationTest;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.junit.jupiter.api.Assertions;
@@ -36,6 +35,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 
+import io.pzstorm.capsid.PluginIntegrationTest;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.mod.ModProperties;
 import io.pzstorm.capsid.mod.ModTasks;

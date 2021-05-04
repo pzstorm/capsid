@@ -51,8 +51,8 @@ public abstract class CapsidProperties {
 	 * Load properties from file to given {@link Project} instance.
 	 *
 	 * @param project {@code Project} to load properties to.
-	 *
 	 * @return {@code true} if properties were successfully loaded, {@code false} otherwise.
+	 *
 	 * @throws GradleException when an I/O error occurred while loading file.
 	 */
 	public boolean load(Project project) throws GradleException {
