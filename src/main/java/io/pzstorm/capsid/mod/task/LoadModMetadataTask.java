@@ -53,7 +53,7 @@ public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 	 * This map maps {@link CapsidProperty} entries to their respective metadata entries.
 	 * Metadata with specified names (keys) will be set as project properties (values).
 	 */
-	private static final Map<String, CapsidProperty<?>> METADATA_MAPPING =
+	static final Map<String, CapsidProperty<?>> METADATA_MAPPING =
 			ImmutableMap.<String, CapsidProperty<?>>builder()
 					.put("name", ModProperties.MOD_NAME)
 					.put("poster", ModProperties.MOD_POSTER)
