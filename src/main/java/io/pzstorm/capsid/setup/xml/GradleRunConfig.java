@@ -37,6 +37,7 @@ public class GradleRunConfig extends XMLDocument {
 					.put("decompileZomboid", OptionType.BEFORE_RUN_TASK)
 					.put("annotateZomboidLua", OptionType.BEFORE_RUN_TASK)
 					.put("compileZomboidLua", OptionType.BEFORE_RUN_TASK)
+					.put("zomboidLuaJar", OptionType.BEFORE_RUN_TASK)
 					.build()
 	);
 	public static final GradleRunConfig INITIALIZE_MOD = new GradleRunConfig(
