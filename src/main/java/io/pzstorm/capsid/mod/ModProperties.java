@@ -70,7 +70,8 @@ public class ModProperties extends CapsidProperties {
 	/**
 	 * Latest version of Project Zomboid compatible with this mod.
 	 */
-	public static final CapsidProperty<String> MOD_PZ_VERSION;
+	public static final CapsidProperty<String> PZ_VERSION;
+
 	private static final ModProperties INSTANCE = new ModProperties();
 	private static final @Unmodifiable Set<CapsidProperty<?>> PROPERTIES;
 
@@ -108,14 +109,14 @@ public class ModProperties extends CapsidProperties {
 				.build();
 
 		//noinspection SpellCheckingInspection
-		MOD_PZ_VERSION = new CapsidProperty.Builder<>("mod.pzversion", String.class)
-				.withEnvironmentVar("MOD_VERSION")
+		PZ_VERSION = new CapsidProperty.Builder<>("pzversion", String.class)
+				.withEnvironmentVar("PZ_VERSION")
 				.isRequired(false)
 				.build();
 
 		PROPERTIES = ImmutableSet.of(
 				MOD_NAME, MOD_POSTER, MOD_DESCRIPTION,
-				MOD_ID, MOD_URL, MOD_VERSION, MOD_PZ_VERSION
+				MOD_ID, MOD_URL, MOD_VERSION, PZ_VERSION
 		);
 	}
 
