@@ -33,12 +33,15 @@ import io.pzstorm.capsid.util.Utils;
 
 class CreateRunConfigurationsTaskFunctionalTest extends PluginFunctionalTest {
 
-	private static final ImmutableMap<LaunchRunConfig, String> RUN_CONFIGS = ImmutableMap.of(
-			LaunchRunConfig.RUN_ZOMBOID, "Run_Zomboid.xml",
-			LaunchRunConfig.RUN_ZOMBOID_LOCAL, "Run_Zomboid_local.xml",
-			LaunchRunConfig.DEBUG_ZOMBOID, "Debug_Zomboid.xml",
-			LaunchRunConfig.DEBUG_ZOMBOID_LOCAL, "Debug_Zomboid_local.xml"
-	);
+	private static final ImmutableMap<XMLDocument, String> RUN_CONFIGS =
+			ImmutableMap.<XMLDocument, String>builder()
+					.put(LaunchRunConfig.RUN_ZOMBOID, "Run_Zomboid.xml")
+					.put(LaunchRunConfig.RUN_ZOMBOID_LOCAL, "Run_Zomboid_local.xml")
+					.put(LaunchRunConfig.DEBUG_ZOMBOID, "Debug_Zomboid.xml")
+					.put(LaunchRunConfig.DEBUG_ZOMBOID_LOCAL, "Debug_Zomboid_local.xml")
+					.put(GradleRunConfig.INITIALIZE_MOD, "initializeMod.xml")
+					.put(GradleRunConfig.SETUP_WORKSPACE, "setupWorkspace.xml")
+					.build();
 
 	CreateRunConfigurationsTaskFunctionalTest() {
 		super("testLaunchRunConfigs");
@@ -51,7 +54,7 @@ class CreateRunConfigurationsTaskFunctionalTest extends PluginFunctionalTest {
 		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_RUN_CONFIGS.name);
 
 		File runConfigurations = new File(getProjectDir(), ".idea/runConfigurations");
-		for (Map.Entry<LaunchRunConfig, String> entry : RUN_CONFIGS.entrySet())
+		for (Map.Entry<XMLDocument, String> entry : RUN_CONFIGS.entrySet())
 		{
 			String filename = entry.getValue();
 			File runConfig = new File(runConfigurations, filename);
