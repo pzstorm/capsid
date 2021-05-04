@@ -57,7 +57,7 @@ public class ShowModMetadataTask extends DefaultTask implements CapsidTask {
 		ext = project.getExtensions().getExtraProperties();
 		Logger logger = CapsidPlugin.LOGGER;
 
-		logger.lifecycle("This is a mod for Project Zomboid " + getDisplayProperty(ModProperties.MOD_PZ_VERSION));
+		logger.lifecycle("This is a mod for Project Zomboid " + getDisplayProperty(ModProperties.PZ_VERSION));
 		logger.lifecycle("------------------------------------------------");
 		logger.lifecycle("Name: " + getDisplayProperty(ModProperties.MOD_NAME));
 		logger.lifecycle("Description: " + getDisplayProperty(ModProperties.MOD_DESCRIPTION));

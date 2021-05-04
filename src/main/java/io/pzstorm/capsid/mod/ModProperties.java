@@ -24,12 +24,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.gradle.api.Project;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import io.pzstorm.capsid.CapsidPlugin;
@@ -70,52 +73,69 @@ public class ModProperties extends CapsidProperties {
 	/**
 	 * Latest version of Project Zomboid compatible with this mod.
 	 */
-	public static final CapsidProperty<String> MOD_PZ_VERSION;
+	public static final CapsidProperty<String> PZ_VERSION;
+
+	/**
+	 * This map maps {@link CapsidProperty} entries to their respective metadata entries.
+	 * Metadata with specified names (keys) will be set as project properties (values).
+	 */
+	public static final Map<String, CapsidProperty<?>> METADATA_MAPPING;
+
 	private static final ModProperties INSTANCE = new ModProperties();
 	private static final @Unmodifiable Set<CapsidProperty<?>> PROPERTIES;
 
 	static
 	{
-		MOD_NAME = new CapsidProperty.Builder<>("mod.name", String.class)
+		MOD_NAME = new CapsidProperty.Builder<>("modname", String.class)
 				.withEnvironmentVar("MOD_NAME")
 				.withDefaultValue("Project Zomboid mod")
 				.build();
 
-		MOD_POSTER = new CapsidProperty.Builder<>("mod.poster", Path.class)
+		MOD_POSTER = new CapsidProperty.Builder<>("modposter", Path.class)
 				.withEnvironmentVar("MOD_POSTER")
 				.withDefaultValue(Paths.get("poster.png"))
 				.isRequired(false)
 				.build();
 
-		MOD_DESCRIPTION = new CapsidProperty.Builder<>("mod.desc", String.class)
+		MOD_DESCRIPTION = new CapsidProperty.Builder<>("moddesc", String.class)
 				.withEnvironmentVar("MOD_DESC")
 				.withDefaultValue("No description available.")
 				.isRequired(false)
 				.build();
 
-		MOD_ID = new CapsidProperty.Builder<>("mod.id", String.class)
+		MOD_ID = new CapsidProperty.Builder<>("modid", String.class)
 				.withEnvironmentVar("MOD_ID")
 				.build();
 
-		MOD_URL = new CapsidProperty.Builder<>("mod.url", URL.class)
+		MOD_URL = new CapsidProperty.Builder<>("modurl", URL.class)
 				.withEnvironmentVar("MOD_URL")
 				.isRequired(false)
 				.build();
 
-		MOD_VERSION = new CapsidProperty.Builder<>("mod.modversion", SemanticVersion.class)
+		MOD_VERSION = new CapsidProperty.Builder<>("modversion", SemanticVersion.class)
 				.withEnvironmentVar("MOD_VERSION")
 				.withDefaultValue(new SemanticVersion("0.1.0"))
 				.build();
 
 		//noinspection SpellCheckingInspection
-		MOD_PZ_VERSION = new CapsidProperty.Builder<>("mod.pzversion", String.class)
-				.withEnvironmentVar("MOD_VERSION")
+		PZ_VERSION = new CapsidProperty.Builder<>("pzversion", String.class)
+				.withEnvironmentVar("PZ_VERSION")
 				.isRequired(false)
+				.build();
+
+		METADATA_MAPPING = ImmutableMap.<String, CapsidProperty<?>>builder()
+				.put("name", ModProperties.MOD_NAME)
+				.put("poster", ModProperties.MOD_POSTER)
+				.put("description", ModProperties.MOD_DESCRIPTION)
+				.put("id", ModProperties.MOD_ID)
+				.put("url", ModProperties.MOD_URL)
+				.put("modversion", ModProperties.MOD_VERSION)
+				.put("pzversion", ModProperties.PZ_VERSION)
 				.build();
 
 		PROPERTIES = ImmutableSet.of(
 				MOD_NAME, MOD_POSTER, MOD_DESCRIPTION,
-				MOD_ID, MOD_URL, MOD_VERSION, MOD_PZ_VERSION
+				MOD_ID, MOD_URL, MOD_VERSION, PZ_VERSION
 		);
 	}
 
@@ -128,6 +148,20 @@ public class ModProperties extends CapsidProperties {
 	 */
 	public static ModProperties get() {
 		return INSTANCE;
+	}
+
+	/**
+	 * Returns the mapping key associated with given {@link CapsidProperty}.
+	 *
+	 * @param property {@code CapsidProperty} associated with key to return.
+	 * @return mapping key or empty {@code String} if no mapping is found.
+	 */
+	public static String getMetadataMappingKey(CapsidProperty<?> property) {
+
+		Optional<Map.Entry<String, CapsidProperty<?>>> entry = METADATA_MAPPING.entrySet()
+				.stream().filter(m -> m.getValue() == property).findFirst();
+
+		return entry.isPresent() ? entry.get().getKey() : "";
 	}
 
 	/**
@@ -155,8 +189,8 @@ public class ModProperties extends CapsidProperties {
 				else if (property.required) {
 					CapsidPlugin.LOGGER.warn("WARN: Missing property value " + property.name);
 				}
-				// remove 'mod.' part of the property before appending
-				sb.append(property.name.substring(4)).append('=').append(value).append('\n');
+				String name = getMetadataMappingKey(property);
+				sb.append(name).append('=').append(value).append('\n');
 			}
 			writer.write(sb.toString());
 		}

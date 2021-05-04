@@ -73,6 +73,22 @@ public class CapsidPlugin implements Plugin<Project> {
 		return Objects.requireNonNull(capsidExt);
 	}
 
+	/**
+	 * Register <b>only</b> {@link Dependencies} not available before evaluation.
+	 *
+	 * @param project {@code Project} to register dependencies for.
+	 * @param dependencies handler to register dependencies with.
+	 */
+	private static void registerDependenciesInEvaluation(Project project, DependencyHandler dependencies) {
+
+		for (Dependencies dependency : Dependencies.values())
+		{
+			if (!dependency.availablePreEval) {
+				dependency.register(project, dependencies);
+			}
+		}
+	}
+
 	@Override
 	public void apply(Project project) {
 
@@ -125,10 +141,13 @@ public class CapsidPlugin implements Plugin<Project> {
 		for (Configurations configuration : Configurations.values()) {
 			configuration.register(configurations);
 		}
-		// register project dependencies
 		DependencyHandler dependencies = project.getDependencies();
-		for (Dependencies dependency : Dependencies.values()) {
-			dependency.register(project, dependencies);
+		for (Dependencies dependency : Dependencies.values())
+		{
+			// register ONLY dependencies available pre-evaluation
+			if (dependency.availablePreEval) {
+				dependency.register(project, dependencies);
+			}
 		}
 		// plugin extension will be configured in evaluation phase
 		project.afterEvaluate(p ->
@@ -156,6 +175,8 @@ public class CapsidPlugin implements Plugin<Project> {
 				for (ModTasks task : ModTasks.values()) {
 					task.createOrRegister(project);
 				}
+				// register dependencies that are only available during evaluation
+				registerDependenciesInEvaluation(project, dependencies);
 
 				// set default excluded directories if map is not user configured
 				if (capsidExt.getExcludedResourceDirs().isEmpty())
@@ -200,6 +221,8 @@ public class CapsidPlugin implements Plugin<Project> {
 						DistributionTasks.MEDIA_CLASSES.name, DistributionTasks.PROCESS_RESOURCES.name
 				);
 			}
+			// register dependencies that are only available during evaluation
+			else registerDependenciesInEvaluation(project, dependencies);
 		});
 	}
 }

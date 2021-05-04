@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" factoryName="Gradle" name="initializeMod" type="GradleRunConfiguration">
+        <ExternalSystemSettings>
+            <option name="executionName"/>
+            <option name="externalProjectPath" value="$PROJECT_DIR$"/>
+            <option name="externalSystemIdString" value="GRADLE"/>
+            <option name="scriptParameters" value=""/>
+        </ExternalSystemSettings>
+        <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+        <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+        <DebugAllEnabled>true</DebugAllEnabled>
+        <method v="2">
+            <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="setGameDirectory" vmOptions=""/>
+            <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="initModMetadata" vmOptions=""/>
+            <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="createModStructure" vmOptions=""/>
+            <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="applyModTemplate" vmOptions=""/>
+        </method>
+    </configuration>
+</component>

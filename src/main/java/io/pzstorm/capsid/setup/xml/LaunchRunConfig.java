@@ -36,34 +36,34 @@ public class LaunchRunConfig extends XMLDocument {
 
 	public static final LaunchRunConfig RUN_ZOMBOID = new LaunchRunConfig(
 			"Run Zomboid", "zombie.gameStates.MainScreenState",
-			new VmParameter.Builder().build()
+			new VmParameter.Builder()
 	);
 	public static final LaunchRunConfig RUN_ZOMBOID_LOCAL = new LaunchRunConfig(
 			"Run Zomboid (local)", "zombie.gameStates.MainScreenState",
-			new VmParameter.Builder().withSteamIntegration(false).build()
+			new VmParameter.Builder().withSteamIntegration(false)
 	);
 	public static final LaunchRunConfig DEBUG_ZOMBOID = new LaunchRunConfig(
 			"Debug Zomboid", "zombie.gameStates.MainScreenState",
-			new VmParameter.Builder().withDebug(true).build()
+			new VmParameter.Builder().withDebug(true)
 	);
 	public static final LaunchRunConfig DEBUG_ZOMBOID_LOCAL = new LaunchRunConfig(
 			"Debug Zomboid (local)", "zombie.gameStates.MainScreenState",
-			new VmParameter.Builder().withDebug(true).withSteamIntegration(false).build()
+			new VmParameter.Builder().withDebug(true).withSteamIntegration(false)
 	);
+	public final VmParameter.Builder vmParamBuilder;
 	private final Map<String, Path> logs;
-	private final VmParameter vmParameters;
 	private final String mainClass;
 
-	public LaunchRunConfig(String name, String mainClass, VmParameter vmParameters, Map<String, Path> logs) {
+	public LaunchRunConfig(String name, String mainClass, VmParameter.Builder vmParamBuilder, Map<String, Path> logs) {
 
 		super(name, Paths.get(".idea/runConfigurations"));
-		this.vmParameters = vmParameters;
+		this.vmParamBuilder = vmParamBuilder;
 		this.mainClass = mainClass;
 		this.logs = logs;
 	}
 
-	public LaunchRunConfig(String name, String mainClass, VmParameter vmParameters) {
-		this(name, mainClass, vmParameters, ImmutableMap.of());
+	public LaunchRunConfig(String name, String mainClass, VmParameter.Builder vmParamBuilder) {
+		this(name, mainClass, vmParamBuilder, ImmutableMap.of());
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class LaunchRunConfig extends XMLDocument {
 		Element optionParams = document.createElement("option");
 
 		optionParams.setAttribute("name", "VM_PARAMETERS");
-		optionParams.setAttribute("value", vmParameters.toString());
+		optionParams.setAttribute("value", vmParamBuilder.build().toString());
 		configuration.appendChild(optionParams);
 
 		// <option name="WORKING_DIRECTORY" value="<game_dir>" />

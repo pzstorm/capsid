@@ -34,6 +34,7 @@ import com.google.common.collect.ImmutableList;
 import io.pzstorm.capsid.CapsidPlugin;
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.Configurations;
+import io.pzstorm.capsid.mod.ModProperties;
 import io.pzstorm.capsid.property.VersionProperties;
 import io.pzstorm.capsid.util.SemanticVersion;
 
@@ -68,7 +69,7 @@ public class ZomboidVersionTask extends JavaExec implements CapsidTask {
 		// get version number and classifier (ex. 41.50-IWBUMS)
 		ExtraPropertiesExtension ext = getProject().getExtensions().getExtraProperties();
 		String sGameVersion = versionText.get(1).substring(12).replaceAll(" ", "").trim();
-		ext.set("mod.pzversion", sGameVersion);
+		ext.set(ModProperties.PZ_VERSION.name, sGameVersion);
 
 		CapsidPlugin.LOGGER.lifecycle("game version " + sGameVersion);
 

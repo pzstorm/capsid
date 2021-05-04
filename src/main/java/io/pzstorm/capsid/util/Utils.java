@@ -92,7 +92,6 @@ public class Utils {
 	 * characters, but do include other leading and trailing whitespace
 	 *
 	 * @param file {@code File} to read the lines from.
-	 *
 	 * @return a {@code String} representing the contents of given file.
 	 *
 	 * @throws IOException if an I/O error occurred.

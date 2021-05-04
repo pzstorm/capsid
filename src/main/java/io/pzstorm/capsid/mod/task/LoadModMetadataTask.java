@@ -40,6 +40,7 @@ import io.pzstorm.capsid.CapsidPluginExtension;
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.ProjectProperty;
 import io.pzstorm.capsid.mod.ModProperties;
+import io.pzstorm.capsid.property.CapsidProperty;
 import io.pzstorm.capsid.property.validator.PropertyValidators;
 
 /**
@@ -80,7 +81,11 @@ public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 					String value = (String) entry.getValue();
 
 					CapsidPlugin.LOGGER.info("Loading property " + key + ':' + value);
-					ext.set("mod." + entry.getKey(), entry.getValue());
+					CapsidProperty<?> metadataMapping = ModProperties.METADATA_MAPPING.get(key);
+					if (metadataMapping != null) {
+						ext.set(metadataMapping.name, entry.getValue());
+					}
+					else CapsidPlugin.LOGGER.warn("Found unknown mod metadata entry '" + key + '\'');
 				}
 				// read repository information from url property
 				String sUrl = properties.getProperty("url");

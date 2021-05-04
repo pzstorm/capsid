@@ -46,6 +46,9 @@ class VmParameterTest extends PluginUnitTest {
 	@Test
 	void shouldBuildVmParameterInstanceWithCustomValues() {
 
+		String[] javaLibPaths = new String[]{ "/home/libs/java", "/home/java/libs" };
+		String[] lwjglPaths = new String[]{ "/home/libs/lwjgl1", "/home/lwjgl/libs" };
+
 		VmParameter parameters = new VmParameter.Builder()
 				.withDebug(true)
 				.withSteamIntegration(false)
@@ -53,6 +56,8 @@ class VmParameterTest extends PluginUnitTest {
 				.withConcurrentMarkSweepCollection(false)
 				.withMinidumpOnCrash(false)
 				.withOmittingStackTraceInFastThrow(false)
+				.withJavaLibraryPaths(javaLibPaths)
+				.withLwjglLibraryPaths(lwjglPaths)
 				.withInitialMemoryAllocation(250)
 				.withMaximumMemoryAllocation(4096)
 				.build();
@@ -64,6 +69,9 @@ class VmParameterTest extends PluginUnitTest {
 		Assertions.assertFalse(parameters.useConcMarkSweepGC);
 		Assertions.assertFalse(parameters.createMinidumpOnCrash);
 		Assertions.assertFalse(parameters.omitStackTraceInFastThrow);
+
+		Assertions.assertEquals(javaLibPaths, parameters.javaLibraryPaths);
+		Assertions.assertEquals(lwjglPaths, parameters.lwjglLibraryPaths);
 
 		Assertions.assertEquals(250, parameters.xms);
 		Assertions.assertEquals(4096, parameters.xmx);
@@ -87,5 +95,35 @@ class VmParameterTest extends PluginUnitTest {
 			String actual = VmParameter.formatAdvancedRuntimeOption(optionName, flag);
 			Assertions.assertEquals(expected, actual);
 		}
+	}
+
+	@Test
+	@SuppressWarnings("SpellCheckingInspection")
+	void shouldCorrectlyDisplayAsString() {
+
+		String[] javaLibPaths = new String[]{ "/home/libs/java", "/home/java/libs" };
+		String[] lwjglPaths = new String[]{ "/home/libs/lwjgl1", "/home/lwjgl/libs" };
+
+		VmParameter parameters = new VmParameter.Builder()
+				.withDebug(true)
+				.withSteamIntegration(false)
+				.withNetworkLogging(0)
+				.withConcurrentMarkSweepCollection(false)
+				.withMinidumpOnCrash(false)
+				.withOmittingStackTraceInFastThrow(false)
+				.withJavaLibraryPaths(javaLibPaths)
+				.withLwjglLibraryPaths(lwjglPaths)
+				.withInitialMemoryAllocation(250)
+				.withMaximumMemoryAllocation(4096)
+				.build();
+
+		String delimiter = VmParameter.getPathDelimiter();
+		String expected = "-Ddebug=1 -Dzomboid.steam=0 -Dzomboid.znetlog=0 " +
+				"-XX:-UseConcMarkSweepGC -XX:-CreateMinidumpOnCrash " +
+				"-XX:-OmitStackTraceInFastThrow -Xms250m -Xmx4096m " +
+				"-Djava.library.path=/home/libs/java" + delimiter + "/home/java/libs " +
+				"-Dorg.lwjgl.librarypath=/home/libs/lwjgl1" + delimiter + "/home/lwjgl/libs";
+
+		Assertions.assertEquals(expected, parameters.toString());
 	}
 }

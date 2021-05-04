@@ -47,7 +47,8 @@ class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 			new ImmutableMap.Builder<String, String>()
 					.put("name", "TestMod").put("description", "None")
 					.put("url", "https://github.com/pzstorm/capsid/")
-					.put("modversion", "0.1.0").put("pzverison", "41.50-IWBUMS")
+					.put("modversion", "0.1.0")
+					.put("pzversion", "41.50-IWBUMS")
 					.build();
 
 	private Project project;
@@ -78,7 +79,7 @@ class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 		for (Map.Entry<String, String> entry : MOD_METADATA.entrySet())
 		{
-			String propertyName = "mod." + entry.getKey();
+			String propertyName = ModProperties.METADATA_MAPPING.get(entry.getKey()).name;
 			Assertions.assertTrue(ext.has(propertyName));
 			Assertions.assertEquals(entry.getValue(), ext.get(propertyName));
 		}

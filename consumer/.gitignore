@@ -3,6 +3,10 @@ local.properties
 version.properties
 media
 
+# Generated
+/LICENSE.txt
+/mod.info
+
 # Temporary
 serialize.lua
 Gemfile

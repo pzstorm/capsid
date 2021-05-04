@@ -21,23 +21,23 @@ import org.gradle.api.Project;
 
 import io.pzstorm.capsid.CapsidTask;
 import io.pzstorm.capsid.setup.task.CreateDiscordIntegrationTask;
-import io.pzstorm.capsid.setup.task.CreateLaunchConfigsTask;
-import io.pzstorm.capsid.setup.task.CreateModSearchScopesTask;
-import io.pzstorm.capsid.setup.task.InitLocalPropertiesTask;
+import io.pzstorm.capsid.setup.task.CreateRunConfigurationsTask;
+import io.pzstorm.capsid.setup.task.CreateSearchScopesTask;
+import io.pzstorm.capsid.setup.task.setGameDirectoryTask;
 
 /**
  * Tasks that help setup modding work environment.
  */
 public enum SetupTasks {
 
-	INIT_LOCAL_PROPERTIES(InitLocalPropertiesTask.class, "initLocalProperties",
-			"Initialize local project properties."
+	SET_GAME_DIRECTORY(setGameDirectoryTask.class, "setGameDirectory",
+			"Set game directory via user input."
 	),
-	CREATE_LAUNCH_CONFIGS(CreateLaunchConfigsTask.class, "createLaunchRunConfigs",
-			"Create game launch run configurations."
+	CREATE_RUN_CONFIGS(CreateRunConfigurationsTask.class, "createRunConfigurations",
+			"Create useful IDEA run configurations."
 	),
-	CREATE_MOD_SEARCH_SCOPES(CreateModSearchScopesTask.class, "createModSearchScopes",
-			"Create IDEA search scopes for mod files."
+	CREATE_SEARCH_SCOPES(CreateSearchScopesTask.class, "createSearchScopes",
+			"Create IDEA search scopes for project files."
 	),
 	CREATE_DISCORD_INTEGRATION(CreateDiscordIntegrationTask.class, "createDiscordIntegration",
 			"Show IDEA project in Discord via rich presence."

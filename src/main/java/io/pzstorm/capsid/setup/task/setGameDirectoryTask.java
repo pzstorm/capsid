@@ -34,9 +34,18 @@ import io.pzstorm.capsid.property.CapsidProperty;
 import io.pzstorm.capsid.setup.LocalProperties;
 
 /**
- * This task will initialize local properties by asking for user input.
+ * This task will initialize game directory by asking for user input.
  */
-public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
+public class setGameDirectoryTask extends DefaultTask implements CapsidTask {
+
+	@Override
+	public void configure(String group, String description, Project project) {
+		CapsidTask.super.configure(group, description, project);
+
+		// execute task only if properties file doesn't exist
+		File propertiesFile = LocalProperties.get().getFile(project);
+		onlyIf(t -> !propertiesFile.exists());
+	}
 
 	@TaskAction
 	void execute() throws IOException {
@@ -47,7 +56,7 @@ public class InitLocalPropertiesTask extends DefaultTask implements CapsidTask {
 
 		// make sure the properties file exists
 		File propertiesFile = LocalProperties.get().getFile(gradleProject);
-		if (!propertiesFile.exists() && !propertiesFile.createNewFile()) {
+		if (!propertiesFile.createNewFile()) {
 			throw new IOException(String.format("Unable to create %s file", propertiesFile.getName()));
 		}
 		Map<CapsidProperty<?>, String> PROPERTIES_INPUT_MAP = ImmutableMap.of(

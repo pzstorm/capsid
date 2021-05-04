@@ -34,7 +34,7 @@ import io.pzstorm.capsid.PluginFunctionalTest;
 import io.pzstorm.capsid.setup.SetupTasks;
 import io.pzstorm.capsid.util.Utils;
 
-class CreateModSearchScopesFunctionalTest extends PluginFunctionalTest {
+class CreateSearchScopesFunctionalTest extends PluginFunctionalTest {
 
 	private static final ImmutableMap<ModSearchScope, String> SEARCH_SCOPES = ImmutableMap.of(
 			ModSearchScope.MOD_LUA, "mod_lua.xml",
@@ -47,15 +47,15 @@ class CreateModSearchScopesFunctionalTest extends PluginFunctionalTest {
 			ModSearchScope.MOD_MEDIA, new String[]{ "mod_media.xml", "mod_media_subproject.xml" }
 	);
 
-	CreateModSearchScopesFunctionalTest() {
+	CreateSearchScopesFunctionalTest() {
 		super("modSearchScopes");
 	}
 
 	@Test
 	void shouldWriteToFileModSearchScopes() throws IOException {
 
-		BuildResult result = getRunner().withArguments(SetupTasks.CREATE_MOD_SEARCH_SCOPES.name).build();
-		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_MOD_SEARCH_SCOPES.name);
+		BuildResult result = getRunner().withArguments(SetupTasks.CREATE_SEARCH_SCOPES.name).build();
+		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_SEARCH_SCOPES.name);
 
 		Path searchScopes = getProjectDir().toPath().resolve(".idea/scopes/");
 		for (Map.Entry<ModSearchScope, String> entry : SEARCH_SCOPES.entrySet())
@@ -86,8 +86,8 @@ class CreateModSearchScopesFunctionalTest extends PluginFunctionalTest {
 		File copyDestination = new File(subProjectDir, "build.gradle");
 		Files.copy(new File(projectDir, "build.gradle"), copyDestination);
 
-		BuildResult result = runner.withArguments(SetupTasks.CREATE_MOD_SEARCH_SCOPES.name).build();
-		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_MOD_SEARCH_SCOPES.name);
+		BuildResult result = runner.withArguments(SetupTasks.CREATE_SEARCH_SCOPES.name).build();
+		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_SEARCH_SCOPES.name);
 
 		Assertions.assertFalse(new File(subProjectDir, ".idea/scopes").exists());
 		Assertions.assertTrue(new File(projectDir, ".idea/scopes").exists());

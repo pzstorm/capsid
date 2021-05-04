@@ -40,7 +40,7 @@ public class ZomboidJar extends Jar {
 			name = name + maybe(name, getArchiveAppendix().getOrNull());
 
 			// omit version from name when no pz version property found
-			String pzVersion = ModProperties.MOD_PZ_VERSION.findProperty(project);
+			String pzVersion = ModProperties.PZ_VERSION.findProperty(project);
 			if (pzVersion != null) {
 				name = name + maybe(name, pzVersion);
 			}
