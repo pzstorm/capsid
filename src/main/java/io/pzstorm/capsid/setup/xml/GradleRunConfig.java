@@ -18,6 +18,9 @@
 package io.pzstorm.capsid.setup.xml;
 
 import com.google.common.collect.ImmutableMap;
+import io.pzstorm.capsid.mod.ModTasks;
+import io.pzstorm.capsid.setup.SetupTasks;
+import io.pzstorm.capsid.zomboid.ZomboidTasks;
 import org.gradle.api.Project;
 import org.w3c.dom.Element;
 
@@ -29,23 +32,23 @@ public class GradleRunConfig extends XMLDocument {
 	//@formatter:off
 	public static final GradleRunConfig SETUP_WORKSPACE = new GradleRunConfig(
 			"setupWorkspace", ImmutableMap.<String, OptionType>builder()
-					.put("setGameDirectory", OptionType.BEFORE_RUN_TASK)
-					.put("createRunConfigurations", OptionType.BEFORE_RUN_TASK)
-					.put("createSearchScopes", OptionType.BEFORE_RUN_TASK)
-					.put("createDiscordIntegration", OptionType.BEFORE_RUN_TASK)
-					.put("zomboidJar", OptionType.BEFORE_RUN_TASK)
-					.put("decompileZomboid", OptionType.BEFORE_RUN_TASK)
-					.put("annotateZomboidLua", OptionType.BEFORE_RUN_TASK)
-					.put("compileZomboidLua", OptionType.BEFORE_RUN_TASK)
-					.put("zomboidLuaJar", OptionType.BEFORE_RUN_TASK)
+					.put(SetupTasks.SET_GAME_DIRECTORY.name, OptionType.BEFORE_RUN_TASK)
+					.put(SetupTasks.CREATE_RUN_CONFIGS.name, OptionType.BEFORE_RUN_TASK)
+					.put(SetupTasks.CREATE_SEARCH_SCOPES.name, OptionType.BEFORE_RUN_TASK)
+					.put(SetupTasks.CREATE_DISCORD_INTEGRATION.name, OptionType.BEFORE_RUN_TASK)
+					.put(ZomboidTasks.ZOMBOID_JAR.name, OptionType.BEFORE_RUN_TASK)
+					.put(ZomboidTasks.DECOMPILE_ZOMBOID.name, OptionType.BEFORE_RUN_TASK)
+					.put(ZomboidTasks.ANNOTATE_ZOMBOID_LUA.name, OptionType.BEFORE_RUN_TASK)
+					.put(ZomboidTasks.COMPILE_ZOMBOID_LUA.name, OptionType.BEFORE_RUN_TASK)
+					.put(ZomboidTasks.ZOMBOID_LUA_JAR.name, OptionType.BEFORE_RUN_TASK)
 					.build()
 	);
 	public static final GradleRunConfig INITIALIZE_MOD = new GradleRunConfig(
 			"initializeMod", ImmutableMap.of(
-					"setGameDirectory", OptionType.BEFORE_RUN_TASK,
-					"initModMetadata", OptionType.BEFORE_RUN_TASK,
-					"createModStructure", OptionType.BEFORE_RUN_TASK,
-					"applyModTemplate", OptionType.BEFORE_RUN_TASK
+					SetupTasks.SET_GAME_DIRECTORY.name, OptionType.BEFORE_RUN_TASK,
+					ModTasks.INIT_MOD_METADATA.name, OptionType.BEFORE_RUN_TASK,
+					ModTasks.CREATE_MOD_STRUCTURE.name, OptionType.BEFORE_RUN_TASK,
+					ModTasks.APPLY_MOD_TEMPLATE.name, OptionType.BEFORE_RUN_TASK
 			)
 	);//@formatter:on
 	private final Map<String, OptionType> options;
