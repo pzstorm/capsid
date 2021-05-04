@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import javax.xml.transform.TransformerException;
 
+import io.pzstorm.capsid.setup.SetupTasks;
 import io.pzstorm.capsid.setup.xml.GradleRunConfig;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
@@ -35,6 +36,13 @@ import io.pzstorm.capsid.setup.xml.LaunchRunConfig;
  * @see LaunchRunConfig
  */
 public class CreateRunConfigurationsTask extends DefaultTask implements CapsidTask {
+
+	@Override
+	public void configure(String group, String description, Project project) {
+		CapsidTask.super.configure(group, description, project);
+
+		dependsOn(project.getTasks().getByName(SetupTasks.SET_GAME_DIRECTORY.name));
+	}
 
 	@TaskAction
 	void execute() throws IOException, TransformerException {
