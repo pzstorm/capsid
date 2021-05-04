@@ -28,12 +28,14 @@ public class GradleRunConfig extends XMLDocument {
 
 	//@formatter:off
 	public static final GradleRunConfig SETUP_WORKSPACE = new GradleRunConfig(
-			"setupWorkspace", ImmutableMap.of(
-					"createRunConfigurations", OptionType.BEFORE_RUN_TASK,
-					"createSearchScopes", OptionType.BEFORE_RUN_TASK,
-					"createDiscordIntegration", OptionType.BEFORE_RUN_TASK,
-					"decompileZomboid", OptionType.RUN_CONFIG_TASK,
-					"runZomboidDoc", OptionType.RUN_CONFIG_TASK)
+			"setupWorkspace", ImmutableMap.<String, OptionType>builder()
+					.put("createRunConfigurations", OptionType.BEFORE_RUN_TASK)
+					.put("createSearchScopes", OptionType.BEFORE_RUN_TASK)
+					.put("createDiscordIntegration", OptionType.BEFORE_RUN_TASK)
+					.put("decompileZomboid", OptionType.BEFORE_RUN_TASK)
+					.put("annotateZomboidLua", OptionType.BEFORE_RUN_TASK)
+					.put("compileZomboidLua", OptionType.BEFORE_RUN_TASK)
+					.build()
 	);
 	public static final GradleRunConfig INITIALIZE_MOD = new GradleRunConfig(
 			"initializeMod", ImmutableMap.of(
