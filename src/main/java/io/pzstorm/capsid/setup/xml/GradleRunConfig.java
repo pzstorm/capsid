@@ -29,6 +29,7 @@ public class GradleRunConfig extends XMLDocument {
 	//@formatter:off
 	public static final GradleRunConfig SETUP_WORKSPACE = new GradleRunConfig(
 			"setupWorkspace", ImmutableMap.<String, OptionType>builder()
+					.put("setGameDirectory", OptionType.BEFORE_RUN_TASK)
 					.put("createRunConfigurations", OptionType.BEFORE_RUN_TASK)
 					.put("createSearchScopes", OptionType.BEFORE_RUN_TASK)
 					.put("createDiscordIntegration", OptionType.BEFORE_RUN_TASK)
