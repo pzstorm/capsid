@@ -32,6 +32,7 @@ public class GradleRunConfig extends XMLDocument {
 					.put("createRunConfigurations", OptionType.BEFORE_RUN_TASK)
 					.put("createSearchScopes", OptionType.BEFORE_RUN_TASK)
 					.put("createDiscordIntegration", OptionType.BEFORE_RUN_TASK)
+					.put("zomboidJar", OptionType.BEFORE_RUN_TASK)
 					.put("decompileZomboid", OptionType.BEFORE_RUN_TASK)
 					.put("annotateZomboidLua", OptionType.BEFORE_RUN_TASK)
 					.put("compileZomboidLua", OptionType.BEFORE_RUN_TASK)
