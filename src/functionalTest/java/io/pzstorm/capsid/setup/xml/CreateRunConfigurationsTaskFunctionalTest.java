@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import org.gradle.testkit.runner.BuildResult;
+import io.pzstorm.capsid.CapsidGradleRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -50,8 +50,10 @@ class CreateRunConfigurationsTaskFunctionalTest extends PluginFunctionalTest {
 	@Test
 	void shouldWriteToFileLaunchRunConfigurationsFromTask() throws IOException {
 
-		BuildResult result = getRunner().withArguments(SetupTasks.CREATE_RUN_CONFIGS.name).build();
-		assertTaskOutcomeSuccess(result, SetupTasks.CREATE_RUN_CONFIGS.name);
+		CapsidGradleRunner runner = getRunner().withArguments(
+				"-x" + SetupTasks.SET_GAME_DIRECTORY.name, SetupTasks.CREATE_RUN_CONFIGS.name
+		);
+		assertTaskOutcomeSuccess(runner.build(), SetupTasks.CREATE_RUN_CONFIGS.name);
 
 		File runConfigurations = new File(getProjectDir(), ".idea/runConfigurations");
 		for (Map.Entry<XMLDocument, String> entry : RUN_CONFIGS.entrySet())

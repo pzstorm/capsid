@@ -10,7 +10,7 @@
         <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
         <DebugAllEnabled>true</DebugAllEnabled>
         <method v="2">
-            <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="initLocalProperties" vmOptions=""/>
+            <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="setGameDirectory" vmOptions=""/>
             <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="initModMetadata" vmOptions=""/>
             <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="createModStructure" vmOptions=""/>
             <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="applyModTemplate" vmOptions=""/>

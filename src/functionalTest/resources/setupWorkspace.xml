@@ -10,12 +10,15 @@
         <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
         <DebugAllEnabled>true</DebugAllEnabled>
         <method v="2">
+            <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="setGameDirectory" vmOptions=""/>
             <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="createRunConfigurations" vmOptions=""/>
             <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="createSearchScopes" vmOptions=""/>
             <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="createDiscordIntegration" vmOptions=""/>
+            <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="zomboidJar" vmOptions=""/>
             <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="decompileZomboid" vmOptions=""/>
             <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="annotateZomboidLua" vmOptions=""/>
             <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="compileZomboidLua" vmOptions=""/>
+            <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="zomboidLuaJar" vmOptions=""/>
         </method>
     </configuration>
 </component>
