@@ -77,33 +77,33 @@ public class ModProperties extends CapsidProperties {
 
 	static
 	{
-		MOD_NAME = new CapsidProperty.Builder<>("mod.name", String.class)
+		MOD_NAME = new CapsidProperty.Builder<>("modname", String.class)
 				.withEnvironmentVar("MOD_NAME")
 				.withDefaultValue("Project Zomboid mod")
 				.build();
 
-		MOD_POSTER = new CapsidProperty.Builder<>("mod.poster", Path.class)
+		MOD_POSTER = new CapsidProperty.Builder<>("modposter", Path.class)
 				.withEnvironmentVar("MOD_POSTER")
 				.withDefaultValue(Paths.get("poster.png"))
 				.isRequired(false)
 				.build();
 
-		MOD_DESCRIPTION = new CapsidProperty.Builder<>("mod.desc", String.class)
+		MOD_DESCRIPTION = new CapsidProperty.Builder<>("moddesc", String.class)
 				.withEnvironmentVar("MOD_DESC")
 				.withDefaultValue("No description available.")
 				.isRequired(false)
 				.build();
 
-		MOD_ID = new CapsidProperty.Builder<>("mod.id", String.class)
+		MOD_ID = new CapsidProperty.Builder<>("modid", String.class)
 				.withEnvironmentVar("MOD_ID")
 				.build();
 
-		MOD_URL = new CapsidProperty.Builder<>("mod.url", URL.class)
+		MOD_URL = new CapsidProperty.Builder<>("modurl", URL.class)
 				.withEnvironmentVar("MOD_URL")
 				.isRequired(false)
 				.build();
 
-		MOD_VERSION = new CapsidProperty.Builder<>("mod.modversion", SemanticVersion.class)
+		MOD_VERSION = new CapsidProperty.Builder<>("modversion", SemanticVersion.class)
 				.withEnvironmentVar("MOD_VERSION")
 				.withDefaultValue(new SemanticVersion("0.1.0"))
 				.build();
