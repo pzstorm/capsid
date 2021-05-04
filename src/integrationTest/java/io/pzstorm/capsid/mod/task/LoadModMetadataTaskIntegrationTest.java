@@ -79,7 +79,7 @@ class LoadModMetadataTaskIntegrationTest extends PluginIntegrationTest {
 		ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
 		for (Map.Entry<String, String> entry : MOD_METADATA.entrySet())
 		{
-			String propertyName = LoadModMetadataTask.METADATA_MAPPING.get(entry.getKey()).name;
+			String propertyName = ModProperties.METADATA_MAPPING.get(entry.getKey()).name;
 			Assertions.assertTrue(ext.has(propertyName));
 			Assertions.assertEquals(entry.getValue(), ext.get(propertyName));
 		}

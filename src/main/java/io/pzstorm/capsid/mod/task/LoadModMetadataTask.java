@@ -49,21 +49,6 @@ import io.pzstorm.capsid.property.validator.PropertyValidators;
  */
 public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 
-	/**
-	 * This map maps {@link CapsidProperty} entries to their respective metadata entries.
-	 * Metadata with specified names (keys) will be set as project properties (values).
-	 */
-	static final Map<String, CapsidProperty<?>> METADATA_MAPPING =
-			ImmutableMap.<String, CapsidProperty<?>>builder()
-					.put("name", ModProperties.MOD_NAME)
-					.put("poster", ModProperties.MOD_POSTER)
-					.put("description", ModProperties.MOD_DESCRIPTION)
-					.put("id", ModProperties.MOD_ID)
-					.put("url", ModProperties.MOD_URL)
-					.put("modversion", ModProperties.MOD_VERSION)
-					.put("pzversion", ModProperties.PZ_VERSION)
-					.build();
-
 	@Override
 	public void configure(String group, String description, Project project) {
 		CapsidTask.super.configure(group, description, project);
@@ -97,7 +82,7 @@ public class LoadModMetadataTask extends DefaultTask implements CapsidTask {
 					String value = (String) entry.getValue();
 
 					CapsidPlugin.LOGGER.info("Loading property " + key + ':' + value);
-					CapsidProperty<?> metadataMapping = METADATA_MAPPING.get(key);
+					CapsidProperty<?> metadataMapping = ModProperties.METADATA_MAPPING.get(key);
 					if (metadataMapping != null) {
 						ext.set(metadataMapping.name, entry.getValue());
 					}

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import io.pzstorm.capsid.mod.ModProperties;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
@@ -68,7 +69,7 @@ public class ZomboidVersionTask extends JavaExec implements CapsidTask {
 		// get version number and classifier (ex. 41.50-IWBUMS)
 		ExtraPropertiesExtension ext = getProject().getExtensions().getExtraProperties();
 		String sGameVersion = versionText.get(1).substring(12).replaceAll(" ", "").trim();
-		ext.set("mod.pzversion", sGameVersion);
+		ext.set(ModProperties.PZ_VERSION.name, sGameVersion);
 
 		CapsidPlugin.LOGGER.lifecycle("game version " + sGameVersion);
 

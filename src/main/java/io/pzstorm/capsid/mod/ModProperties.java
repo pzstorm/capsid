@@ -24,8 +24,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
@@ -72,6 +75,12 @@ public class ModProperties extends CapsidProperties {
 	 */
 	public static final CapsidProperty<String> PZ_VERSION;
 
+	/**
+	 * This map maps {@link CapsidProperty} entries to their respective metadata entries.
+	 * Metadata with specified names (keys) will be set as project properties (values).
+	 */
+	public static final Map<String, CapsidProperty<?>> METADATA_MAPPING;
+
 	private static final ModProperties INSTANCE = new ModProperties();
 	private static final @Unmodifiable Set<CapsidProperty<?>> PROPERTIES;
 
@@ -112,6 +121,16 @@ public class ModProperties extends CapsidProperties {
 		PZ_VERSION = new CapsidProperty.Builder<>("pzversion", String.class)
 				.withEnvironmentVar("PZ_VERSION")
 				.isRequired(false)
+				.build();
+
+		METADATA_MAPPING = ImmutableMap.<String, CapsidProperty<?>>builder()
+				.put("name", ModProperties.MOD_NAME)
+				.put("poster", ModProperties.MOD_POSTER)
+				.put("description", ModProperties.MOD_DESCRIPTION)
+				.put("id", ModProperties.MOD_ID)
+				.put("url", ModProperties.MOD_URL)
+				.put("modversion", ModProperties.MOD_VERSION)
+				.put("pzversion", ModProperties.PZ_VERSION)
 				.build();
 
 		PROPERTIES = ImmutableSet.of(
@@ -156,10 +175,24 @@ public class ModProperties extends CapsidProperties {
 				else if (property.required) {
 					CapsidPlugin.LOGGER.warn("WARN: Missing property value " + property.name);
 				}
-				// remove 'mod.' part of the property before appending
-				sb.append(property.name.substring(4)).append('=').append(value).append('\n');
+				String name = getMetadataMappingKey(property);
+				sb.append(name).append('=').append(value).append('\n');
 			}
 			writer.write(sb.toString());
 		}
+	}
+
+	/**
+	 * Returns the mapping key associated with given {@link CapsidProperty}.
+	 *
+	 * @param property {@code CapsidProperty} associated with key to return.
+	 * @return mapping key or empty {@code String} if no mapping is found.
+	 */
+	public static String getMetadataMappingKey(CapsidProperty<?> property) {
+
+		Optional<Map.Entry<String, CapsidProperty<?>>> entry = METADATA_MAPPING.entrySet()
+				.stream().filter(m -> m.getValue() == property).findFirst();
+
+		return entry.isPresent() ? entry.get().getKey() : "";
 	}
 }
