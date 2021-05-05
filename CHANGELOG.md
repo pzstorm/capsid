@@ -1,5 +1,20 @@
 # Changelog
 
+## [v0.4.0](https://github.com/pzstorm/capsid/tree/v0.4.0) (2021-05-04)
+
+[Full Changelog](https://github.com/pzstorm/capsid/compare/v0.3.0...v0.4.0)
+
+**Implemented enhancements:**
+
+- Configurable VM param options for library paths   [\#12](https://github.com/pzstorm/capsid/issues/12)
+- Setup workspace run configuration [\#8](https://github.com/pzstorm/capsid/issues/8)
+- Mod initialization run configuration [\#7](https://github.com/pzstorm/capsid/issues/7)
+
+**Fixed bugs:**
+
+- Launch run configurations not working on Linux [\#14](https://github.com/pzstorm/capsid/issues/14)
+- Class libraries not loaded as dependencies [\#13](https://github.com/pzstorm/capsid/issues/13)
+
 ## [v0.3.0](https://github.com/pzstorm/capsid/tree/v0.3.0) (2021-04-24)
 
 [Full Changelog](https://github.com/pzstorm/capsid/compare/v0.2.0...v0.3.0)
