@@ -157,6 +157,13 @@ Capsid handles this for you. Just run `assembleDist` and a distribution archive 
 - `mediaClasses` - Assembles mod Lua classes.
 - `processMediaResources` - Process mod resources.
 
+## Discussion
+
+- Feel free to [open a ticket](https://github.com/pzstorm/capsid/issues/new) if you have any problems, questions or suggestions regarding the project.
+- You are also welcome to join [Coco Labs](https://discord.gg/vCeydWCbd9) on Discord to talk about modding and follow community projects.
+- If you are interested in learning about Java modding join [The Storm Project](https://discord.gg/ZCmg9VsvSW) on Discord.
+
+
 ## License
 
 This project is licensed under [GNU General Public License v3.0](https://github.com/cocolabs/pz-zdoc/blob/master/LICENSE.txt).
