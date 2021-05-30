@@ -83,15 +83,26 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 		ExtraPropertiesExtension ext = extensions.getExtraProperties();
 		CapsidPluginExtension capsidExt = extensions.getByType(CapsidPluginExtension.class);
 
+		String tRepoOwner = capsidExt.getProjectRepositoryOwner();
+		if (Strings.isNullOrEmpty(tRepoOwner) && ext.has("repo.owner")) {
+			tRepoOwner = (String) ext.get("repo.owner");
+		}
+		String tRepoName = capsidExt.getProjectRepositoryName();
+		if (Strings.isNullOrEmpty(tRepoName) && ext.has("repo.name")) {
+			tRepoName = (String) ext.get("repo.name");
+		}
+		// assign data to final variables so they can be used in lambdas
+		final String repoOwner = tRepoOwner, repoName = tRepoName;
+
 		// cannot generate changelog without knowing where to look
-		boolean hasDefinedRepo = ext.has("repo.owner") && ext.has("repo.name");
+		boolean hasDefinedRepo = !Strings.isNullOrEmpty(repoOwner) && !Strings.isNullOrEmpty(repoName);
 		onlyIf(it -> hasDefinedRepo);
 
 		Map<GenerateChangelogOptions, Object> optionsMap = capsidExt.generateChangelogOptions;
 		if (hasDefinedRepo)
 		{
-			optionsMap.putIfAbsent(GenerateChangelogOptions.USER, ext.get("repo.owner"));
-			optionsMap.putIfAbsent(GenerateChangelogOptions.PROJECT, ext.get("repo.name"));
+			optionsMap.putIfAbsent(GenerateChangelogOptions.USER, repoOwner);
+			optionsMap.putIfAbsent(GenerateChangelogOptions.PROJECT, repoName);
 			optionsMap.putIfAbsent(GenerateChangelogOptions.ISSUES_WITHOUT_LABELS, "false");
 		}
 		else CapsidPlugin.LOGGER.warn("WARN: Repository owner and name not specified");
@@ -137,6 +148,6 @@ public class GenerateChangelogTask extends Exec implements CapsidTask {
 		createGemfile(project);
 
 		doFirst(task -> CapsidPlugin.LOGGER.lifecycle(String.format(
-				"Generating changelog for %s/%s", ext.get("repo.owner"), ext.get("repo.name"))));
+				"Generating changelog for %s/%s", repoOwner, repoName)));
 	}
 }

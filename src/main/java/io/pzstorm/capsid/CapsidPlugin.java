@@ -221,8 +221,13 @@ public class CapsidPlugin implements Plugin<Project> {
 						DistributionTasks.MEDIA_CLASSES.name, DistributionTasks.PROCESS_RESOURCES.name
 				);
 			}
-			// register dependencies that are only available during evaluation
-			else registerDependenciesInEvaluation(project, dependencies);
+			else {
+				// register dependencies that are only available during evaluation
+				registerDependenciesInEvaluation(project, dependencies);
+
+				// allow non-mod projects to generate changelogs
+				DistributionTasks.GENERATE_CHANGELOG.register(project);
+			}
 		});
 	}
 }
