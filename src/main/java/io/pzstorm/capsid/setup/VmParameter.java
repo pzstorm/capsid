@@ -105,9 +105,9 @@ public class VmParameter {
 				formatAdvancedRuntimeOption("OmitStackTraceInFastThrow", omitStackTraceInFastThrow)
 		});
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("-Ddebug=%d -Dzomboid.steam=%d -Dzomboid.znetlog=%d %s -Xms%dm -Xmx%dm",
-				isDebug ? 1 : 0, steamIntegration ? 1 : 0, zNetLog, expOptions, xms, xmx
-		));
+		sb.append(String.format("%s -Dzomboid.steam=%d -Dzomboid.znetlog=%d %s -Xms%dm -Xmx%dm",
+				isDebug ? "-Ddebug" : "", steamIntegration ? 1 : 0, zNetLog, expOptions, xms, xmx
+		).trim());
 		String delimiter = getPathDelimiter();
 		if (javaLibraryPaths.length > 0)
 		{
