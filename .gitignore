@@ -9,6 +9,10 @@
 # Output
 out/
 
+# Ruby files
+Gemfile
+Gemfile.lock
+
 ### Java ###
 # Compiled class file
 *.class
