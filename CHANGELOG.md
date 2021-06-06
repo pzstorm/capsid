@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.4.2](https://github.com/pzstorm/capsid/tree/v0.4.2) (2021-06-06)
+
+[Full Changelog](https://github.com/pzstorm/capsid/compare/v0.4.1...v0.4.2)
+
+**Fixed bugs:**
+
+- Zomboid classes not available without game dir [\#17](https://github.com/pzstorm/capsid/issues/17)
+
 ## [v0.4.1](https://github.com/pzstorm/capsid/tree/v0.4.1) (2021-05-30)
 
 [Full Changelog](https://github.com/pzstorm/capsid/compare/v0.4.0...v0.4.1)
