@@ -33,7 +33,7 @@ Check the latest version on [Gradle Plugin Portal](https://plugins.gradle.org/pl
 
 ```groovy
 plugins {
-    id 'io.pzstorm.capsid' version '0.4.1' 
+    id 'io.pzstorm.capsid' version '0.4.2' 
 }
 ```
 

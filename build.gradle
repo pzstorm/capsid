@@ -27,7 +27,7 @@ spotless.java {
 }
 apply from: 'test.gradle'
 
-version '0.4.1'
+version '0.4.2'
 group 'io.pzstorm.capsid'
 
 repositories {
@@ -53,7 +53,6 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.google.errorprone/javac
 	errorproneJavac('com.google.errorprone:javac:9+181-r4173-1')
 }
-
 
 gradlePlugin {
 	//noinspection GroovyAssignabilityCheck

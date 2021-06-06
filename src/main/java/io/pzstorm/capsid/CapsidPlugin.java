@@ -119,7 +119,16 @@ public class CapsidPlugin implements Plugin<Project> {
 		}
 		ExtraPropertiesExtension ext = extensions.getExtraProperties();
 		// if game directory property is not initialize do not continue
-		if (!ext.has(LocalProperties.GAME_DIR.name)) {
+		if (!ext.has(LocalProperties.GAME_DIR.name))
+		{
+			// register project configurations
+			ConfigurationContainer configurations = project.getConfigurations();
+			for (Configurations configuration : Configurations.values()) {
+				configuration.register(configurations);
+			}
+			// register dependencies that are only available during evaluation
+			DependencyHandler dependencies = project.getDependencies();
+			project.afterEvaluate(p -> registerDependenciesInEvaluation(project, dependencies));
 			return;
 		}
 		// path to game installation directory
