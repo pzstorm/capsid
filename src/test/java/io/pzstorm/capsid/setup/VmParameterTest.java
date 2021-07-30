@@ -119,7 +119,7 @@ class VmParameterTest extends PluginUnitTest {
 
 		String delimiter = VmParameter.getPathDelimiter();
 		String expected = "-Ddebug -Dzomboid.steam=0 -Dzomboid.znetlog=0 " +
-				"-XX:-UseConcMarkSweepGC -XX:-CreateMinidumpOnCrash " +
+				"-XX:-UseZGC -XX:-CreateCoredumpOnCrash " +
 				"-XX:-OmitStackTraceInFastThrow -Xms250m -Xmx4096m " +
 				"-Djava.library.path=/home/libs/java" + delimiter + "/home/java/libs " +
 				"-Dorg.lwjgl.librarypath=/home/libs/lwjgl1" + delimiter + "/home/lwjgl/libs";
