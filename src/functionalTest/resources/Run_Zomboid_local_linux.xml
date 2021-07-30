@@ -2,7 +2,7 @@
     <configuration default="false" factoryName="Application" name="Run Zomboid (local)" type="Application">
         <option name="MAIN_CLASS_NAME" value="zombie.gameStates.MainScreenState"/>
         <module name="testLaunchRunConfigs.main"/>
-        <option name="VM_PARAMETERS" value="-Dzomboid.steam=0 -Dzomboid.znetlog=1 -XX:+UseConcMarkSweepGC -XX:-CreateMinidumpOnCrash -XX:-OmitStackTraceInFastThrow -Xms1800m -Xmx2048m -Djava.library.path=build/tmp/functionalTest/testLaunchRunConfigs/gameDir:build/tmp/functionalTest/testLaunchRunConfigs/gameDir/linux64:build/tmp/functionalTest/testLaunchRunConfigs/gameDir/jre64/lib/amd64 -Dorg.lwjgl.librarypath=build/tmp/functionalTest/testLaunchRunConfigs/gameDir"/>
+        <option name="VM_PARAMETERS" value="-Dzomboid.steam=0 -Dzomboid.znetlog=1 -XX:+UseZGC -XX:-CreateCoredumpOnCrash -XX:-OmitStackTraceInFastThrow -Xms1800m -Xmx2048m -Djava.library.path=build/tmp/functionalTest/testLaunchRunConfigs/gameDir:build/tmp/functionalTest/testLaunchRunConfigs/gameDir/linux64:build/tmp/functionalTest/testLaunchRunConfigs/gameDir/jre64/lib/amd64 -Dorg.lwjgl.librarypath=build/tmp/functionalTest/testLaunchRunConfigs/gameDir"/>
         <option name="WORKING_DIRECTORY" value="build/tmp/functionalTest/testLaunchRunConfigs/gameDir"/>
         <method v="2">
             <option enabled="true" externalProjectPath="$PROJECT_DIR$" name="Gradle.BeforeRunTask" scriptParameters="" tasks="zomboidClasses" vmOptions=""/>

@@ -100,8 +100,8 @@ public class VmParameter {
 	public String toString() {
 
 		String expOptions = String.join(" ", new String[]{
-				formatAdvancedRuntimeOption("UseConcMarkSweepGC", useConcMarkSweepGC),
-				formatAdvancedRuntimeOption("CreateMinidumpOnCrash", createMinidumpOnCrash),
+				formatAdvancedRuntimeOption("UseZGC", useConcMarkSweepGC),
+				formatAdvancedRuntimeOption("CreateCoredumpOnCrash", createMinidumpOnCrash),
 				formatAdvancedRuntimeOption("OmitStackTraceInFastThrow", omitStackTraceInFastThrow)
 		});
 		StringBuilder sb = new StringBuilder();
