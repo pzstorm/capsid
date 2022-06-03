@@ -19,7 +19,7 @@ plugins {
 	id "com.diffplug.spotless" version "5.12.1"
 }
 apply plugin: 'com.diffplug.spotless'
-apply from: "https://gist.githubusercontent.com/yooksi/${spotlessGistID}/raw/spotless.gradle"
+apply from: "https://gist.githubusercontent.com/matshou/${spotlessGistID}/raw/spotless.gradle"
 
 // exclude decompiler code from formatting
 spotless.java {
